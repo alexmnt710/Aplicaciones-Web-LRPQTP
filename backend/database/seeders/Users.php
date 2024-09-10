@@ -16,5 +16,20 @@ class Users extends Seeder
     {
         Role::create(['name' => 'admin']);
         Role::create(['name' => 'student']);
+        DB::table('users')->insert([
+            ['userName' => 'admin', 'userPassword' => 'admin', 'userNombres' => 'admin', 'userApellidos' => 'admin', 'userCorreo' => ''],
+        ]);
+        DB::table('pagoType')->insert([
+            ['pagoTypeId' => 1, 'pagoTypeName' => 'Tarjeta'],
+            ['pagoTypeId' => 2, 'pagoTypeName' => 'Efectivo'],
+            ['pagoTypeId' => 3, 'pagoTypeName' => 'Transferencia'],
+            ['pagoTypeId' => 4, 'pagoTypeName' => 'Cheque'],
+        ]);
+        DB::table('nivel')->insert([
+            ['nivelId' => 1, 'nivelName' => 'Basico'],
+            ['nivelId' => 2, 'nivelName' => 'Intermedio'],
+            ['nivelId' => 3, 'nivelName' => 'Avanzado'],
+            ['nivelId' => 4, 'nivelName' => 'Profesional'],
+        ]);
     }
 }

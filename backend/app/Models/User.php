@@ -14,12 +14,7 @@ class User extends Authenticatable
     use HasFactory, Notifiable, HasRoles;
     
     protected $primaryKey = 'userId';
-    protected $fillable = ['userName', 'userPassword', 'userTypeId'];
-
-    public function userType()
-    {
-        return $this->belongsTo(UserType::class, 'userTypeId', 'userTypeId');
-    }
+    protected $fillable = ['userName', 'userPassword, userNombres', 'userApellidos', 'userCorreo'];
 
     public function clases()
     {

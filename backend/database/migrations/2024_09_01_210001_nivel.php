@@ -12,9 +12,10 @@ return new class extends Migration
     public function up()
     {
         Schema::create('nivel', function (Blueprint $table) {
-            $table->id('nivelId');
-            $table->string('nivelName');
-            $table->timestamps();
+            $table->id('nivelId'); // Crea una columna 'nivelId' de tipo BIGINT como clave primaria autoincremental.
+            $table->string('nivelName'); // Crea una columna 'nivelName' de tipo VARCHAR para almacenar el nombre del nivel.
+            $table->timestamps(); // Crea dos columnas de tipo TIMESTAMP, 'created_at' y 'updated_at', para almacenar las marcas de tiempo de creación y actualización del registro.
+            
         });
     }
 

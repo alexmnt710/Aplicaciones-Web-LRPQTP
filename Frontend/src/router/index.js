@@ -10,6 +10,7 @@ const router = createRouter({
             meta: { requiresAuth: false } // Marca la ruta como no requiere autenticación
       
         },
+        
 
     ]
   });
