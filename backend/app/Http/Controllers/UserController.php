@@ -14,9 +14,8 @@ class UserController extends Controller
         return response()->json($users);
     }
     public function rawr(){
-        $user = User::find('userName'=='admin');
-        $user->AssignRole('admin');
-        $user->save();
+        $user = User::where('userName','admin')->first();
+        $user->assignRole('admin');
         return 'dale campeon';
     }
     public function show($id){

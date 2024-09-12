@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id('userId'); // Crea una columna 'userId' de tipo BIGINT como clave primaria autoincremental.
             $table->string('userName'); // Crea una columna 'userName' de tipo VARCHAR para almacenar el nombre de usuario.
-            $table->string('userPassword'); // Crea una columna 'userPassword' de tipo VARCHAR para almacenar la contraseña del usuario.
+            $table->string('password'); // Crea una columna 'userPassword' de tipo VARCHAR para almacenar la contraseña del usuario.
             $table->string('userNombres'); // Crea una columna 'userNombres' de tipo VARCHAR para almacenar los nombres del usuario.
             $table->string('userApellidos'); // Crea una columna 'userApellidos' de tipo VARCHAR para almacenar los apellidos del usuario.
             $table->string('userCorreo'); // Crea una columna 'userCorreo' de tipo VARCHAR para almacenar el correo electrónico del usuario.
