@@ -1,7 +1,15 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted  } from 'vue'
 import Header from '../components/Public/header.vue';
 import Footer from '../components/Public/footer.vue';
+import { Cursos } from '../store/cursos';
+
+const cursoStore = Cursos();
+onMounted(async () => {
+   await cursoStore.getCursosHome();
+   console.log(cursoStore.cursos);
+});
+
 
 </script>
 

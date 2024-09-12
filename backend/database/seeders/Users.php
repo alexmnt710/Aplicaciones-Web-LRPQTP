@@ -6,6 +6,8 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\DB;
+use App\Models\Curso;
+use App\Models\Categoria;
 
 class Users extends Seeder
 {
@@ -31,5 +33,7 @@ class Users extends Seeder
             ['nivelId' => 3, 'nivelName' => 'Avanzado'],
             ['nivelId' => 4, 'nivelName' => 'Profesional'],
         ]);
+        Categoria::factory()->count(10)->create(); 
+        Curso::factory()->count(10)->create();
     }
 }

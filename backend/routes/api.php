@@ -11,6 +11,7 @@ use App\Http\Controllers\SesionController;
 // Route::put('rawr',[UserController::class,'rawr']);
 
 //rutas publicas
+Route::get('/courses',[CursoController::class,'home']);
 Route::post('/login', [SesionController::class, 'login'])->middleware('guest:sanctum');
 Route::post('/logout', [SesionController::class, 'logout'])->middleware('auth:sanctum');
 //ruta para sesion
@@ -34,4 +35,8 @@ Route::middleware(['auth:sanctum','role:admin'])->group(function () {
     Route::post('/postCategoria',[CategoriaController::class, 'createCategoria']);
     Route::put('/updateCategoria/{id}',[CategoriaController::class, 'updateCategoria']);
     Route::delete('/deleteCategoria/{id}',[CategoriaController::class, 'deleteCategoria']);
+});
+Route::middleware(['auth:sanctum','role:student'])->group(function () {
+    //Rutas para estudiantes
+
 });

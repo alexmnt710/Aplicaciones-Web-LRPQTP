@@ -101,4 +101,8 @@ class CursoController extends Controller
         ], 404);
     }
 
+    public function home(){
+        $cursos = Curso::latest()->take(10)->get();
+        return response()->json($cursos);
+    }
 }
