@@ -1,8 +1,13 @@
 <script setup>
 import { RouterLink,RouterView, useRouter } from 'vue-router';
 import { onMounted } from 'vue';
+import { Sesion } from './store/sesion';
+
+const sesionStore = Sesion();
+
 const router = useRouter();
 onMounted(() => {
+  console.log(sesionStore.sesion);
     router.push('/');
 });
 </script>

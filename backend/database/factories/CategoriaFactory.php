@@ -19,6 +19,7 @@ class CategoriaFactory extends Factory
         return [
             'categoriaName' => $this->faker->word(),  // Genera un nombre aleatorio de una palabra
             'categoriaDescripcion' => $this->faker->sentence(),  // Genera una descripción aleatoria de una oración
+            'categoriaImagen' => $this->faker->imageUrl(),  // Genera una URL de imagen aleatoria
         ];
     }
 }

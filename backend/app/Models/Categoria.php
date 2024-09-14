@@ -10,7 +10,7 @@ class Categoria extends Model
     use HasFactory;
 
     protected $primaryKey = 'categoriaId';
-    protected $fillable = ['categoriaName, categoriaDescripcion'];
+    protected $fillable = ['categoriaName, categoriaDescripcion, categoriaImagen'];
 
     public function cursos()
     {

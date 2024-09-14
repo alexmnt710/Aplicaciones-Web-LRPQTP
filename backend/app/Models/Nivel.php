@@ -11,6 +11,8 @@ class Nivel extends Model
     protected $primaryKey = 'nivelId';
     protected $fillable = ['nivelName'];
 
+    protected $table = 'nivel';
+
     public function cursos()
     {
         return $this->hasMany(Curso::class, 'cursoNivelId', 'nivelId');

@@ -14,8 +14,9 @@ const router = useRouter(); // Para redirigir a otra página
 onMounted(async () => {
    await cursoStore.getCursosHome();
    cursos.value = cursoStore.cursos;
+   console.log(cursoStore.cursos);
 });
-console.log(cursoStore.cursos);
+
 // Función para mostrar el alert con los requisitos del curso
 const mostrarRequisitos = (cursoRequisito) => {
   sweetAlert.showAlert("Requisitos", cursoRequisito || "No hay requisitos especificados");
@@ -46,7 +47,7 @@ const irAVistaCurso = (cursoId) => {
           <p><strong>Precio:</strong> ${{ curso.cursoValor }}</p>
           
           <!-- Mostrar la categoría -->
-          <p><strong>Categoría:</strong> {{ curso.cursoCategoriaId }}</p>
+          <p><strong>Categoría:</strong> {{ curso.categoria.categoriaName }}</p>
 
           <!-- Botón para mostrar requisitos -->
           <button @click="mostrarRequisitos(curso.cursoRequisito)">

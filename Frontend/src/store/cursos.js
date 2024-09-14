@@ -21,6 +21,4 @@ export const Cursos = defineStore('cursoStore',{
         }
     },
 
-
-
 })

@@ -101,8 +101,17 @@ class CursoController extends Controller
         ], 404);
     }
 
-    public function home(){
-        $cursos = Curso::latest()->take(10)->get();
+    public function home()
+    {
+        // Cargar las relaciones 'nivel' y 'categoria', obteniendo solo los nombres
+        $cursos = Curso::with([
+            'categoria:categoriaId,categoriaName', // Trae solo categoriaId y categoriaName de la tabla categorías
+            'nivel:nivelId,nivelName' // Trae solo nivelId y nivelName de la tabla niveles
+        ])
+        ->latest()
+        ->take(10)
+        ->get();
+
         return response()->json($cursos);
     }
 }
