@@ -24,7 +24,7 @@ const mostrarRequisitos = (cursoRequisito) => {
 
 // Función para navegar a la vista del curso
 const irAVistaCurso = async (cursoId) => {
-  cursoStore.getCurso(cursoId).then(()=>router.push(`/clases`)); // Obtener los detalles del curso y redirigir
+  router.push(`/clases/${cursoId}`); // Redirigir a la ruta con el cursoId
 }
 </script>
 

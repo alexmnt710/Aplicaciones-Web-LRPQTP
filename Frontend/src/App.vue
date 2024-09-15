@@ -8,7 +8,6 @@ const sesionStore = Sesion();
 const router = useRouter();
 onMounted(() => {
   console.log(sesionStore.sesion);
-    router.push('/');
 });
 </script>
 

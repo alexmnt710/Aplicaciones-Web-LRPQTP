@@ -11,7 +11,7 @@ const router = createRouter({
             path: '/',
             name: 'Home',
             component: Home,
-            meta: { requiresAuth: false } // Marca la ruta como no requiere autenticación
+            meta: { requiresAuth: false }, // Marca la ruta como no requiere autenticación
       
         },
         {
@@ -21,10 +21,11 @@ const router = createRouter({
             meta: { requiresAuth: false } // Marca la ruta como no requiere autenticación
         },
         {
-            path: '/clases',
+            path: '/clases/:claseId',
             name: 'Clases',
             component: Clases,
-            meta: { requiresAuth: false } // Marca la ruta como no requiere autenticación
+            meta: { requiresAuth: false }, // Marca la ruta como no requiere autenticación
+            props: true
       
         },
         {
