@@ -13,10 +13,6 @@ class CursoController extends Controller
         $cursos = Curso::all();
         return response()->json($cursos);
     }
-    public function show($id){
-        $curso = Curso::find($id);
-    return response()->json($curso);
-    }
     public function createCurso(Request $request){
         $validator = Validator::make($request->all(),[
             'cursoName' => 'required',
@@ -101,17 +97,36 @@ class CursoController extends Controller
         ], 404);
     }
 
-    public function home()
+    public function home($id = null)
     {
-        // Cargar las relaciones 'nivel' y 'categoria', obteniendo solo los nombres
-        $cursos = Curso::with([
-            'categoria:categoriaId,categoriaName', // Trae solo categoriaId y categoriaName de la tabla categorías
-            'nivel:nivelId,nivelName' // Trae solo nivelId y nivelName de la tabla niveles
-        ])
-        ->latest()
-        ->take(10)
-        ->get();
+        try {
+            if ($id) {
 
-        return response()->json($cursos);
+                $curso = Curso::with([
+                    'categoria:categoriaId,categoriaName,categoriaImagen', // Trae solo categoriaId y categoriaName de la tabla categorías
+                    'nivel:nivelId,nivelName' // Trae solo nivelId y nivelName de la tabla niveles
+                ])
+                ->find($id);
+        
+                return response()->json($curso);
+                
+            }else{
+                $cursos = Curso::with([
+                    'categoria:categoriaId,categoriaName,categoriaImagen', // Trae solo categoriaId y categoriaName de la tabla categorías
+                    'nivel:nivelId,nivelName' // Trae solo nivelId y nivelName de la tabla niveles
+                ])
+                ->latest()
+                ->take(10)
+                ->get();
+        
+                return response()->json($cursos);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al obtener los cursos',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }

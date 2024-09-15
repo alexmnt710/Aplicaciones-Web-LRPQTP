@@ -11,7 +11,7 @@ use App\Http\Controllers\SesionController;
 // Route::put('rawr',[UserController::class,'rawr']);
 
 //rutas publicas
-Route::get('/courses',[CursoController::class,'home']);
+Route::get('/courses/{id?}',[CursoController::class,'home']);
 Route::post('/login', [SesionController::class, 'login'])->middleware('guest:sanctum');
 Route::post('/logout', [SesionController::class, 'logout'])->middleware('auth:sanctum');
 //ruta para sesion
