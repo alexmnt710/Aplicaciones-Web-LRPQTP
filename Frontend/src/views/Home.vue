@@ -1,36 +1,42 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted } from 'vue';
 import Header from '../components/Public/header.vue';
 import Footer from '../components/Public/footer.vue';
 import { Cursos } from '../store/cursos';
 import { sweetalert } from '../composables/sweetAlert';
 import { useRouter } from 'vue-router';
+import { Sesion } from '../store/sesion';
 
-const sweetAlert = sweetalert();
+const sweetAlert = sweetalert(); 
 const cursoStore = Cursos();
+const sesionStore = Sesion();  
 const cursos = ref([]);
-const router = useRouter(); // Para redirigir a otra página
+const router = useRouter();  
 
 onMounted(async () => {
    await cursoStore.getCursosHome();
    cursos.value = cursoStore.cursos;
    console.log(cursoStore.cursos);
+   console.log(sesionStore.sesion);  
 });
 
-// Función para mostrar el alert con los requisitos del curso
+
 const mostrarRequisitos = (cursoRequisito) => {
   sweetAlert.showAlert("Requisitos", cursoRequisito || "No hay requisitos especificados");
 }
 
-// Función para navegar a la vista del curso
-const irAVistaCurso = async (cursoId) => {
-  router.push(`/clases/${cursoId}`); // Redirigir a la ruta con el cursoId
+// coso para ir al coso con sesion
+const irAVistaCurso = (cursoId) => {
+  if (!sesionStore.sesion) {
+    sweetAlert.showAlert(
+      "Debes iniciar sesión",
+      "Por favor, inicia sesión para acceder a los cursos."
+    );
+  } else {
+    router.push(`/clases/${cursoId}`);
+  }
 }
-
-
 </script>
-
-<!-- <router-link :to="{ name: 'Home' }">Home</router-link> -->
 
 <template>
   <Header />
@@ -49,8 +55,6 @@ const irAVistaCurso = async (cursoId) => {
         <div class="col-md-6">
           <!-- <img src="@/assets/img/gustavinHome.png" alt="Certificado" class="cta-image"> -->
           <img src="/src/assets/img/gustavinHome.png" alt="Certificado" class="cta-image img-fluid">
-
-
         </div>
       </div>
     </div>
@@ -85,7 +89,6 @@ const irAVistaCurso = async (cursoId) => {
               </div>
 
               <!-- Imagen del curso -->
-
               <div class="col-md-6">
                 <img :src="curso.cursoImagen || 'ruta/imagen/por/defecto.jpg'" class="d-block w-100 img-fluid" alt="Imagen del curso">
               </div>
@@ -106,9 +109,9 @@ const irAVistaCurso = async (cursoId) => {
       <span class="visually-hidden">Next</span>
     </button>
   </div>
+
   <Footer />
 </template>
-
 <style scoped>
 .carousel-inner {
   min-height: 400px;
@@ -231,4 +234,3 @@ const irAVistaCurso = async (cursoId) => {
 }
 
 </style>
-
