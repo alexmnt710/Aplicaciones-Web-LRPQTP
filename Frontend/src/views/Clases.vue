@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, defineProps} from 'vue'
+import { ref, onMounted} from 'vue'
 import Header from '../components/Public/header.vue';
 import Footer from '../components/Public/footer.vue';
 import { Cursos } from '../store/cursos';
