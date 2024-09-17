@@ -32,7 +32,7 @@ import Footer from '../components/Public/footer.vue';
       </div>
   
       <div class="login-image">
-        <img src="" alt="Imagen de Login" />
+        <img src="/src/assets/img/gustavinlogin.png"  class="cta-image img-fluid">
       </div>
     </div>
     <Footer></Footer>
@@ -143,8 +143,8 @@ import Footer from '../components/Public/footer.vue';
   }
   
   .login-image img {
-    width: 80%;
-    max-width: 400px;
+    width: 100%;
+    max-width: 200px;
   }
   </style>
   

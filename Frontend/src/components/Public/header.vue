@@ -22,8 +22,8 @@
       </ul>
     </nav>
     <div class="login-button">
-      <button>;)</button>
-    </div>
+      <button><router-link :to="{ name: 'Login' }">Acceder</router-link></button>
+          </div>
     <!-- Botón de menú para móviles -->
     <div class="mobile-menu-icon" @click="toggleMobileMenu">
       <span></span>
