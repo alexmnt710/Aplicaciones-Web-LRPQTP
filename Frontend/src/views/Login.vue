@@ -2,6 +2,27 @@
 import { ref } from 'vue'
 import Header from '../components/Public/header.vue';
 import Footer from '../components/Public/footer.vue';
+import {Sesion} from '../store/sesion.js';
+import { useRouter } from 'vue-router';
+
+const sesionStore = Sesion();
+const router = useRouter();
+
+//variables a usar
+
+const formData = {
+  userName: '',
+  password: '',
+};
+
+const login = async () => {
+  const response = await sesionStore.login(formData);
+  console.log(response);
+};
+
+const goToRegister = () => {
+  router.push({ name: 'Register' }); // Redirigir usando el nombre de la ruta
+};
 
 </script>
 <template>
@@ -12,13 +33,13 @@ import Footer from '../components/Public/footer.vue';
   
         <form @submit.prevent="login">
           <div class="form-group">
-            <label for="email">Correo electrónico</label>
-            <input type="email" id="email" v-model="email" required />
+            <label for="userName">Nombre de usuario</label>
+            <input type="text" id="userName" v-model="formData.userName" required />
           </div>
   
           <div class="form-group">
             <label for="password">Contraseña</label>
-            <input type="password" id="password" v-model="password" required />
+            <input type="password" id="password" v-model="formData.password" required />
           </div>
   
           <button type="submit" class="login-button">Iniciar sesión</button>
@@ -37,27 +58,7 @@ import Footer from '../components/Public/footer.vue';
     </div>
     <Footer></Footer>
   </template>
-  
-  <script>
-  export default {
-    data() {
-      return {
-        email: '',
-        password: '',
-      };
-    },
-    methods: {
-      login() {
-        // Lógica para el inicio de sesión
-        alert(`Correo: ${this.email}, Contraseña: ${this.password}`);
-      },
-      goToRegister() {
-      this.$router.push({ name: 'Register' }); // Redirigir usando el nombre de la ruta
-    }
-    },
-  };
-  </script>
-  
+    
   <style scoped>
   /* Contenedor principal del login */
   .login-container {
