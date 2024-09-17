@@ -18,7 +18,7 @@ class User extends Authenticatable
     protected $primaryKey = 'userId';
     
     # Los atributos que se pueden asignar masivamente son 'userName', 'userPassword', 'userNombres', 'userApellidos' y 'userCorreo'.
-    protected $fillable = ['userName', 'userPassword', 'userNombres', 'userApellidos', 'userCorreo'];
+    protected $fillable = ['userName', 'userPassword', 'userNombres', 'userApellidos', 'userCorreo', 'userWordKey'];
     
     # Relación uno a muchos (un usuario puede tener muchas clases).
     # Se establece una relación con el modelo 'Clase', donde 'users_userId' es la clave foránea y 'userId' es la clave local.
