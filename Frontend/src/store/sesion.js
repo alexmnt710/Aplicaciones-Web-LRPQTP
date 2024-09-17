@@ -3,7 +3,7 @@ export const Sesion = defineStore('sesionStore',{
     state: ()=>(
         {
             sesion: false,
-            user: null,
+            user: [],
             url: import.meta.env.VITE_API_URL,
         }
     ),
