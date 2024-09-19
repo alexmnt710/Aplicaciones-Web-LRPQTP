@@ -15,10 +15,12 @@ Route::get('/courses/{id?}',[CursoController::class,'home']);
 Route::post('/login', [SesionController::class, 'login'])->middleware('guest:sanctum');
 Route::post('/logout', [SesionController::class, 'logout'])->middleware('auth:sanctum');
 Route::post('/postUser', [UserController::class,'createUser'])->middleware('guest:sanctum');
+Route::get('/checksesion', [SesionController::class, 'checkSession'])->middleware('auth:sanctum');
 //ruta para sesion
 Route::post('/', function () {
     return response()->json(['message' => 'Hay Sesion', 'success' => true],200);
 })->name('home');
+
 
 Route::middleware(['auth:sanctum','role:admin'])->group(function () {
     //Rutas user

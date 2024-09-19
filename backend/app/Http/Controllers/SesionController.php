@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Spatie\Permission\Models\Role;
+
 use Exception;
 
 
@@ -21,7 +23,8 @@ class SesionController extends Controller
                 $user = Auth::user();
                 // Creamos un token para el usuario autenticado
                 $token = $user->createToken('authToken')->plainTextToken;
-            return response(['success'=>true,'message'=> 'Inicio de Sesion', 'token'=>$token, 'user'=>$user], 200);
+                $roles = $user->getRoleNames();
+            return response(['success'=>true,'message'=> 'Inicio de Sesion', 'token'=>$token, 'user'=>$user,'rol'=> $roles] ,200);
             } else {
                 // La autenticación ha fallado
                 return response(['success'=>false, 'message'=>'Credenciales invalidas'], 401);
@@ -31,6 +34,18 @@ class SesionController extends Controller
         }
     }
     public function logout(Request $request){
-
+        try{
+            $request->user()->currentAccessToken()->delete();
+            return response(['success'=>true,'message'=>'Sesion cerrada'],200);
+        }catch(Exception $e){
+            return response()->json(['error'=>$e->getMessage()]);
+        }
+    }
+    public function checkSession() {
+        if (Auth::check()) {
+            return response()->json(['success' => true]);
+        } else {
+            return response()->json(['success'=> false], 401);
+        }
     }
 }
