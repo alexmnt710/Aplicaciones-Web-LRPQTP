@@ -26,10 +26,11 @@ class UserController extends Controller
         // Definir las reglas de validación
         $validator = Validator::make($request->all(), [
             'userName' => 'required|unique:users',
-            'userPassword' => 'required|min:6',
+            'password' => 'required|min:6',
             'userNombres' => 'required',
             'userApellidos' => 'required',
             'userCorreo' => 'required|email',
+            'userWordKey' => 'required'
         ]);
     
         // Verificar si la validación falla
@@ -44,10 +45,11 @@ class UserController extends Controller
         // Si la validación es exitosa, se procede a crear el usuario
         $user = new User();
         $user->userName = $request->userName;
-        $user->userPassword = bcrypt($request->userPassword); // Encriptar la contraseña
+        $user->password = bcrypt($request->password); // Encriptar la contraseña
         $user->userNombres = $request->userNombres;
         $user->userApellidos = $request->userApellidos;
         $user->userCorreo = $request->userCorreo;
+        $user->userWordKey = $request->userWordKey;
         $user->save();
     
         // Asignar rol al usuario

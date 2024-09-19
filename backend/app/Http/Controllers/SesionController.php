@@ -21,7 +21,7 @@ class SesionController extends Controller
                 $user = Auth::user();
                 // Creamos un token para el usuario autenticado
                 $token = $user->createToken('authToken')->plainTextToken;
-            return response(['success'=>true,'message'=> 'Inicio de Sesion', 'token'=>$token], 200);
+            return response(['success'=>true,'message'=> 'Inicio de Sesion', 'token'=>$token, 'user'=>$user], 200);
             } else {
                 // La autenticación ha fallado
                 return response(['success'=>false, 'message'=>'Credenciales invalidas'], 401);

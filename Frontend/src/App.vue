@@ -6,8 +6,10 @@ import { Sesion } from './store/sesion';
 const sesionStore = Sesion();
 
 const router = useRouter();
-onMounted(() => {
-  console.log(sesionStore.sesion);
+onMounted(async () => {
+  await sesionStore.getSesion();
+  console.log(sesionStore.sesion)
+
 });
 </script>
 

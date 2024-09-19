@@ -4,9 +4,11 @@ import Header from '../components/Public/header.vue';
 import Footer from '../components/Public/footer.vue';
 import { Sesion } from '../store/sesion.js';
 import { useRouter } from 'vue-router';
+import { User } from '../store/users.js';
 
 const sesionStore = Sesion();
 const router = useRouter();
+const userStore = User();
 
 // Datos del formulario de registro
 const formData = {
@@ -28,15 +30,9 @@ const register = async () => {
 
   // Intentar registrar al usuario
   try {
-    const message = await sesionStore.register(formData);
+    const response = await userStore.registrar(formData);
+    console.log(response);
 
-    // Verifica si el registro fue exitoso (puedes ajustar según cómo responda tu API)
-    if (message === 'Cuenta creada exitosamente') {  // Ajusta este mensaje según la respuesta de tu API
-      alert('Cuenta creada correctamente. Redirigiendo al inicio de sesión...');
-      router.push({ name: 'Login' }); // Redirige al login
-    } else {
-      alert(`Error al crear la cuenta: ${message}`);
-    }
   } catch (error) {
     console.error('Error en el registro:', error);
     alert('Ocurrió un error al crear la cuenta');
@@ -85,7 +81,7 @@ const register = async () => {
 
         <div class="form-group">
           <label for="userWordKey">Palabra clave</label>
-          <input type="text" id="userWordKey" v-model="formData.userWordKey" required />
+          <input type="text" id="userWordKey" v-model="formData.userWordKey" />
         </div>
 
         <button type="submit" class="register-button">Crear cuenta</button>
