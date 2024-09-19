@@ -5,12 +5,14 @@ import Footer from '../components/Public/footer.vue';
 import { Sesion } from '../store/sesion.js';
 import { useRouter } from 'vue-router';
 import { User } from '../store/users.js';
+import { sweetalert } from '../composables/sweetAlert';
 
 const sesionStore = Sesion();
 const router = useRouter();
 const userStore = User();
+const { successAlert, errorAlert, ShowLoading } = sweetalert(); 
 
-// Datos del formulario de registro
+
 const formData = {
   userNombres: '',
   userApellidos: '',
@@ -22,24 +24,40 @@ const formData = {
 };
 
 const register = async () => {
-  
   if (formData.password !== formData.confirmPassword) {
-    alert('Las contraseñas no coinciden');
+    errorAlert('Error', 'Las contraseñas no coinciden');
     return;
   }
+
+  // Mostrar un loading mientras se realiza el registro
+  const closeLoading = ShowLoading();
 
   // Intentar registrar al usuario
   try {
     const response = await userStore.registrar(formData);
-    console.log(response);
-
+    closeLoading(); 
+    if (response.success) {
+      successAlert('Registro exitoso', response.message);
+    } else {
+      
+      const errorMessages = Object.values(response.errors)
+        .flat()
+        .map(error => `<p>${error}</p>`) 
+        .join(''); 
+      errorAlert('Error en el registro', `Por favor revise los campos: ${errorMessages}`, true); 
+    }
   } catch (error) {
+    closeLoading(); 
     console.error('Error en el registro:', error);
-    alert('Ocurrió un error al crear la cuenta');
+    errorAlert('Error', 'Ocurrió un error al crear la cuenta');
   }
 };
 
+const goToLogin = () => {
+  router.push({ name: 'Login' }); // Redirigir usando el nombre de la ruta
+};
 </script>
+
 
 <template>
   <Header></Header>
@@ -48,6 +66,7 @@ const register = async () => {
       <h2>Regístrate</h2>
 
       <form @submit.prevent="register">
+        <!-- Campos del formulario -->
         <div class="form-group-inline">
           <div class="form-group">
             <label for="userNombres">Nombres</label>
