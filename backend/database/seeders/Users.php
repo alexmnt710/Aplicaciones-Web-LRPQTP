@@ -18,6 +18,7 @@ class Users extends Seeder
     {
         Role::create(['name' => 'admin']);
         Role::create(['name' => 'student']);
+        Role::create(['name' => 'teacher']);
         DB::table('users')->insert([
             ['userName' => 'admin', 'password' => bcrypt('admin'), 'userNombres' => 'admin', 'userApellidos' => 'admin', 'userCorreo' => '','userWordKey'=>'admin'],
         ]);

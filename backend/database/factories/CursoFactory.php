@@ -24,6 +24,7 @@ class CursoFactory extends Factory
             'cursoValor' => $this->faker->randomFloat(2, 100, 1000),  // Valor del curso aleatorio entre 100 y 1000
             'cursoRequisito' => $this->faker->sentence(),  // Requisito del curso como una oración aleatoria
             'cursoContenido' => $this->faker->text(200),  // Contenido del curso como un texto aleatorio de 200 caracteres
+            'createdBy' => $this->faker->name(),  // Nombre del creador del curso
             'cursoCategoriaId' => Categoria::factory(),  // Genera un ID de categoría usando el factory del modelo Categoria
         ];
     }

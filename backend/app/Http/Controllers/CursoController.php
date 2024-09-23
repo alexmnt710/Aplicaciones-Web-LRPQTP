@@ -21,6 +21,7 @@ class CursoController extends Controller
             'cursoValor' => 'required',
             'cursoRequisito' => 'required',
             'cursoContenido' => 'required',
+            'createdBy' => 'required',
             'cursoCategoriaId' => 'required'
         ]);
         if($validator->fails()){
@@ -37,6 +38,7 @@ class CursoController extends Controller
         $curso->cursoValor = $request->cursoValor;
         $curso->cursoRequisito = $request->cursoRequisito;
         $curso->cursoContenido = $request->cursoContenido;
+        $curso->createdBy = $request->createdBy;
         $curso->cursoCategoriaId = $request->cursoCategoriaId;
         $curso->save();
         return response()->json([
@@ -70,6 +72,7 @@ class CursoController extends Controller
             $curso->cursoValor = $request->cursoValor;
             $curso->cursoRequisito = $request->cursoRequisito;
             $curso->cursoContenido = $request->cursoContenido;
+            $curso->createdBy = $request->createdBy;
             $curso->cursoCategoriaId = $request->cursoCategoriaId;
             $curso->save();
             return response()->json([

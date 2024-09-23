@@ -26,6 +26,7 @@ class Curso extends Model
         'cursoValor', 
         'cursoRequisito', 
         'cursoContenido', 
+        'createdBy',
         'cursoCategoriaId'
     ];
 
