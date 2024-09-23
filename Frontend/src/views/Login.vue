@@ -17,27 +17,18 @@ const formData = {
 };
 
 const login = async () => {
-  // Mostrar el "Verificando..." al iniciar el login
   const closeLoading = ShowLoading('Verificando', 'Espere un momento...');
-
-  try {
     const response = await sesionStore.login(formData);
-
-    closeLoading(); // Cerrar la alerta de carga cuando tengamos la respuesta
-
+    closeLoading();
+    //por preguntarxd
     if (response.success) {
-      // Si la autenticación es exitosa, muestra una alerta de éxito y redirige
       await successAlert('Inicio de sesión exitoso', 'Bienvenido de nuevo!');
-      router.push({ name: 'Dashboard' }); // Redirigir al dashboard o a donde prefieras
+      router.push({ name: 'Home' }); 
     } else {
-      // Mostrar alerta de error si la autenticación falla
+      
       errorAlert('Error al iniciar sesión', 'Usuario o contraseña incorrectos');
     }
-  } catch (error) {
-    closeLoading(); // Cerrar la alerta de carga en caso de error
-    console.error('Error en el inicio de sesión:', error);
-    errorAlert('Error', 'Ocurrió un error durante el inicio de sesión.');
-  }
+  
 };
 
 const goToRegister = () => {
@@ -77,7 +68,7 @@ const goToRegister = () => {
       </div>
     </div>
     <Footer></Footer>
-  </template>
+</template>
     
   <style scoped>
   /* Contenedor principal del login */

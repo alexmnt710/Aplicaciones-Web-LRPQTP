@@ -1,5 +1,23 @@
+<script setup>
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { Sesion } from '../../store/sesion';
+
+const isMobileMenuOpen = ref(false);
+const router = useRouter();
+const sesionStore = Sesion();
+
+const toggleMobileMenu = () => {
+  isMobileMenuOpen.value = !isMobileMenuOpen.value;
+};
+
+const handleLogout = async () => {
+  await sesionStore.logout();  
+  router.push({ name: 'Login' }); 
+};
+</script>
+
 <template>
-  <!-- Como debe verse el header -->
   <header class="navbar">
     <div class="logo">
       <h1>Ulemi</h1>
@@ -7,7 +25,6 @@
     <nav class="nav-links" :class="{ 'mobile-menu': isMobileMenuOpen }">
       <ul>
         <li>
-          <!-- No usar el path -->
           <router-link :to="{ name: 'Home' }">Home</router-link>
         </li>
         <li>
@@ -22,9 +39,13 @@
       </ul>
     </nav>
     <div class="login-button">
-      <button><router-link :to="{ name: 'Login' }">Acceder</router-link></button>
-          </div>
-    <!-- Botón de menú para móviles -->
+      <button v-if="!sesionStore.sesion">
+        <router-link :to="{ name: 'Login' }">Acceder</router-link>
+      </button>
+      <button v-else @click="handleLogout">
+        Cerrar sesión
+      </button>
+    </div>
     <div class="mobile-menu-icon" @click="toggleMobileMenu">
       <span></span>
       <span></span>
@@ -33,15 +54,7 @@
   </header>
 </template>
 
-<script setup>
-import { ref } from 'vue';
 
-const isMobileMenuOpen = ref(false);
-
-const toggleMobileMenu = () => {
-  isMobileMenuOpen.value = !isMobileMenuOpen.value;
-};
-</script>
 
 
 <style scoped>
