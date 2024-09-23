@@ -1,11 +1,16 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { Sesion } from '../../store/sesion';
 
 const isMobileMenuOpen = ref(false);
 const router = useRouter();
 const sesionStore = Sesion();
+
+onMounted(async () => {
+  await sesionStore.getSesion();
+
+});
 
 const toggleMobileMenu = () => {
   isMobileMenuOpen.value = !isMobileMenuOpen.value;
@@ -39,7 +44,7 @@ const handleLogout = async () => {
       </ul>
     </nav>
     <div class="login-button">
-      <button v-if="!sesionStore.sesion">
+      <button v-if="sesionStore.sesion == false">
         <router-link :to="{ name: 'Login' }">Acceder</router-link>
       </button>
       <button v-else @click="handleLogout">

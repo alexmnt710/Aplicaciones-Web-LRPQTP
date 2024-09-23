@@ -11,7 +11,6 @@ const cursoStore = Cursos();
 const claseId = defineProps(['claseId']);
 
 onMounted(() => {
-    console.log(claseId.claseId);
     cursoStore.getCurso(claseId.claseId).then(() => {
         console.log(cursoStore.cursoIndividual);
     });

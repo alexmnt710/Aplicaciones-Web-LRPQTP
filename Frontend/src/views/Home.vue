@@ -15,9 +15,7 @@ const router = useRouter();
 
 onMounted(async () => {
    await cursoStore.getCursosHome();
-   cursos.value = cursoStore.cursos;
-   console.log(cursoStore.cursos);
-   console.log(sesionStore.sesion);  
+   cursos.value = cursoStore.cursos; 
 });
 
 

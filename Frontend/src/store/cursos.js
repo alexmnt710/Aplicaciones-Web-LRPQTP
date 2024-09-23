@@ -36,7 +36,6 @@ export const Cursos = defineStore('cursoStore',{
         
                 const data = await response.json();
                 this.cursoIndividual = data;
-                console.log(this.cursoIndividual);
             } catch (error) {
                 console.error('Error fetching course:', error);
             }

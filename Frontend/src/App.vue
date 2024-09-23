@@ -8,12 +8,6 @@ const sesionStore = Sesion();
 const router = useRouter();
 onMounted(async () => {
   await sesionStore.getSesion();
-  console.log(sesionStore.sesion)
-  console.log(sesionStore.user)
-  console.log(sesionStore.token)
-  console.log(sesionStore.rol)
-
-
 });
 </script>
 

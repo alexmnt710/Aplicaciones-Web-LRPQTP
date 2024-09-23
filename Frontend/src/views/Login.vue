@@ -21,11 +21,10 @@ const login = async () => {
     const response = await sesionStore.login(formData);
     closeLoading();
     //por preguntarxd
-    if (response.success) {
-      await successAlert('Inicio de sesión exitoso', 'Bienvenido de nuevo!');
+    if (response.success == true) {
+      successAlert('Inicio de sesión exitoso', 'Bienvenido de nuevo!');
       router.push({ name: 'Home' }); 
     } else {
-      
       errorAlert('Error al iniciar sesión', 'Usuario o contraseña incorrectos');
     }
   

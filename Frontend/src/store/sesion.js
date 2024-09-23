@@ -22,8 +22,6 @@ export const Sesion = defineStore('sesionStore',{
                     this.sesion = false;
                     return;
                 }
-
-                return;
             } catch (error) {
                 this.sesion = false;
                 return error;
@@ -42,15 +40,14 @@ export const Sesion = defineStore('sesionStore',{
                     body: JSON.stringify(formData),
                 });
                 const data = await response.json()
-                console.log(data);
                 if (data.success == true){
                     localStorage.setItem('user', JSON.stringify(data.user));
                     localStorage.setItem('token', data.token);
                     localStorage.setItem('rol', data.rol);
-                    return data.message;
+                    return data;
                 }else{
                     this.sesion = false;
-                    return data.message;
+                    return data;
                 }
             } catch (error) {
                 this.sesion = false;
@@ -60,7 +57,7 @@ export const Sesion = defineStore('sesionStore',{
         async logout(){
             try {
                 const response = await fetch(`${this.url}/logout`, {
-                    method: 'GET',
+                    method: 'POST',
                     headers: {
                         'Content-Type':'application/json',
                         'Accept': 'application/json',
@@ -72,7 +69,6 @@ export const Sesion = defineStore('sesionStore',{
                 localStorage.removeItem('token');
                 localStorage.removeItem('rol');
                 this.sesion = false;
-
                 return data.message;
             } catch (error) {
                 return error;
