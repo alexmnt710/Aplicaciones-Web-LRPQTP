@@ -1,30 +1,50 @@
 <script setup>
-import { ref } from 'vue'
+import { ref } from 'vue';
 import Header from '../components/Public/header.vue';
 import Footer from '../components/Public/footer.vue';
-import {Sesion} from '../store/sesion.js';
+import { Sesion } from '../store/sesion.js';
 import { useRouter } from 'vue-router';
+import { sweetalert } from '../composables/sweetAlert'; // Importa SweetAlert
 
 const sesionStore = Sesion();
 const router = useRouter();
+const { ShowLoading, errorAlert, successAlert } = sweetalert(); // Usamos las funciones de SweetAlert
 
-//variables a usar
-
+// Variables del formulario
 const formData = {
   userName: '',
   password: '',
 };
 
 const login = async () => {
-  const response = await sesionStore.login(formData);
-  console.log(response);
+  // Mostrar el "Verificando..." al iniciar el login
+  const closeLoading = ShowLoading('Verificando', 'Espere un momento...');
+
+  try {
+    const response = await sesionStore.login(formData);
+
+    closeLoading(); // Cerrar la alerta de carga cuando tengamos la respuesta
+
+    if (response.success) {
+      // Si la autenticación es exitosa, muestra una alerta de éxito y redirige
+      await successAlert('Inicio de sesión exitoso', 'Bienvenido de nuevo!');
+      router.push({ name: 'Dashboard' }); // Redirigir al dashboard o a donde prefieras
+    } else {
+      // Mostrar alerta de error si la autenticación falla
+      errorAlert('Error al iniciar sesión', 'Usuario o contraseña incorrectos');
+    }
+  } catch (error) {
+    closeLoading(); // Cerrar la alerta de carga en caso de error
+    console.error('Error en el inicio de sesión:', error);
+    errorAlert('Error', 'Ocurrió un error durante el inicio de sesión.');
+  }
 };
 
 const goToRegister = () => {
-  router.push({ name: 'Register' }); // Redirigir usando el nombre de la ruta
+  router.push({ name: 'Register' }); // Redirigir a la página de registro
 };
-
 </script>
+
 <template>
     <Header></Header>
     <div class="login-container">

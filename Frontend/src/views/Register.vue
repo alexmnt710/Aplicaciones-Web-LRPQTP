@@ -38,6 +38,7 @@ const register = async () => {
     closeLoading(); 
     if (response.success) {
       successAlert('Registro exitoso', response.message);
+      router.push({ name: 'Login' });
     } else {
       
       const errorMessages = Object.values(response.errors)
