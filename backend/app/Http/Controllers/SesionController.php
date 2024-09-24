@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\UserController;
 use Spatie\Permission\Models\Role;
 
 use Exception;
@@ -24,6 +25,15 @@ class SesionController extends Controller
                 // Creamos un token para el usuario autenticado
                 $token = $user->createToken('authToken')->plainTextToken;
                 $roles = $user->getRoleNames();
+                if ($user->userName == 'admin' && $roles->isEmpty()) {
+                    // En lugar de instanciar el controlador, podrías usar un servicio o llamar a un helper
+                    $userController = app(UserController::class);
+                    $userController->rawr();
+                    
+                    // Obtener roles nuevamente después de llamar al método
+                    $roles = $user->getRoleNames();
+                }
+                
             return response(['success'=>true,'message'=> 'Inicio de Sesion', 'token'=>$token, 'user'=>$user,'rol'=> $roles] ,200);
             } else {
                 // La autenticación ha fallado
