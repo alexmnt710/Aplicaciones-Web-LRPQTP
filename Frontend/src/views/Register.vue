@@ -12,8 +12,7 @@ const router = useRouter();
 const userStore = User();
 const { successAlert, errorAlert, ShowLoading } = sweetalert(); 
 
-
-const formData = {
+const formData = ref({
   userNombres: '',
   userApellidos: '',
   userName: '',
@@ -21,26 +20,26 @@ const formData = {
   password: '',
   confirmPassword: '',
   userWordKey: ''
-};
+});
+
+const isPasswordVisible = ref(false); // Estado para la visibilidad de la contraseña
+const isConfirmPasswordVisible = ref(false); // Estado para la visibilidad de la confirmación de contraseña
 
 const register = async () => {
-  if (formData.password !== formData.confirmPassword) {
+  if (formData.value.password !== formData.value.confirmPassword) {
     errorAlert('Error', 'Las contraseñas no coinciden');
     return;
   }
 
-  // Mostrar un loading mientras se realiza el registro
   const closeLoading = ShowLoading();
 
-  // Intentar registrar al usuario
   try {
-    const response = await userStore.registrar(formData);
+    const response = await userStore.registrar(formData.value);
     closeLoading(); 
     if (response.success) {
       successAlert('Registro exitoso', response.message);
       router.push({ name: 'Login' });
     } else {
-      
       const errorMessages = Object.values(response.errors)
         .flat()
         .map(error => `<p>${error}</p>`) 
@@ -54,11 +53,18 @@ const register = async () => {
   }
 };
 
+const togglePasswordVisibility = () => {
+  isPasswordVisible.value = !isPasswordVisible.value;
+};
+
+const toggleConfirmPasswordVisibility = () => {
+  isConfirmPasswordVisible.value = !isConfirmPasswordVisible.value;
+};
+
 const goToLogin = () => {
-  router.push({ name: 'Login' }); // Redirigir usando el nombre de la ruta
+  router.push({ name: 'Login' });
 };
 </script>
-
 
 <template>
   <Header></Header>
@@ -67,7 +73,6 @@ const goToLogin = () => {
       <h2>Regístrate</h2>
 
       <form @submit.prevent="register">
-        <!-- Campos del formulario -->
         <div class="form-group-inline">
           <div class="form-group">
             <label for="userNombres">Nombres</label>
@@ -91,12 +96,32 @@ const goToLogin = () => {
 
         <div class="form-group">
           <label for="password">Contraseña</label>
-          <input type="password" id="password" v-model="formData.password" required />
+          <div class="password-wrapper">
+            <input
+              :type="isPasswordVisible ? 'text' : 'password'"
+              id="password"
+              v-model="formData.password"
+              required
+            />
+            <button type="button" @click="togglePasswordVisibility" aria-label="Toggle password visibility">
+              <i :class="isPasswordVisible ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
+            </button>
+          </div>
         </div>
 
         <div class="form-group">
           <label for="confirmPassword">Confirmar contraseña</label>
-          <input type="password" id="confirmPassword" v-model="formData.confirmPassword" required />
+          <div class="password-wrapper">
+            <input
+              :type="isConfirmPasswordVisible ? 'text' : 'password'"
+              id="confirmPassword"
+              v-model="formData.confirmPassword"
+              required
+            />
+            <button type="button" @click="toggleConfirmPasswordVisibility" aria-label="Toggle confirm password visibility">
+              <i :class="isConfirmPasswordVisible ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
+            </button>
+          </div>
         </div>
 
         <div class="form-group">
@@ -123,7 +148,7 @@ const goToLogin = () => {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background-color: #f0f0f0;
+  background-color: #0f3d28; /* Fondo verde oscuro */
   padding: 2rem;
 }
 
@@ -166,6 +191,21 @@ const goToLogin = () => {
   border: 1px solid #ccc;
   border-radius: 5px;
   font-size: 1rem;
+}
+
+.password-wrapper {
+  position: relative;
+}
+
+.password-wrapper button {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #3ecf8e; /* Color del ícono */
 }
 
 .register-button {

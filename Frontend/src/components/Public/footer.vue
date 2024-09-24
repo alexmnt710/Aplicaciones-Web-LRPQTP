@@ -1,9 +1,5 @@
-<script setup>
-
-</script>
-
 <template>
-    <div class="footer bg-dark text-center text-light">
+    <div class="footer text-center text-light">
         <p>ESTE SERA EL FOOTER</p>
         <p>ULEAM © Copyright 2020, Todos los derechos reservados - Universidad Laica Eloy Alfaro de Manabí</p>
         <p>Dirección: Av. Circunvalación - Vía a San Mateo</p>
@@ -15,9 +11,17 @@
 .footer {
     bottom: 0;
     width: 100%;
-    background-color: #212529;
-    color: #d3d3d3; /* gris claro */
-    padding: 10px 0;
+    padding: 20px 0;
+    color: white;
     font-family: 'Montserrat', sans-serif;
+    
+    /* Degradado del footer */
+    background-image: linear-gradient(90deg, #0f3d28, #0d0f0c); 
+    /* Otras propiedades opcionales */
+    background-size: cover;
+}
+
+.footer p {
+    margin: 5px 0;
 }
 </style>

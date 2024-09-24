@@ -40,34 +40,49 @@ const irAVistaCurso = (cursoId) => {
 <template>
   <Header />
 
-  <section class="cta-section">
+<!-- Gustavin -->
+<section v-if="!sesionStore.sesion" class="cta-section">
     <div class="container">
       <div class="row align-items-center">
         <!-- Texto principal -->
         <div class="col-md-6">
           <h1>Estudia gratis y certifícate con +6,000 cursos online</h1>
           <p>Acelera tu futuro con nuestros cursos certificados.</p>
-          <button class="cta-button">Crear cuenta gratis</button>
+          <button class="btn btn-custom">Crear cuenta gratis</button>
           <p class="cta-disclaimer">*Sin datos de tarjetas y sin llamadas de ventas.</p>
         </div>
         <!-- Imagen -->
         <div class="col-md-6">
-          <!-- <img src="@/assets/img/gustavinHome.png" alt="Certificado" class="cta-image"> -->
           <img src="/src/assets/img/gustavinHome.png" alt="Certificado" class="cta-image img-fluid">
         </div>
       </div>
     </div>
   </section>
 
-  <div id="carouselExample" class="carousel slide" data-bs-ride="carousel">
+
+<!-- carrusel -->
+<div id="carouselExample" class="carousel slide" data-bs-ride="carousel">
     <!-- Indicadores de carrusel -->
     <div class="carousel-indicators">
-      <button type="button" data-bs-target="#carouselExample" v-for="(curso, index) in cursos" :key="curso.cursoId" :data-bs-slide-to="index" :class="{ active: index === 0 }" aria-current="index === 0 ? 'true' : 'false'" aria-label="Slide"></button>
+      <button
+        type="button"
+        data-bs-target="#carouselExample"
+        v-for="(curso, index) in cursos"
+        :key="curso.cursoId"
+        :data-bs-slide-to="index"
+        :class="{ active: index === 0 }"
+        aria-current="index === 0 ? 'true' : 'false'"
+        aria-label="Slide"
+      ></button>
     </div>
 
     <!-- Diapositivas del carrusel -->
     <div class="carousel-inner">
-      <div v-for="(curso, index) in cursos" :key="curso.cursoId" :class="['carousel-item', { active: index === 0 }]">
+      <div
+        v-for="(curso, index) in cursos"
+        :key="curso.cursoId"
+        :class="['carousel-item', { active: index === 0 }]"
+      >
         <div class="d-flex align-items-center" style="min-height: 400px;">
           <div class="container">
             <div class="row">
@@ -78,20 +93,24 @@ const irAVistaCurso = (cursoId) => {
                 <p><strong>Precio:</strong> ${{ curso.cursoValor }}</p>
                 <p><strong>Categoría:</strong> {{ curso.categoria.categoriaName }}</p>
                 <!-- Botón para mostrar requisitos -->
-                <button class="btn btn-primary" @click="mostrarRequisitos(curso.cursoRequisito)">
+                <button class="btn btn-custom" @click="mostrarRequisitos(curso.cursoRequisito)">
                   Ver Requisitos
                 </button>
                 <br>
-                <button class="btn btn-primary" @click="irAVistaCurso(curso.cursoId)">
+                <button class="btn btn-custom" @click="irAVistaCurso(curso.cursoId)">
                   Ver Curso
                 </button>
+                <br>
               </div>
 
               <!-- Imagen del curso -->
               <div class="col-md-6">
-                <img :src="curso.cursoImagen || 'ruta/imagen/por/defecto.jpg'" class="d-block w-100 img-fluid" alt="Imagen del curso">
+                <img
+                  :src="curso.cursoImagen || 'ruta/imagen/por/defecto.jpg'"
+                  class="d-block w-100 img-fluid"
+                  alt="Imagen del curso"
+                />
               </div>
-
             </div>
           </div>
         </div>
@@ -111,9 +130,18 @@ const irAVistaCurso = (cursoId) => {
 
   <Footer />
 </template>
+
 <style scoped>
+/* Fondo del body que coincide con el header */
+body {
+  background-color: #0f3d28; /* Fondo verde oscuro */
+}
+
+/* Carrusel */
+/* Carrusel */
 .carousel-inner {
   min-height: 400px;
+  background-color: #0f3d28; /* Fondo del carrusel */
 }
 
 .carousel-item {
@@ -122,80 +150,82 @@ const irAVistaCurso = (cursoId) => {
 
 .carousel-control-prev-icon,
 .carousel-control-next-icon {
-  background-color: black;
+  background-color: rgb(2, 2, 2); /* Controles en blanco para contraste */
 }
 
 .carousel-indicators [data-bs-target] {
-  background-color: black;
+  background-color: white; /* Indicadores en blanco */
 }
 
-.container {
-  max-width: 1100px;
-}
-/* Estilos para la sección de llamada a la acción */
-.cta-section {
-  background-color: #f0f8ff; /* Fondo suave similar al de la imagen */
-  padding: 4rem 0;
+/* Textos del Carrusel */
+h2 {
+  color: #a4dbac; /* Títulos en verde claro */
+  font-size: 1.8rem;
 }
 
-.cta-section h1 {
-  font-size: 2.5rem;
-  font-weight: bold;
-  color: #0f3d28; /* Color azul oscuro */
+p {
+  color: #d3d3d3; /* Texto en gris claro */
+  font-size: 1rem;
 }
 
-.cta-section p {
-  font-size: 1.2rem;
-  color: #0f3d28;
+p strong {
+  color: #f1f1f1; /* Texto destacado en blanco */
 }
 
-.cta-button {
-  background-color: #3ecf8e;
+/* Botones del carrusel */
+.btn {
+  background-color: #3ecf8e; /* Botón verde claro */
   color: white;
   padding: 0.75rem 1.5rem;
   border: none;
   border-radius: 5px;
-  font-size: 1.2rem;
-  margin-top: 1rem;
-  cursor: pointer;
+  font-size: 1.1rem;
+  margin-top: 0.5rem;
 }
 
-.cta-button:hover {
-  background-color: #0f3d28;
+.btn:hover {
+  background-color: white; /* Hover del botón */
+  color: #0f3d28; /* Texto en verde oscuro al hacer hover */
+}
+
+/* Ajuste de las imágenes del carrusel */
+.carousel-item img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+/* Texto del CTA (llamada a la acción) */
+.cta-section {
+  background-color: #0f3d28; /* Fondo verde oscuro */
+  padding: 4rem 0;
+}
+
+.cta-section h1,
+.cta-section p {
+  color: white; /* Texto en blanco para buen contraste */
 }
 
 .cta-disclaimer {
   font-size: 0.85rem;
-  color: #666;
-  margin-top: 0.5rem;
+  color: #ccc; /* Texto más claro */
 }
 
-.cta-image {
-  max-width: 100%;
-  height: auto; /* Se adapta automáticamente a la pantalla */
-  display: block;
-}
-
-/* Para garantizar que las imágenes y el contenido del carrusel sean adaptables */
-.carousel-inner {
-  min-height: 400px;
-}
-
-/* Ajusta las imágenes y el contenido del carrusel */
+/* Imagen dentro del carrusel */
 .carousel-item img {
   width: 100%;
-  height: auto; /* Se adapta al tamaño del contenedor */
+  height: auto;
   object-fit: cover;
 }
 
-/* Ocultar ciertos elementos en pantallas pequeñas y ajustar otros */
+/* Diseño responsivo para pantallas pequeñas */
 @media (max-width: 768px) {
   .carousel-inner {
-    min-height: 300px; /* Reduce el tamaño mínimo del carrusel en pantallas pequeñas */
+    min-height: 300px;
   }
 
   .cta-section h1 {
-    font-size: 1.8rem; /* Reduce el tamaño del título en móviles */
+    font-size: 1.8rem;
   }
 
   .cta-section p {
@@ -204,23 +234,18 @@ const irAVistaCurso = (cursoId) => {
 
   .cta-button {
     font-size: 1rem;
-    padding: 0.5rem 1rem; /* Reduce el tamaño del botón */
-  }
-
-  /* Ocultar el texto de los slides en pantallas pequeñas si es necesario */
-  .carousel-caption {
-    font-size: 0.8rem;
+    padding: 0.5rem 1rem;
   }
 
   .carousel-item img {
-    max-height: 250px; /* Limita la altura de la imagen */
+    max-height: 250px;
   }
 
-  /* Ajusta las columnas para que se apilen en pantallas pequeñas */
+  /* Ajustar las columnas para que se apilen en pantallas pequeñas */
   .cta-section .row,
   .carousel .row {
-    flex-direction: column; /* Apila las columnas en pantallas pequeñas */
-    text-align: center; /* Centra el texto */
+    flex-direction: column;
+    text-align: center;
   }
 
   .col-md-6 {
@@ -228,8 +253,9 @@ const irAVistaCurso = (cursoId) => {
   }
 
   .carousel-indicators {
-    bottom: -30px; /* Ajusta la posición de los indicadores en pantallas pequeñas */
+    bottom: -30px; /* Ajusta la posición de los indicadores */
   }
 }
-
 </style>
+
+
