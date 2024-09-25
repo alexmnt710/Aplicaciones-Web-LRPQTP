@@ -50,7 +50,7 @@ const router = createRouter({
       
         },
         {
-            path: '/cursos',
+            path: '/adcursos',
             name: 'AdminCursos',
             component: AdminCursos,
             meta: { requiresAuth: true } // Cursos para el admin

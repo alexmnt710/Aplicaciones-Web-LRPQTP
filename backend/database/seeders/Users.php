@@ -34,7 +34,7 @@ class Users extends Seeder
             ['nivelId' => 3, 'nivelName' => 'Avanzado'],
             ['nivelId' => 4, 'nivelName' => 'Profesional'],
         ]);
-        Categoria::factory()->count(10)->create(); 
-        Curso::factory()->count(10)->create();
+        Categoria::factory()->count(20)->create(); 
+        Curso::factory()->count(20)->create();
     }
 }

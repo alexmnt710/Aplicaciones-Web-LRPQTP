@@ -8,6 +8,7 @@ export const Cursos = defineStore('cursoStore',{
         }
     ),
     actions:{
+        //get de cursos home
         async getCursosHome(){
             const response = await fetch (`${this.url}/courses`,{
                 method:'GET',
@@ -20,6 +21,7 @@ export const Cursos = defineStore('cursoStore',{
             const data = await response.json()
             this.cursos = data
         },
+        //Get de curso individual
         async getCurso(id) {
             try {
                 const response = await fetch(`${this.url}/courses/${id}`, {
@@ -39,7 +41,22 @@ export const Cursos = defineStore('cursoStore',{
             } catch (error) {
                 console.error('Error fetching course:', error);
             }
-        }        
+        },
+        //get de cursos global
+        async getCursos(token){
+            const response = await fetch (`${this.url}/getCursos`,{
+                method:'GET',
+                headers:{
+                    'Content-Type':'application/json',
+                    'Accept': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                credentials:'include',
+            })
+            const data = await response.json()
+            console.log(data)
+            this.cursos = data
+        },      
     },
     
 })

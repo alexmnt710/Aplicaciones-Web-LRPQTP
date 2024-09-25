@@ -9,9 +9,27 @@ use Illuminate\Support\Facades\Validator;
 class CursoController extends Controller
 {
     //
-    public function index($curso){
-        $cursos = Curso::all();
-        return response()->json($cursos);
+    public function index(Request $request, $search = null){
+        try {
+            if($search){
+                $cursos = Curso::where('cursoName','like','%'.$search.'%')->paginate(10);
+                return response()->json($cursos);
+            }else if($request->has('categoriaId')){
+                $cursos = Curso::where('cursoCategoriaId',$request->categoriaId)->paginate(10);
+                return response()->json($cursos);
+            }else{
+                $cursos = Curso::paginate(10);
+                return response()->json($cursos);
+            }
+        }catch(\Exception $e){
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al obtener los cursos',
+                'error' => $e->getMessage()
+            ], 500);
+
+        }
+        
     }
     public function createCurso(Request $request){
         $validator = Validator::make($request->all(),[
