@@ -40,6 +40,9 @@ const irAVistaCurso = (cursoId) => {
 <template>
   <Header />
 
+
+
+
 <!-- Gustavin -->
 <section v-if="!sesionStore.sesion" class="cta-section">
     <div class="container">
@@ -91,7 +94,11 @@ const irAVistaCurso = (cursoId) => {
                 <h2>{{ curso.cursoName }}</h2>
                 <p>{{ curso.cursoDescripcion }}</p>
                 <p><strong>Precio:</strong> ${{ curso.cursoValor }}</p>
-                <p><strong>Categoría:</strong> {{ curso.categoria.categoriaName }}</p>
+                <p>
+                  <strong>Categoría:</strong> {{ curso.categoria.categoriaName }}
+                  <strong>Dificultad:</strong> {{ curso.nivel.nivelName }} 
+                </p>
+                
                 <!-- Botón para mostrar requisitos -->
                 <button class="btn btn-custom" @click="mostrarRequisitos(curso.cursoRequisito)">
                   Ver Requisitos

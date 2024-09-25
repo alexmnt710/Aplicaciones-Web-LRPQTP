@@ -9,7 +9,6 @@ const sesionStore = Sesion();
 
 onMounted(async () => {
   await sesionStore.getSesion();
-
 });
 
 const toggleMobileMenu = () => {
@@ -30,25 +29,34 @@ const handleLogout = async () => {
     <nav class="nav-links" :class="{ 'mobile-menu': isMobileMenuOpen }">
       <ul>
         <li>
-          <router-link :to="{ name: 'Home' }">Home</router-link>
+          <router-link :to="{ name: 'Home' }"><i class="bi bi-house"></i> Home</router-link>
         </li>
-        <li>
-          <router-link :to="{ name: 'Home' }">Cursos</router-link>
+        <li v-if="sesionStore.rol === 'student' || sesionStore.sesion == false">
+          <router-link :to="{ name: 'Cursos' }"><i class="bi bi-book"></i> Cursos</router-link>
         </li>
-        <li>
-          <router-link :to="{ name: 'Home' }">Clases</router-link>
+        <li v-else-if="sesionStore.rol === 'admin' || sesionStore.rol === 'teacher'">
+          <router-link :to="{ name: 'AdminCursos' }"><i class="bi bi-bookmarks"></i> Cursos</router-link>
         </li>
-        <li>
-          <router-link :to="{ name: 'Home' }">Perfil</router-link>
+        <li v-if="sesionStore.rol === 'admin'">
+          <router-link :to="{ name: 'Docentes' }"><i class="bi bi-person"></i> Docentes</router-link>
+        </li>
+        <li v-if="sesionStore.rol === 'admin'">
+          <router-link :to="{ name: 'Usuarios' }"><i class="bi bi-person-lines-fill"></i> Usuarios</router-link>
+        </li>
+        <li>        
+          <router-link :to="{ name: 'Perfil' }"><i class="bi bi-person-circle"></i> Perfil</router-link>
         </li>
       </ul>
     </nav>
     <div class="login-button">
       <button v-if="sesionStore.sesion == false">
-        <router-link :to="{ name: 'Login' }">Acceder</router-link>
+        <router-link :to="{ name: 'Register' }"><i class="bi bi-person-plus"></i> Registrarse</router-link>
+      </button>
+      <button v-if="sesionStore.sesion == false">
+        <router-link :to="{ name: 'Login' }"><i class="bi bi-box-arrow-in-right"></i> Acceder</router-link>
       </button>
       <button v-else @click="handleLogout">
-        Cerrar sesión
+        <i class="bi bi-box-arrow-right"></i> Cerrar sesión
       </button>
     </div>
     <div class="mobile-menu-icon" @click="toggleMobileMenu">
@@ -58,9 +66,6 @@ const handleLogout = async () => {
     </div>
   </header>
 </template>
-
-
-
 
 <style scoped>
 /* Estilos para el navbar */
@@ -92,10 +97,21 @@ const handleLogout = async () => {
   color: white;
   text-decoration: none;
   font-weight: 500;
+  display: flex;
+  align-items: center;
+}
+
+.nav-links ul li a i {
+  margin-right: 0.5rem; /* Espacio entre el icono y el texto */
 }
 
 .nav-links ul li a:hover {
   text-decoration: underline;
+}
+
+.login-button {
+  display: flex;
+  gap: 1rem; /* Espacio entre los botones */
 }
 
 .login-button button {
@@ -107,6 +123,12 @@ const handleLogout = async () => {
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.3s;
+  display: flex;
+  align-items: center;
+}
+
+.login-button button i {
+  margin-right: 0.5rem; /* Espacio entre el icono y el texto en los botones */
 }
 
 .login-button button:hover {
