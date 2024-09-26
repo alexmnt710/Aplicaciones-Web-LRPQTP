@@ -29,7 +29,7 @@ export const Sesion = defineStore('sesionStore',{
         },
         async login(formData){
             try {
-                console.log(formData);  
+                // console.log(formData);  
                 const response = await fetch(`${this.url}/login`,{
                     method: 'POST',
                     headers:{

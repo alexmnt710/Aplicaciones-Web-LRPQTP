@@ -18,6 +18,7 @@ const toggleMobileMenu = () => {
 const handleLogout = async () => {
   await sesionStore.logout();  
   router.push({ name: 'Login' }); 
+  window.location.reload(); // Recargar la página
 };
 </script>
 
