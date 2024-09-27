@@ -5,6 +5,7 @@ import Pagination from '../components/Pagination.vue'; // Componente de paginaci
 import { Cursos } from '../store/cursos';
 import { ref, onMounted } from 'vue';
 import { Sesion } from '../store/sesion';
+import { Categoria } from '../store/categoria';
 
 const categoriaStore = Categoria();
 const sesionStore = Sesion();
