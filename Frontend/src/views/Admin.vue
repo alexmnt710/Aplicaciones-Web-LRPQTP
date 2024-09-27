@@ -1,12 +1,17 @@
+<script setup>
+import Header from '../components/Public/header.vue';
+import Footer from '../components/Public/footer.vue';
+</script>
 <template>
+    <Header></Header>
+    
     <div>
-      <h1>Admin Page</h1>
+        <h2>    vista admin
+        </h2>
     </div>
-  </template>
-  
-  <script>
-  export default {
-    name: "Admin"
-  };
-  </script>
-  
+    
+    <Footer></Footer>
+</template>
+<style scoped>
+    
+</style>

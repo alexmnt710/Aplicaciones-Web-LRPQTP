@@ -19,9 +19,9 @@ const paginationData = ref({
   next_page_url: null
 });
 
-const selectedCurso = ref(null); // Variable para guardar el curso seleccionado
-const showModal = ref(false); // Controla si el modal está visible
-const showCreateModal = ref(false); // Controla si el modal de creación está visible
+const selectedCurso = ref(null);
+const showModal = ref(false);
+const showCreateModal = ref(false);
 
 // Variables para crear un nuevo curso
 const newCurso = ref({
@@ -30,9 +30,23 @@ const newCurso = ref({
   cursoNivelId: '',
   cursoValor: '',
   cursoRequisito: '',
-  cursoContenido: '',
-  cursoCategoriaId: ''
+  cursoCategoriaId: '',
+  contenido: [] // Array para contener los bloques de contenido
 });
+
+// Función para añadir un nuevo bloque de contenido
+const addContentBlock = () => {
+  newCurso.value.contenido.push({
+    titulo: '',
+    media: '',
+    concepto: ''
+  });
+};
+
+// Función para eliminar un bloque de contenido
+const removeContentBlock = (index) => {
+  newCurso.value.contenido.splice(index, 1);
+};
 
 const loadCursos = async (pageUrl = null) => {
   await cursoStore.getCursos(sesionStore.token, pageUrl);
@@ -43,12 +57,6 @@ const loadCursos = async (pageUrl = null) => {
     prev_page_url: cursoStore.cursos.prev_page_url,
     next_page_url: cursoStore.cursos.next_page_url
   };
-};
-
-// Función para abrir el modal con los detalles del curso
-const viewCurso = (curso) => {
-  selectedCurso.value = curso; 
-  showModal.value = true; 
 };
 
 // Función para abrir el modal de creación de curso
@@ -67,8 +75,8 @@ const createCurso = async () => {
     // Llamada al store para crear el curso
     await cursoStore.createCurso(sesionStore.token, newCurso.value);
     sweetAlert.successAlert('Éxito', 'El curso se ha creado correctamente.');
-    showCreateModal.value = false; 
-    loadCursos(); 
+    showCreateModal.value = false;
+    loadCursos();
   } catch (error) {
     sweetAlert.errorAlert('Error', 'Hubo un problema al crear el curso.');
   }
@@ -76,8 +84,6 @@ const createCurso = async () => {
 
 onMounted(async () => {
   await loadCursos();
-  console.log(categoriaStore.categoria)
-  console.log(categoriaStore.nivel)
 });
 </script>
 
@@ -190,13 +196,31 @@ onMounted(async () => {
               <input v-model="newCurso.cursoRequisito" type="text" id="cursoRequisito" class="form-control">
             </div>
             <div class="mb-3">
-              <label for="cursoContenido" class="form-label">Contenido</label>
-              <textarea v-model="newCurso.cursoContenido" id="cursoContenido" class="form-control"></textarea>
-            </div>
-            <div class="mb-3">
               <label for="cursoCategoriaId" class="form-label">ID de Categoría</label>
               <input v-model="newCurso.cursoCategoriaId" type="number" id="cursoCategoriaId" class="form-control" required>
             </div>
+
+            <!-- Sección para añadir contenido -->
+            <h5>Contenido del Curso</h5>
+            <div v-for="(block, index) in newCurso.contenido" :key="index" class="content-block mb-3">
+              <div class="mb-3">
+                <label :for="'titulo-' + index" class="form-label">Título</label>
+                <input v-model="block.titulo" :id="'titulo-' + index" type="text" class="form-control" required>
+              </div>
+              <div class="mb-3">
+                <label :for="'media-' + index" class="form-label">Imagen/Video URL</label>
+                <input v-model="block.media" :id="'media-' + index" type="text" class="form-control">
+              </div>
+              <div class="mb-3">
+                <label :for="'concepto-' + index" class="form-label">Concepto</label>
+                <textarea v-model="block.concepto" :id="'concepto-' + index" class="form-control" required></textarea>
+              </div>
+              <button type="button" class="btn btn-danger" @click="removeContentBlock(index)">Eliminar</button>
+              <hr>
+            </div>
+            <button type="button" class="btn btn-secondary" @click="addContentBlock">Añadir Bloque de Contenido</button>
+
+            <!-- Footer del Modal -->
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" @click="showCreateModal = false">Cerrar</button>
               <button type="submit" class="btn btn-primary">Crear Curso</button>
@@ -209,6 +233,7 @@ onMounted(async () => {
 
   <Footer />
 </template>
+
 
 <style scoped>
 .table th, .table td {
