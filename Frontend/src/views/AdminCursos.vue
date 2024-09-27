@@ -5,13 +5,12 @@ import Pagination from '../components/Pagination.vue'; // Componente de paginaci
 import { Cursos } from '../store/cursos';
 import { ref, onMounted } from 'vue';
 import { Sesion } from '../store/sesion';
-import { Categoria } from '../store/categoria';
-
 
 const categoriaStore = Categoria();
 const sesionStore = Sesion();
 const cursoStore = Cursos();
 const cursos = ref([]);
+
 const paginationData = ref({
   current_page: 1,
   last_page: 1,
@@ -21,6 +20,18 @@ const paginationData = ref({
 
 const selectedCurso = ref(null); // Variable para guardar el curso seleccionado
 const showModal = ref(false); // Controla si el modal está visible
+const showCreateModal = ref(false); // Controla si el modal de creación está visible
+
+// Variables para crear un nuevo curso
+const newCurso = ref({
+  cursoName: '',
+  cursoDescripcion: '',
+  cursoNivelId: '',
+  cursoValor: '',
+  cursoRequisito: '',
+  cursoContenido: '',
+  cursoCategoriaId: ''
+});
 
 const loadCursos = async (pageUrl = null) => {
   await cursoStore.getCursos(sesionStore.token, pageUrl);
@@ -35,8 +46,31 @@ const loadCursos = async (pageUrl = null) => {
 
 // Función para abrir el modal con los detalles del curso
 const viewCurso = (curso) => {
-  selectedCurso.value = curso; // Guarda el curso seleccionado
-  showModal.value = true; // Muestra el modal
+  selectedCurso.value = curso; 
+  showModal.value = true; 
+};
+
+// Función para abrir el modal de creación de curso
+const openCreateModal = () => {
+  showCreateModal.value = true;
+};
+
+// Función para crear un curso con SweetAlert
+const createCurso = async () => {
+  if (newCurso.value.cursoValor < 0) {
+    sweetAlert.errorAlert('Numero Inválido', 'El valor del curso no puede ser menor a 0.');
+    return;
+  }
+
+  try {
+    // Llamada al store para crear el curso
+    await cursoStore.createCurso(sesionStore.token, newCurso.value);
+    sweetAlert.successAlert('Éxito', 'El curso se ha creado correctamente.');
+    showCreateModal.value = false; 
+    loadCursos(); 
+  } catch (error) {
+    sweetAlert.errorAlert('Error', 'Hubo un problema al crear el curso.');
+  }
 };
 
 onMounted(async () => {
@@ -51,6 +85,11 @@ onMounted(async () => {
 
   <div class="container mt-5">
     <h2>Gestión de Cursos</h2>
+    
+    <!-- Botón para abrir el modal de crear curso -->
+    <div class="mb-3">
+      <button class="btn btn-primary" @click="openCreateModal">Crear Curso</button>
+    </div>
     
     <table class="table table-bordered">
       <thead class="thead-dark">
@@ -119,6 +158,54 @@ onMounted(async () => {
     </div>
   </div>
 
+  <!-- Modal para crear un nuevo curso -->
+  <div v-if="showCreateModal" class="modal fade show d-block" tabindex="-1" role="dialog" style="background-color: rgba(0, 0, 0, 0.5);">
+    <div class="modal-dialog modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Crear Curso</h5>
+          <button type="button" class="btn-close" @click="showCreateModal = false"></button>
+        </div>
+        <div class="modal-body">
+          <form @submit.prevent="createCurso">
+            <div class="mb-3">
+              <label for="cursoName" class="form-label">Nombre del Curso</label>
+              <input v-model="newCurso.cursoName" type="text" id="cursoName" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label for="cursoDescripcion" class="form-label">Descripción</label>
+              <textarea v-model="newCurso.cursoDescripcion" id="cursoDescripcion" class="form-control" required></textarea>
+            </div>
+            <div class="mb-3">
+              <label for="cursoNivelId" class="form-label">Nivel del Curso</label>
+              <input v-model="newCurso.cursoNivelId" type="number" id="cursoNivelId" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label for="cursoValor" class="form-label">Precio</label>
+              <input v-model="newCurso.cursoValor" type="number" id="cursoValor" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label for="cursoRequisito" class="form-label">Requisitos</label>
+              <input v-model="newCurso.cursoRequisito" type="text" id="cursoRequisito" class="form-control">
+            </div>
+            <div class="mb-3">
+              <label for="cursoContenido" class="form-label">Contenido</label>
+              <textarea v-model="newCurso.cursoContenido" id="cursoContenido" class="form-control"></textarea>
+            </div>
+            <div class="mb-3">
+              <label for="cursoCategoriaId" class="form-label">ID de Categoría</label>
+              <input v-model="newCurso.cursoCategoriaId" type="number" id="cursoCategoriaId" class="form-control" required>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" @click="showCreateModal = false">Cerrar</button>
+              <button type="submit" class="btn btn-primary">Crear Curso</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <Footer />
 </template>
 
@@ -128,16 +215,23 @@ onMounted(async () => {
   vertical-align: middle;
 }
 
-/* Estilos para el modal */
+/* Estilos para hacer que el modal se pueda scrollear */
+.modal-dialog-scrollable {
+  max-height: 90vh; /* Ajusta la altura del modal */
+}
+
+.modal-body {
+  overflow-y: auto; /* Habilita el scroll en la parte del cuerpo */
+  max-height: 65vh; /* Limita la altura del cuerpo del modal */
+  padding: 1.5rem;
+}
+
+/* Estilo general del modal */
 .modal.show {
   display: block;
 }
 
 .modal-dialog {
   max-width: 600px;
-}
-
-.modal-body {
-  padding: 1.5rem;
 }
 </style>
