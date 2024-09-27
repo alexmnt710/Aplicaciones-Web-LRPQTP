@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Categoria;
+use App\Models\Nivel;
 use Illuminate\Support\Facades\Validator;
 
 class CategoriaController extends Controller
@@ -87,6 +88,11 @@ class CategoriaController extends Controller
                 'message' => 'Categoría no encontrada'
             ], 404);
         }
+    }
+    
+    public function nivelGet(){
+        $niveles = Nivel::all();
+        return response()->json($niveles);
     }
 
 }

@@ -1,10 +1,12 @@
 <script setup>
 import { RouterLink, RouterView, useRouter } from 'vue-router';
+import { Categoria } from './store/categoria';
 import { onMounted } from 'vue';
 import { Sesion } from './store/sesion';
 import { sweetalert } from './composables/sweetAlert'; // Importa correctamente tu archivo de SweetAlert
 
 const sesionStore = Sesion();
+const categoriaStore = Categoria();
 const sweetAlert = sweetalert(); // Llama a la función sweetalert
 
 const router = useRouter();
@@ -23,7 +25,6 @@ onMounted(async () => {
   try {
     // Esperar a que se obtenga la sesión
     await sesionStore.getSesion();
-
     // Ver el rol obtenido
     console.log(sesionStore.rol);
   } catch (error) {

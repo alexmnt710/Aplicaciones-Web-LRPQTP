@@ -5,7 +5,10 @@ import Pagination from '../components/Pagination.vue'; // Componente de paginaci
 import { Cursos } from '../store/cursos';
 import { ref, onMounted } from 'vue';
 import { Sesion } from '../store/sesion';
+import { Categoria } from '../store/categoria';
 
+
+const categoriaStore = Categoria();
 const sesionStore = Sesion();
 const cursoStore = Cursos();
 const cursos = ref([]);
@@ -36,8 +39,10 @@ const viewCurso = (curso) => {
   showModal.value = true; // Muestra el modal
 };
 
-onMounted(() => {
-  loadCursos();
+onMounted(async () => {
+  await loadCursos();
+  console.log(categoriaStore.categoria)
+  console.log(categoriaStore.nivel)
 });
 </script>
 

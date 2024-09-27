@@ -43,7 +43,8 @@ export const Cursos = defineStore('cursoStore',{
             }
         },
         //get de cursos global
-        async getCursos(token){
+        async getCursos(token, page){
+            console.log(page);
             const response = await fetch (`${this.url}/getCursos`,{
                 method:'GET',
                 headers:{
