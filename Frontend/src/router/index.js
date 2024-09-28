@@ -6,6 +6,7 @@ import Admin from '../views/Admin.vue';
 import Register from '../views/Register.vue';
 import AdminCursos from '../views/AdminCursos.vue';
 import Usuarios from '../views/Usuarios.vue';
+import Categorias from '../views/Categorias.vue';
 import Docentes from '../views/Docentes.vue';
 import Perfil from '../views/Perfil.vue';
 import Cursos from '../views/Cursos.vue';
@@ -22,6 +23,7 @@ const router = createRouter({
         { path: '/admin', name: 'Admin', component: Admin, meta: { requiresAuth: true, role: 'admin' } },
         { path: '/adcursos', name: 'AdminCursos', component: AdminCursos, meta: { requiresAuth: true, role: ['admin', 'teacher'] } },
         { path: '/docentes', name: 'Docentes', component: Docentes, meta: { requiresAuth: true, role: 'admin' } },
+        { path: '/categorias', name: 'Categorias', component: Categorias, meta: { requiresAuth: true, role: 'admin' } },
         { path: '/usuarios', name: 'Usuarios', component: Usuarios, meta: { requiresAuth: true, role: 'admin' } },
         { path: '/perfil', name: 'Perfil', component: Perfil, meta: { requiresAuth: true, role: ['admin', 'teacher', 'student'] } }
     ]

@@ -40,9 +40,6 @@ const irAVistaCurso = (cursoId) => {
 <template>
   <Header />
 
-
-
-
 <!-- Gustavin -->
 <section v-if="!sesionStore.sesion" class="cta-section">
     <div class="container">

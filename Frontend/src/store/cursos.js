@@ -56,27 +56,35 @@ export const Cursos = defineStore('cursoStore',{
                 credentials:'include',
             })
             const data = await response.json()
-            console.log(data)
             this.cursos = data
         },
-        async crearCurso(token, formdata){
+        async crearCurso(token, formData) {
             try {
-                const response = await fetch(`${this.url}/postCurso`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type':'application/json',
-                        'Accept': 'application/json',
-                        Authorization: `Bearer ${token}`,
-                    },
-                    credentials: 'include',
-                    body: JSON.stringify(formdata),
-                });
-                const data = await response.json();
-                console.log(data);
+              const response = await fetch(`${this.url}/postCurso`, {
+                method: 'POST',
+                headers: {
+                  'Accept': 'application/json', // Mantén este encabezado para aceptar JSON como respuesta
+                  Authorization: `Bearer ${token}`, // El token de autorización
+                },
+                credentials: 'include',
+                body: formData, // Enviar FormData directamente
+              });
+          
+              const data = await response.json();
+              console.log(data);
+          
+              // Verificar si el servidor responde con éxito
+              if (!response.ok) {
+                throw new Error(data.message || 'Error al crear el curso');
+              }
+          
+              return data;
             } catch (error) {
-                console.error('Error creating course:', error);
+              console.error('Error creating course:', error);
+              throw error; // Lanzar el error para manejarlo en el componente
             }
-        },      
+          }
+               
     },
     
 })

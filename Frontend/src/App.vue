@@ -1,22 +1,17 @@
 <script setup>
-import { RouterLink, RouterView, useRouter } from 'vue-router';
-import { Categoria } from './store/categoria';
-import { onMounted } from 'vue';
+import { RouterView, useRouter } from 'vue-router';
+import { ref, onMounted } from 'vue';
 import { Sesion } from './store/sesion';
 import { sweetalert } from './composables/sweetAlert'; // Importa correctamente tu archivo de SweetAlert
+import { Categoria } from './store/categoria';
 
 const sesionStore = Sesion();
 const categoriaStore = Categoria();
 const sweetAlert = sweetalert(); // Llama a la función sweetalert
-
 const router = useRouter();
 
-    // coso anterior
-// onMounted(async () => {
-//   // abrir un cuadro de loading(sweetAlert) y cuando termine la sesion lo cierre 
-//   await sesionStore.getSesion();
-//   console.log(sesionStore.rol);
-// });
+// Bandera para controlar el renderizado del componente hijo
+const isChildMounted = ref(false);
 
 onMounted(async () => {
   // Mostrar alerta de cargando
@@ -25,8 +20,13 @@ onMounted(async () => {
   try {
     // Esperar a que se obtenga la sesión
     await sesionStore.getSesion();
-    // Ver el rol obtenido
-    console.log(sesionStore.rol);
+    await categoriaStore.getCategorias();
+    console.log (sesionStore.rol);
+    console.log (sesionStore.user.userName);
+    console.log (categoriaStore.categoria)
+
+    // Simula alguna operación adicional, por ejemplo cargar categorías
+    console.log('Operación adicional realizada.');
   } catch (error) {
     // Mostrar alerta de error en caso de fallo
     sweetAlert.errorAlert('Error', 'Error al obtener la sesión');
@@ -34,13 +34,17 @@ onMounted(async () => {
   } finally {
     // Cerrar la alerta de cargando cuando termine la operación
     closeLoading();
+
+    // Permitir que se monte el componente hijo (RouterView)
+    isChildMounted.value = true;
   }
 });
 </script>
 
 <template>
   <div class="app" style="height: 100vh">
-    <RouterView />
+    <!-- Solo muestra RouterView cuando isChildMounted es true -->
+    <RouterView v-if="isChildMounted" />
   </div>
 </template>
 

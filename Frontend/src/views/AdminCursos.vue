@@ -6,7 +6,9 @@ import { Cursos } from '../store/cursos';
 import { ref, onMounted } from 'vue';
 import { Sesion } from '../store/sesion';
 import { Categoria } from '../store/categoria';
+import { sweetalert } from '../composables/sweetAlert';
 
+const sweetAlert = sweetalert();
 const categoriaStore = Categoria();
 const sesionStore = Sesion();
 const cursoStore = Cursos();
@@ -65,15 +67,37 @@ const openCreateModal = () => {
 };
 
 // Función para crear un curso con SweetAlert
+// Función para crear un curso con SweetAlert
 const createCurso = async () => {
   if (newCurso.value.cursoValor < 0) {
-    sweetAlert.errorAlert('Numero Inválido', 'El valor del curso no puede ser menor a 0.');
+    sweetAlert.errorAlert('Número Inválido', 'El valor del curso no puede ser menor a 0.');
     return;
   }
 
   try {
+    // Crear un solo objeto FormData
+    const formData = new FormData();
+
+    // Añadir todos los campos del curso al FormData
+    formData.append('cursoName', newCurso.value.cursoName);
+    formData.append('cursoDescripcion', newCurso.value.cursoDescripcion);
+    formData.append('cursoNivelId', newCurso.value.cursoNivelId);
+    formData.append('cursoValor', newCurso.value.cursoValor);
+    formData.append('cursoRequisito', newCurso.value.cursoRequisito);
+    formData.append('cursoCategoriaId', newCurso.value.cursoCategoriaId);
+    formData.append('createdBy', sesionStore.user.userName); // Añadir el campo createdBy
+
+    // Convertir el contenido del curso a una cadena JSON y añadirlo al FormData
+    formData.append('contenido', JSON.stringify(newCurso.value.contenido));
+
+    // Mostrar el contenido del FormData en la consola para depuración
+    for (let pair of formData.entries()) {
+      console.log(pair[0] + ': ' + pair[1]);
+    }
+
     // Llamada al store para crear el curso
-    await cursoStore.createCurso(sesionStore.token, newCurso.value);
+    await cursoStore.crearCurso(sesionStore.token, formData);
+
     sweetAlert.successAlert('Éxito', 'El curso se ha creado correctamente.');
     showCreateModal.value = false;
     loadCursos();
@@ -82,9 +106,16 @@ const createCurso = async () => {
   }
 };
 
-onMounted(async () => {
-  await loadCursos();
-});
+
+
+  onMounted(async () => {
+    await loadCursos();
+    await categoriaStore.getCategorias();
+    await categoriaStore.getNiveles();
+
+   
+
+  });
 </script>
 
 <template>
@@ -118,9 +149,6 @@ onMounted(async () => {
           <td>{{ curso.cursoCategoriaId }}</td>
           <td>
             <!-- Botón para ver los detalles del curso -->
-            <button class="btn btn-success btn-sm mx-1" @click="viewCurso(curso)">
-              <i class="bi bi-eye"></i>
-            </button>
             <button class="btn btn-primary btn-sm mx-1">
               <i class="bi bi-pencil"></i>
             </button>
@@ -183,10 +211,18 @@ onMounted(async () => {
               <label for="cursoDescripcion" class="form-label">Descripción</label>
               <textarea v-model="newCurso.cursoDescripcion" id="cursoDescripcion" class="form-control" required></textarea>
             </div>
+            <!-- select niveles -->
             <div class="mb-3">
               <label for="cursoNivelId" class="form-label">Nivel del Curso</label>
-              <input v-model="newCurso.cursoNivelId" type="number" id="cursoNivelId" class="form-control" required>
+              <select v-model="newCurso.cursoNivelId" id="cursoNivelId" class="form-control" required>
+                <option value="" disabled>Seleccione un nivel</option>
+                <!-- Itera sobre los niveles para mostrar las opciones -->
+                <option v-for="nivel in categoriaStore.nivel" :key="nivel.nivelId" :value="nivel.nivelId">
+                  {{ nivel.nivelName }}
+                </option>
+              </select>
             </div>
+
             <div class="mb-3">
               <label for="cursoValor" class="form-label">Precio</label>
               <input v-model="newCurso.cursoValor" type="number" id="cursoValor" class="form-control" required>
@@ -196,10 +232,14 @@ onMounted(async () => {
               <input v-model="newCurso.cursoRequisito" type="text" id="cursoRequisito" class="form-control">
             </div>
             <div class="mb-3">
-              <label for="cursoCategoriaId" class="form-label">ID de Categoría</label>
-              <input v-model="newCurso.cursoCategoriaId" type="number" id="cursoCategoriaId" class="form-control" required>
+              <label for="cursoCategoriaId" class="form-label">Categoría</label>
+              <select v-model="newCurso.cursoCategoriaId" id="cursoCategoriaId" class="form-control" required>
+                <option value="" disabled>Seleccione una categoría</option>
+                <option v-for="categoria in categoriaStore.categoria" :key="categoria.categoriaId" :value="categoria.categoriaId">
+                  {{ categoria.categoriaName }}
+                </option>
+              </select>
             </div>
-
             <!-- Sección para añadir contenido -->
             <h5>Contenido del Curso</h5>
             <div v-for="(block, index) in newCurso.contenido" :key="index" class="content-block mb-3">

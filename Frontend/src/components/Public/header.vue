@@ -42,6 +42,9 @@ const handleLogout = async () => {
           <router-link :to="{ name: 'Docentes' }"><i class="bi bi-person"></i> Docentes</router-link>
         </li>
         <li v-if="sesionStore.rol === 'admin'">
+          <router-link :to="{ name: 'Categorias' }"><i class="bi bi-person"></i> Categorias</router-link>
+        </li>
+        <li v-if="sesionStore.rol === 'admin'">
           <router-link :to="{ name: 'Usuarios' }"><i class="bi bi-person-lines-fill"></i> Usuarios</router-link>
         </li>
         <li>        
