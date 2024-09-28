@@ -43,9 +43,10 @@ export const Cursos = defineStore('cursoStore',{
             }
         },
         //get de cursos global
-        async getCursos(token, page){
+        async getCursos(token, page, search) {
             console.log(page);
-            const response = await fetch (`${this.url}/getCursos`,{
+            const response = await fetch (`${this.url}/getCursos?page=${page}`,{
+                //&search=${search}
                 method:'GET',
                 headers:{
                     'Content-Type':'application/json',
@@ -57,6 +58,24 @@ export const Cursos = defineStore('cursoStore',{
             const data = await response.json()
             console.log(data)
             this.cursos = data
+        },
+        async crearCurso(token, formdata){
+            try {
+                const response = await fetch(`${this.url}/postCurso`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type':'application/json',
+                        'Accept': 'application/json',
+                        Authorization: `Bearer ${token}`,
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify(formdata),
+                });
+                const data = await response.json();
+                console.log(data);
+            } catch (error) {
+                console.error('Error creating course:', error);
+            }
         },      
     },
     
