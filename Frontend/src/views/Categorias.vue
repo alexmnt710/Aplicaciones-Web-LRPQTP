@@ -4,8 +4,10 @@ import Footer from '../components/Public/footer.vue';
 import { Categoria } from '../store/categoria';
 import { ref, onMounted } from 'vue';
 import { sweetalert } from '../composables/sweetAlert';
+import { Sesion } from '../store/sesion';
 
 const categoriaStore = Categoria();
+const sesionStore = Sesion();
 const sweetAlert = sweetalert();
 
 const categorias = ref([]); // Lista de categorías
@@ -41,25 +43,28 @@ const openModal = (categoria = null) => {
 // Función para crear o editar una categoría
 const saveCategoria = async () => {
   try {
-    // Crear un objeto FormData
-    const formData = new FormData();
-    formData.append('categoriaName', newCategoria.value.categoriaName);
-    formData.append('categoriaDescripcion', newCategoria.value.categoriaDescripcion);
-    formData.append('categoriaImagen', newCategoria.value.categoriaImagen);
-
-    // Mostrar el contenido del FormData en la consola para depuración
-    for (let pair of formData.entries()) {
-      console.log(pair[0] + ': ' + pair[1]);
-    }
+    const formData = {
+      categoriaName: newCategoria.value.categoriaName,
+      categoriaDescripcion: newCategoria.value.categoriaDescripcion,
+      categoriaImagen: newCategoria.value.categoriaImagen
+    };
 
     if (isEditing.value) {
       // Editar categoría
-      await categoriaStore.updateCategoria(selectedCategoria.value.categoriaId, formData);
-      sweetAlert.successAlert('Éxito', 'La categoría ha sido actualizada correctamente.');
+      console.log('formData', formData);
+      const response = await categoriaStore.updateCategoria(sesionStore.token, formData, selectedCategoria.value.categoriaId);
+      if (response.success == true) {
+        sweetAlert.successAlert('Éxito', 'La categoría ha sido actualizada correctamente.');
+      }else{
+        sweetAlert.errorAlert('Error', response.message);
+      }
     } else {
       // Crear nueva categoría
-      await categoriaStore.crearCategoria(formData);
-      sweetAlert.successAlert('Éxito', 'La categoría ha sido creada correctamente.');
+      console.log('formData', formData);
+      const response = await categoriaStore.crearCategoria(sesionStore.token, formData);
+      if (response.success == true) {
+      sweetAlert.successAlert('Éxito', response.message);
+      }
     }
     showModal.value = false;
     loadCategorias();
@@ -72,7 +77,7 @@ const saveCategoria = async () => {
 const deleteCategoria = async (categoriaId) => {
   const confirm = await sweetAlert.confirmAlert('Confirmar', '¿Estás seguro de que deseas eliminar esta categoría?');
   if (confirm) {
-    await categoriaStore.deleteCategoria(categoriaId);
+    await categoriaStore.deleteCategoria(sesionStore.token, categoriaId);
     sweetAlert.successAlert('Éxito', 'La categoría ha sido eliminada correctamente.');
     loadCategorias();
   }

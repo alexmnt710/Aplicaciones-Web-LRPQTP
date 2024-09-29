@@ -35,6 +35,7 @@ export const Categoria = defineStore('categoriaStore',{
         },
         async crearCategoria(token, formData){
             try {
+                console.log(formData);
                 const response = await fetch(`${this.url}/postCategoria`, {
                     method: 'POST',
                     headers: {
@@ -52,6 +53,7 @@ export const Categoria = defineStore('categoriaStore',{
         },
         async updateCategoria(token, formData, id){
             try {
+                console.log(formData);
                 const response = await fetch(`${this.url}/updateCategoria/${id}`, {
                     method: 'PUT',
                     headers: {
@@ -69,6 +71,7 @@ export const Categoria = defineStore('categoriaStore',{
         },
         async deleteCategoria(token, id){
             try {
+                console.log(id);
                 const response = await fetch(`${this.url}/deleteCategoria/${id}`, {
                     method: 'DELETE',
                     headers: {

@@ -19,7 +19,8 @@ class CategoriaController extends Controller
     public function createCategoria(Request $request){
         $validator = Validator::make($request->all(), [
             'categoriaName' => 'required|unique:categorias',
-            'categoriaDescripcion' => 'required'
+            'categoriaDescripcion' => 'required',
+            'categoriaImagen' => 'required'
         ]);
 
         // Usando operador ternario para validar
@@ -35,6 +36,7 @@ class CategoriaController extends Controller
                 'data' => tap(new Categoria(), function($categoria) use ($request) {
                     $categoria->categoriaName = $request->categoriaName;
                     $categoria->categoriaDescripcion = $request->categoriaDescripcion;
+                    $categoria->categoriaImagen = $request->categoriaImagen;
                     $categoria->save();
                 })
               ]);
@@ -44,7 +46,8 @@ class CategoriaController extends Controller
     public function updateCategoria(Request $request, $id){
         $validator = Validator::make($request->all(), [
             'categoriaName' => 'required|unique:categorias',
-            'categoriaDescripcion' => 'required'
+            'categoriaDescripcion' => 'required',
+            'categoriaImagen' => 'required'
         ]);
         if ($validator->fails()) {
             return response()->json([
