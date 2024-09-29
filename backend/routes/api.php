@@ -21,7 +21,7 @@ Route::post('/', function () {
 })->name('home');
 
 
-Route::middleware(['auth:sanctum','role:admin', 'role:teacher'])->group(function () {
+Route::middleware(['auth:sanctum','role:admin|teacher'])->group(function () {
     //Rutas user
     Route::get('/getUsers',[UserController::class,'index']);
     

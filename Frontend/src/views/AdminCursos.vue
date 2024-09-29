@@ -88,7 +88,7 @@ const createCurso = async () => {
     formData.append('createdBy', sesionStore.user.userName); // Añadir el campo createdBy
 
     // Convertir el contenido del curso a una cadena JSON y añadirlo al FormData
-    formData.append('contenido', JSON.stringify(newCurso.value.contenido));
+    formData.append('cursoContenido', JSON.stringify(newCurso.value.contenido));
 
     // Mostrar el contenido del FormData en la consola para depuración
     for (let pair of formData.entries()) {
@@ -100,13 +100,24 @@ const createCurso = async () => {
 
     sweetAlert.successAlert('Éxito', 'El curso se ha creado correctamente.');
     showCreateModal.value = false;
+    limpiarFormulario();
     loadCursos();
   } catch (error) {
     sweetAlert.errorAlert('Error', 'Hubo un problema al crear el curso.');
   }
 };
 
-
+const limpiarFormulario = () => {
+  newCurso.value = {
+    cursoName: '',
+    cursoDescripcion: '',
+    cursoNivelId: '',
+    cursoValor: '',
+    cursoRequisito: '',
+    cursoCategoriaId: '',
+    contenido: []
+  };
+};
 
   onMounted(async () => {
     await loadCursos();

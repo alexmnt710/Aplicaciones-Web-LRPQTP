@@ -72,18 +72,53 @@ export const Cursos = defineStore('cursoStore',{
           
               const data = await response.json();
               console.log(data);
-          
-              // Verificar si el servidor responde con éxito
-              if (!response.ok) {
-                throw new Error(data.message || 'Error al crear el curso');
-              }
-          
+
               return data;
             } catch (error) {
               console.error('Error creating course:', error);
               throw error; // Lanzar el error para manejarlo en el componente
             }
-          }
+          },
+        async deleteCurso(token, id) {
+            try {
+              const response = await fetch(`${this.url}/deleteCurso/${id}`, {
+                method: 'DELETE',
+                headers: {
+                  'Accept': 'application/json',
+                  Authorization: `Bearer ${token}`,
+                },
+                credentials: 'include',
+              });
+          
+              const data = await response.json();
+              console.log(data);
+              
+              return data;
+            } catch (error) {
+              console.error('Error deleting course:', error);
+              throw error;
+            }
+          },
+        async updateCurso(token, id, formData) {
+            try {
+              const response = await fetch(`${this.url}/updateCurso/${id}`, {
+                method: 'PUT',
+                headers: {
+                  'Accept': 'application/json',
+                  Authorization: `Bearer ${token}`,
+                },
+                credentials: 'include',
+                body: formData,
+              });
+          
+              const data = await response.json();
+              console.log(data);
+              return data;
+            } catch (error) {
+              console.error('Error updating course:', error);
+              throw error;
+            }
+          },
                
     },
     
