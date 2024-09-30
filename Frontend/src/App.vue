@@ -26,7 +26,6 @@ onMounted(async () => {
     // console.log (categoriaStore.categoria)
 
     // Simula alguna operación adicional, por ejemplo cargar categorías
-    console.log('Operación adicional realizada.');
   } catch (error) {
     // Mostrar alerta de error en caso de fallo
     sweetAlert.errorAlert('Error', 'Error al obtener la sesión');

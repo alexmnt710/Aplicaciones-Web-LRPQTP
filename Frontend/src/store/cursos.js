@@ -44,7 +44,6 @@ export const Cursos = defineStore('cursoStore',{
         },
         //get de cursos global
         async getCursos(token, page, search) {
-            console.log(page);
             const response = await fetch (`${this.url}/getCursos?page=${page}`,{
                 //&search=${search}
                 method:'GET',
@@ -60,6 +59,7 @@ export const Cursos = defineStore('cursoStore',{
         },
         async crearCurso(token, formData) {
             try {
+              console.log(formData);
               const response = await fetch(`${this.url}/postCurso`, {
                 method: 'POST',
                 headers: {
@@ -81,6 +81,7 @@ export const Cursos = defineStore('cursoStore',{
           },
         async deleteCurso(token, id) {
             try {
+              console.log*('id', id);
               const response = await fetch(`${this.url}/deleteCurso/${id}`, {
                 method: 'DELETE',
                 headers: {
@@ -101,6 +102,8 @@ export const Cursos = defineStore('cursoStore',{
           },
         async updateCurso(token, id, formData) {
             try {
+              console.log('id', id);
+              console.log('formData', formData);
               const response = await fetch(`${this.url}/updateCurso/${id}`, {
                 method: 'PUT',
                 headers: {
