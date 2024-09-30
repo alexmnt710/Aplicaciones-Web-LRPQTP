@@ -1,7 +1,7 @@
 <script setup>
 import Header from '../components/Public/header.vue';
 import Footer from '../components/Public/footer.vue';
-import Pagination from '../components/Pagination.vue'; // Componente de paginación
+import Pagination from '../components/Pagination.vue'; 
 import { Cursos } from '../store/cursos';
 import { ref, onMounted } from 'vue';
 import { Sesion } from '../store/sesion';
@@ -13,7 +13,7 @@ const categoriaStore = Categoria();
 const sesionStore = Sesion();
 const cursoStore = Cursos();
 const cursos = ref([]);
-
+const selectedCurso = ref(null);
 const paginationData = ref({
   current_page: 1,
   last_page: 1,
@@ -21,11 +21,11 @@ const paginationData = ref({
   next_page_url: null
 });
 
-const selectedCurso = ref(null);
-const showModal = ref(false);
+const showModal = ref(false); 
 const showCreateModal = ref(false);
+const showUpdateModal = ref(false);  // Modal para actualizar curso
 
-// Variables para crear un nuevo curso
+// Variables para crear o actualizar un curso
 const newCurso = ref({
   cursoName: '',
   cursoDescripcion: '',
@@ -33,22 +33,8 @@ const newCurso = ref({
   cursoValor: '',
   cursoRequisito: '',
   cursoCategoriaId: '',
-  contenido: [] // Array para contener los bloques de contenido
+  contenido: [] 
 });
-
-// Función para añadir un nuevo bloque de contenido
-const addContentBlock = () => {
-  newCurso.value.contenido.push({
-    titulo: '',
-    media: '',
-    concepto: ''
-  });
-};
-
-// Función para eliminar un bloque de contenido
-const removeContentBlock = (index) => {
-  newCurso.value.contenido.splice(index, 1);
-};
 
 const loadCursos = async (pageUrl = null) => {
   await cursoStore.getCursos(sesionStore.token, pageUrl);
@@ -61,52 +47,19 @@ const loadCursos = async (pageUrl = null) => {
   };
 };
 
-// Función para abrir el modal de creación de curso
+// Abrir modal para creación de curso
 const openCreateModal = () => {
+  limpiarFormulario();
   showCreateModal.value = true;
 };
 
-// Función para crear un curso con SweetAlert
-// Función para crear un curso con SweetAlert
-const createCurso = async () => {
-  if (newCurso.value.cursoValor < 0) {
-    sweetAlert.errorAlert('Número Inválido', 'El valor del curso no puede ser menor a 0.');
-    return;
-  }
-
-  try {
-    // Crear un solo objeto FormData
-    const formData = new FormData();
-
-    // Añadir todos los campos del curso al FormData
-    formData.append('cursoName', newCurso.value.cursoName);
-    formData.append('cursoDescripcion', newCurso.value.cursoDescripcion);
-    formData.append('cursoNivelId', newCurso.value.cursoNivelId);
-    formData.append('cursoValor', newCurso.value.cursoValor);
-    formData.append('cursoRequisito', newCurso.value.cursoRequisito);
-    formData.append('cursoCategoriaId', newCurso.value.cursoCategoriaId);
-    formData.append('createdBy', sesionStore.user.userName); // Añadir el campo createdBy
-
-    // Convertir el contenido del curso a una cadena JSON y añadirlo al FormData
-    formData.append('cursoContenido', JSON.stringify(newCurso.value.contenido));
-
-    // Mostrar el contenido del FormData en la consola para depuración
-    for (let pair of formData.entries()) {
-      console.log(pair[0] + ': ' + pair[1]);
-    }
-
-    // Llamada al store para crear el curso
-    await cursoStore.crearCurso(sesionStore.token, formData);
-
-    sweetAlert.successAlert('Éxito', 'El curso se ha creado correctamente.');
-    showCreateModal.value = false;
-    limpiarFormulario();
-    loadCursos();
-  } catch (error) {
-    sweetAlert.errorAlert('Error', 'Hubo un problema al crear el curso.');
-  }
+// Cerrar cualquier modal
+const closeModal = () => {
+  showCreateModal.value = false;
+  showUpdateModal.value = false; 
 };
 
+// Limpiar el formulario de curso
 const limpiarFormulario = () => {
   newCurso.value = {
     cursoName: '',
@@ -119,59 +72,151 @@ const limpiarFormulario = () => {
   };
 };
 
-  onMounted(async () => {
-    await loadCursos();
-    await categoriaStore.getCategorias();
-    await categoriaStore.getNiveles();
+// Función para crear curso
+const createCurso = async () => {
+  if (newCurso.value.cursoValor < 0) {
+    sweetAlert.errorAlert('Número Inválido', 'El valor del curso no puede ser menor a 0.');
+    return;
+  }
 
-   
+  try {
+    const formData = new FormData();
+    formData.append('cursoName', newCurso.value.cursoName);
+    formData.append('cursoDescripcion', newCurso.value.cursoDescripcion);
+    formData.append('cursoNivelId', newCurso.value.cursoNivelId);
+    formData.append('cursoValor', newCurso.value.cursoValor);
+    formData.append('cursoRequisito', newCurso.value.cursoRequisito);
+    formData.append('cursoCategoriaId', newCurso.value.cursoCategoriaId);
+    formData.append('cursoContenido', JSON.stringify(newCurso.value.contenido));
+    formData.append('createdBy', sesionStore.user.userName);
 
-  });
+    await cursoStore.crearCurso(sesionStore.token, formData);
+    sweetAlert.successAlert('Éxito', 'El curso se ha creado correctamente.');
+    closeModal();
+    loadCursos();
+  } catch (error) {
+    sweetAlert.errorAlert('Error', 'Hubo un problema al crear el curso.');
+  }
+};
+
+// Función para cargar datos de un curso al modal de actualización
+// Función para cargar datos de un curso al modal de actualización
+const openUpdateModal = (curso) => {
+  selectedCurso.value = curso;
+
+  // Verificar si cursoContenido ya es un objeto o es un JSON válido
+  let parsedContenido;
+  try {
+    parsedContenido = typeof curso.cursoContenido === 'string' 
+      ? JSON.parse(curso.cursoContenido) 
+      : curso.cursoContenido;
+  } catch (e) {
+    console.error('Error parsing cursoContenido:', e);
+    parsedContenido = []; // Si hay error, inicializamos con un array vacío
+  }
+
+  // Cargar los datos en el formulario
+  newCurso.value = { 
+    ...curso, 
+    contenido: parsedContenido || [] 
+  };
+
+  // Mostrar el modal de actualización
+  showUpdateModal.value = true;
+};
+
+
+// Función para actualizar el curso
+const updateCurso = async () => {
+  if (newCurso.value.cursoValor < 0) {
+    sweetAlert.errorAlert('Número Inválido', 'El valor del curso no puede ser menor a 0.');
+    return;
+  }
+
+  try {
+    const formData = new FormData();
+    formData.append('cursoName', newCurso.value.cursoName);
+    formData.append('cursoDescripcion', newCurso.value.cursoDescripcion);
+    formData.append('cursoNivelId', newCurso.value.cursoNivelId);
+    formData.append('cursoValor', newCurso.value.cursoValor);
+    formData.append('cursoRequisito', newCurso.value.cursoRequisito);
+    formData.append('cursoCategoriaId', newCurso.value.cursoCategoriaId);
+    formData.append('cursoContenido', JSON.stringify(newCurso.value.contenido));
+
+    await cursoStore.updateCurso(sesionStore.token, selectedCurso.value.cursoId, formData);
+    sweetAlert.successAlert('Éxito', 'El curso se ha actualizado correctamente.');
+    closeModal();
+    loadCursos();
+  } catch (error) {
+    sweetAlert.errorAlert('Error', 'Hubo un problema al actualizar el curso.');
+  }
+};
+
+// Función para eliminar curso
+const deleteCurso = async (cursoId) => {
+  try {
+    const confirm = await sweetAlert.confirmAlert('Eliminar curso', '¿Estás seguro de que deseas eliminar este curso?');
+    if (confirm.isConfirmed) {
+      await cursoStore.deleteCurso(sesionStore.token, cursoId);
+      sweetAlert.successAlert('Éxito', 'El curso ha sido eliminado.');
+      loadCursos();
+    }
+  } catch (error) {
+    sweetAlert.errorAlert('Error', 'Hubo un problema al eliminar el curso.');
+  }
+};
+
+onMounted(async () => {
+  await loadCursos();
+  await categoriaStore.getCategorias();
+  await categoriaStore.getNiveles();
+});
 </script>
 
 <template>
   <Header />
 
-  <div class="container mt-5">
-    <h2>Gestión de Cursos</h2>
-    
-    <!-- Botón para abrir el modal de crear curso -->
-    <div class="mb-3">
+  <div class="container-fluid mt-5">
+    <h2 class="text-center">Gestión de Cursos</h2>
+
+    <div class="d-flex justify-content-end mb-3">
       <button class="btn btn-primary" @click="openCreateModal">Crear Curso</button>
     </div>
-    
-    <table class="table table-bordered">
-      <thead class="thead-dark">
-        <tr>
-          <th>Id</th>
-          <th>Nombre</th>
-          <th>Descripción</th>
-          <th>Precio</th>
-          <th>Categoría</th>
-          <th>Acción</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="curso in cursos" :key="curso.cursoId">
-          <td>{{ curso.cursoId }}</td>
-          <td>{{ curso.cursoName }}</td>
-          <td>{{ curso.cursoDescripcion }}</td>
-          <td>{{ curso.cursoValor }}</td>
-          <td>{{ curso.cursoCategoriaId }}</td>
-          <td>
-            <!-- Botón para ver los detalles del curso -->
-            <button class="btn btn-primary btn-sm mx-1">
-              <i class="bi bi-pencil"></i>
-            </button>
-            <button class="btn btn-danger btn-sm mx-1">
-              <i class="bi bi-trash"></i>
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
 
-    <!-- Componente de Paginación -->
+    <div class="table-responsive">
+      <table class="table table-bordered">
+        <thead class="thead-dark">
+          <tr>
+            <th>Id</th>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Precio</th>
+            <th>Categoría</th>
+            <th>Creador</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="curso in cursos" :key="curso.cursoId">
+            <td>{{ curso.cursoId }}</td>
+            <td>{{ curso.cursoName }}</td>
+            <td>{{ curso.cursoDescripcion }}</td>
+            <td>{{ curso.cursoValor }}</td>
+            <td>{{ curso.cursoCategoriaId }}</td>
+            <td>{{ curso.createdBy }}</td>
+            <td>
+              <button class="btn btn-primary btn-sm" @click="openUpdateModal(curso)">
+                <i class="bi bi-pencil"></i> Editar
+              </button>
+              <button class="btn btn-danger btn-sm" @click="deleteCurso(curso.cursoId)">
+                <i class="bi bi-trash"></i> Eliminar
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
     <Pagination
       :currentPage="paginationData.current_page"
       :lastPage="paginationData.last_page"
@@ -179,104 +224,102 @@ const limpiarFormulario = () => {
       :nextPageUrl="paginationData.next_page_url"
       @pageChange="loadCursos"
     />
-  </div>
 
-  <!-- Modal para ver los detalles del curso -->
-  <div v-if="showModal" class="modal fade show d-block" tabindex="-1" role="dialog" style="background-color: rgba(0, 0, 0, 0.5);">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Detalles del Curso</h5>
-          <button type="button" class="btn-close" @click="showModal = false"></button>
-        </div>
-        <div class="modal-body">
-          <p><strong>ID:</strong> {{ selectedCurso?.cursoId }}</p>
-          <p><strong>Nombre:</strong> {{ selectedCurso?.cursoName }}</p>
-          <p><strong>Descripción:</strong> {{ selectedCurso?.cursoDescripcion }}</p>
-          <p><strong>Precio:</strong> {{ selectedCurso?.cursoValor }}</p>
-          <p><strong>Categoría:</strong> {{ selectedCurso?.cursoCategoriaId }}</p>
-          <p><strong>Requisitos:</strong> {{ selectedCurso?.cursoRequisito }}</p>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" @click="showModal = false">Cerrar</button>
+    <!-- Modal para crear curso -->
+    <div v-if="showCreateModal" class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0, 0, 0, 0.5);">
+      <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Crear Curso</h5>
+            <button type="button" class="btn-close" @click="closeModal"></button>
+          </div>
+          <div class="modal-body">
+            <form @submit.prevent="createCurso">
+              <div class="mb-3">
+                <label for="cursoName" class="form-label">Nombre del Curso</label>
+                <input v-model="newCurso.cursoName" type="text" id="cursoName" class="form-control" required>
+              </div>
+              <div class="mb-3">
+                <label for="cursoDescripcion" class="form-label">Descripción</label>
+                <textarea v-model="newCurso.cursoDescripcion" id="cursoDescripcion" class="form-control" required></textarea>
+              </div>
+              <div class="mb-3">
+                <label for="cursoNivelId" class="form-label">Nivel del Curso</label>
+                <select v-model="newCurso.cursoNivelId" id="cursoNivelId" class="form-control" required>
+                  <option value="" disabled>Seleccione un nivel</option>
+                  <option v-for="nivel in categoriaStore.nivel" :key="nivel.nivelId" :value="nivel.nivelId">{{ nivel.nivelName }}</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="cursoValor" class="form-label">Valor del Curso</label>
+                <input v-model="newCurso.cursoValor" type="number" id="cursoValor" class="form-control" required min="0">
+              </div>
+              <div class="mb-3">
+                <label for="cursoRequisito" class="form-label">Requisito</label>
+                <textarea v-model="newCurso.cursoRequisito" id="cursoRequisito" class="form-control" required></textarea>
+              </div>
+              <div class="mb-3">
+                <label for="cursoCategoriaId" class="form-label">Categoría</label>
+                <select v-model="newCurso.cursoCategoriaId" id="cursoCategoriaId" class="form-control" required>
+                  <option value="" disabled>Seleccione una categoría</option>
+                  <option v-for="categoria in categoriaStore.categoria" :key="categoria.categoriaId" :value="categoria.categoriaId">
+                    {{ categoria.categoriaName }}
+                  </option>
+                </select>
+              </div>
+              <button type="submit" class="btn btn-primary">Guardar Curso</button>
+            </form>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- Modal para crear un nuevo curso -->
-  <div v-if="showCreateModal" class="modal fade show d-block" tabindex="-1" role="dialog" style="background-color: rgba(0, 0, 0, 0.5);">
-    <div class="modal-dialog modal-dialog-scrollable">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Crear Curso</h5>
-          <button type="button" class="btn-close" @click="showCreateModal = false"></button>
-        </div>
-        <div class="modal-body">
-          <form @submit.prevent="createCurso">
-            <div class="mb-3">
-              <label for="cursoName" class="form-label">Nombre del Curso</label>
-              <input v-model="newCurso.cursoName" type="text" id="cursoName" class="form-control" required>
-            </div>
-            <div class="mb-3">
-              <label for="cursoDescripcion" class="form-label">Descripción</label>
-              <textarea v-model="newCurso.cursoDescripcion" id="cursoDescripcion" class="form-control" required></textarea>
-            </div>
-            <!-- select niveles -->
-            <div class="mb-3">
-              <label for="cursoNivelId" class="form-label">Nivel del Curso</label>
-              <select v-model="newCurso.cursoNivelId" id="cursoNivelId" class="form-control" required>
-                <option value="" disabled>Seleccione un nivel</option>
-                <!-- Itera sobre los niveles para mostrar las opciones -->
-                <option v-for="nivel in categoriaStore.nivel" :key="nivel.nivelId" :value="nivel.nivelId">
-                  {{ nivel.nivelName }}
-                </option>
-              </select>
-            </div>
-
-            <div class="mb-3">
-              <label for="cursoValor" class="form-label">Precio</label>
-              <input v-model="newCurso.cursoValor" type="number" id="cursoValor" class="form-control" required>
-            </div>
-            <div class="mb-3">
-              <label for="cursoRequisito" class="form-label">Requisitos</label>
-              <input v-model="newCurso.cursoRequisito" type="text" id="cursoRequisito" class="form-control">
-            </div>
-            <div class="mb-3">
-              <label for="cursoCategoriaId" class="form-label">Categoría</label>
-              <select v-model="newCurso.cursoCategoriaId" id="cursoCategoriaId" class="form-control" required>
-                <option value="" disabled>Seleccione una categoría</option>
-                <option v-for="categoria in categoriaStore.categoria" :key="categoria.categoriaId" :value="categoria.categoriaId">
-                  {{ categoria.categoriaName }}
-                </option>
-              </select>
-            </div>
-            <!-- Sección para añadir contenido -->
-            <h5>Contenido del Curso</h5>
-            <div v-for="(block, index) in newCurso.contenido" :key="index" class="content-block mb-3">
+    <!-- Modal para actualizar curso -->
+    <div v-if="showUpdateModal" class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0, 0, 0, 0.5);">
+      <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Actualizar Curso</h5>
+            <button type="button" class="btn-close" @click="closeModal"></button>
+          </div>
+          <div class="modal-body">
+            <form @submit.prevent="updateCurso">
+              <!-- Campos iguales a los del formulario de crear curso -->
               <div class="mb-3">
-                <label :for="'titulo-' + index" class="form-label">Título</label>
-                <input v-model="block.titulo" :id="'titulo-' + index" type="text" class="form-control" required>
+                <label for="cursoName" class="form-label">Nombre del Curso</label>
+                <input v-model="newCurso.cursoName" type="text" id="cursoName" class="form-control" required>
               </div>
               <div class="mb-3">
-                <label :for="'media-' + index" class="form-label">Imagen/Video URL</label>
-                <input v-model="block.media" :id="'media-' + index" type="text" class="form-control">
+                <label for="cursoDescripcion" class="form-label">Descripción</label>
+                <textarea v-model="newCurso.cursoDescripcion" id="cursoDescripcion" class="form-control" required></textarea>
               </div>
               <div class="mb-3">
-                <label :for="'concepto-' + index" class="form-label">Concepto</label>
-                <textarea v-model="block.concepto" :id="'concepto-' + index" class="form-control" required></textarea>
+                <label for="cursoNivelId" class="form-label">Nivel del Curso</label>
+                <select v-model="newCurso.cursoNivelId" id="cursoNivelId" class="form-control" required>
+                  <option value="" disabled>Seleccione un nivel</option>
+                  <option v-for="nivel in categoriaStore.nivel" :key="nivel.nivelId" :value="nivel.nivelId">{{ nivel.nivelName }}</option>
+                </select>
               </div>
-              <button type="button" class="btn btn-danger" @click="removeContentBlock(index)">Eliminar</button>
-              <hr>
-            </div>
-            <button type="button" class="btn btn-secondary" @click="addContentBlock">Añadir Bloque de Contenido</button>
-
-            <!-- Footer del Modal -->
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" @click="showCreateModal = false">Cerrar</button>
-              <button type="submit" class="btn btn-primary">Crear Curso</button>
-            </div>
-          </form>
+              <div class="mb-3">
+                <label for="cursoValor" class="form-label">Valor del Curso</label>
+                <input v-model="newCurso.cursoValor" type="number" id="cursoValor" class="form-control" required min="0">
+              </div>
+              <div class="mb-3">
+                <label for="cursoRequisito" class="form-label">Requisito</label>
+                <textarea v-model="newCurso.cursoRequisito" id="cursoRequisito" class="form-control" required></textarea>
+              </div>
+              <div class="mb-3">
+                <label for="cursoCategoriaId" class="form-label">Categoría</label>
+                <select v-model="newCurso.cursoCategoriaId" id="cursoCategoriaId" class="form-control" required>
+                  <option value="" disabled>Seleccione una categoría</option>
+                  <option v-for="categoria in categoriaStore.categoria" :key="categoria.categoriaId" :value="categoria.categoriaId">
+                    {{ categoria.categoriaName }}
+                  </option>
+                </select>
+              </div>
+              <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+            </form>
+          </div>
         </div>
       </div>
     </div>
@@ -287,6 +330,10 @@ const limpiarFormulario = () => {
 
 
 <style scoped>
+.table-responsive {
+  margin-top: 1rem;
+}
+
 .table th, .table td {
   text-align: center;
   vertical-align: middle;
@@ -309,6 +356,12 @@ const limpiarFormulario = () => {
 }
 
 .modal-dialog {
-  max-width: 600px;
+  max-width: 100%;
+}
+
+@media (min-width: 768px) {
+  .modal-dialog {
+    max-width: 600px;
+  }
 }
 </style>

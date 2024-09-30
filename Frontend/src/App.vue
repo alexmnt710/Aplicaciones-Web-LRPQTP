@@ -21,9 +21,9 @@ onMounted(async () => {
     // Esperar a que se obtenga la sesión
     await sesionStore.getSesion();
     await categoriaStore.getCategorias();
-    console.log (sesionStore.rol);
-    console.log (sesionStore.user.userName);
-    console.log (categoriaStore.categoria)
+    // console.log (sesionStore.rol);
+    // console.log (sesionStore.user.userName);
+    // console.log (categoriaStore.categoria)
 
     // Simula alguna operación adicional, por ejemplo cargar categorías
     console.log('Operación adicional realizada.');
