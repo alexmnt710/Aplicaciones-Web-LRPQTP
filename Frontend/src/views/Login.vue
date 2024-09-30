@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import Header from '../components/Public/header.vue';
 import Footer from '../components/Public/footer.vue';
 import { Sesion } from '../store/sesion.js';
@@ -10,10 +10,15 @@ const sesionStore = Sesion();
 const router = useRouter();
 const { ShowLoading, errorAlert, successAlert } = sweetalert(); // Usamos las funciones de SweetAlert
 
+
 // Variables del formulario
 const formData = ref({
   userName: '',
   password: '',
+});
+
+onMounted(async () => {
+  await sesionStore.getSesion();
 });
 
 const isPasswordVisible = ref(false); // Estado para controlar la visibilidad de la contraseña
@@ -23,9 +28,9 @@ const login = async () => {
   const response = await sesionStore.login(formData.value);
   closeLoading();
 
-  if (response.success === true) {
+  if (response.success == true) {
     successAlert('Inicio de sesión exitoso', 'Bienvenido de nuevo!');
-    router.push({ name: 'Home' }); 
+    router.push({name : "Home"});
   } else {
     errorAlert('Error al iniciar sesión', 'Usuario o contraseña incorrectos');
   }

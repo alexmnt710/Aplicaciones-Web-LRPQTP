@@ -19,6 +19,7 @@ return new class extends Migration
             $table->decimal('cursoValor', 8, 2);  // Cambia a decimal si es necesario
             $table->string('cursoRequisito');
             $table->text('cursoContenido');
+            $table->string('cursoExamen')->nullable();
             $table->string('createdBy');
             $table->foreignId('cursoCategoriaId')->constrained('categorias', 'categoriaId');  // Definir una clave foránea
             $table->timestamps();

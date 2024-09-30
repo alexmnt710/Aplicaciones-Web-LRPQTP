@@ -6,26 +6,13 @@ import { Cursos } from '../store/cursos';
 import { sweetalert } from '../composables/sweetAlert';
 import { useRouter } from 'vue-router';
 import { Sesion } from '../store/sesion';
+import Homead from './Homead.vue';
 
 const sweetAlert = sweetalert(); 
 const cursoStore = Cursos();
 const sesionStore = Sesion();  
 const cursos = ref([]);
 const router = useRouter();  
-
-onMounted(async () => {
-   await cursoStore.getCursosHome();
-   cursos.value = cursoStore.cursos; 
-   if (sesionStore.userRole === 'admin') {
-    // Redirigir a 'homead' si el usuario es un administrador
-    router.push({ name: 'homead' });
-  } else {
-    // Redirigir a 'home' si no es administrador (opcional)
-    router.push({ name: 'home' });
-  }
-  //  console.log(cursoStore.cursos);
-});
-
 
 const mostrarRequisitos = (cursoRequisito) => {
   sweetAlert.showAlert("Requisitos", cursoRequisito || "No hay requisitos especificados");
@@ -42,6 +29,28 @@ const irAVistaCurso = (cursoId) => {
     router.push(`/clases/${cursoId}`);
   }
 }
+
+onMounted(async () => {
+  const closeLoading = sweetAlert.ShowLoading();
+  try {
+    await cursoStore.getCursosHome().then(() => {
+      cursos.value = cursoStore.cursos;
+      const rol = sesionStore.rol;
+      if (rol === "admin") {
+        router.push({ name: "homead" });
+      }else{
+        router.push({name : 'Home'})
+      }
+    });
+
+  } catch (error) {
+    sweetAlert.errorAlert("Error", "Error al obtener los cursos");
+    console.error(error);
+  } finally {
+    closeLoading();
+  }
+});
+
 </script>
 
 <template>

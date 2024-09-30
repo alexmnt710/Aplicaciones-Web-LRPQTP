@@ -19,7 +19,7 @@ const selectedCategoria = ref(null);
 const newCategoria = ref({
   categoriaName: '',
   categoriaDescripcion: '',
-  categoriaImagenUrl: '' // URL para la imagen
+  categoriaImagen: '' // URL para la imagen
 });
 
 // --- Funciones CRUD ---
@@ -48,8 +48,10 @@ const openEditModal = (categoria) => {
   newCategoria.value = {
     categoriaName: categoria.categoriaName,
     categoriaDescripcion: categoria.categoriaDescripcion,
-    categoriaImagenUrl: categoria.categoriaImagen // Prellenar con la URL existente
+    categoriaImagen: categoria.categoriaImagen // Prellenar con la URL existente
   };
+
+
   showModal.value = true;
 };
 
@@ -58,7 +60,7 @@ const resetForm = () => {
   newCategoria.value = {
     categoriaName: '',
     categoriaDescripcion: '',
-    categoriaImagenUrl: ''
+    categoriaImagen: ''
   };
 };
 
@@ -67,9 +69,10 @@ const createCategoria = async () => {
   const formData = new FormData();
   formData.append('categoriaName', newCategoria.value.categoriaName);
   formData.append('categoriaDescripcion', newCategoria.value.categoriaDescripcion);
-  formData.append('categoriaImagenUrl', newCategoria.value.categoriaImagenUrl); // Añadir URL de la imagen
+  formData.append('categoriaImagen', newCategoria.value.categoriaImagen);
 
   try {
+    console.log(formData)
     const response = await categoriaStore.crearCategoria(sesionStore.token, formData);
     if (response.success) {
       sweetAlert.successAlert('Éxito', 'La categoría ha sido creada correctamente.');
@@ -89,10 +92,11 @@ const updateCategoria = async () => {
   const formData = new FormData();
   formData.append('categoriaName', newCategoria.value.categoriaName);
   formData.append('categoriaDescripcion', newCategoria.value.categoriaDescripcion);
-  formData.append('categoriaImagenUrl', newCategoria.value.categoriaImagenUrl); // Añadir URL de la imagen
+  formData.append('categoriaImagen', newCategoria.value.categoriaImagen);
 
+  console.log(newCategoria.value)
   try {
-    const response = await categoriaStore.updateCategoria(sesionStore.token, formData, selectedCategoria.value.categoriaId);
+    const response = await categoriaStore.updateCategoria(sesionStore.token, newCategoria.value, selectedCategoria.value.categoriaId);
     if (response.success) {
       sweetAlert.successAlert('Éxito', 'La categoría ha sido actualizada correctamente.');
       showModal.value = false;
@@ -195,7 +199,7 @@ onMounted(() => {
               </div>
               <div class="mb-3">
                 <label for="categoriaImagenUrl" class="form-label">URL de la Imagen</label>
-                <input v-model="newCategoria.categoriaImagenUrl" type="text" id="categoriaImagenUrl" class="form-control" required>
+                <input v-model="newCategoria.categoriaImagen" type="text" id="categoriaImagenUrl" class="form-control" required>
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" @click="showModal = false">Cerrar</button>

@@ -22,7 +22,7 @@ const router = createRouter({
         { path: '/cursos', name: 'Cursos', component: Cursos, meta: { requiresAuth: false } },
         { path: '/clases/:claseId', name: 'Clases', component: Clases, meta: { requiresAuth: true }, props: true },
         { path: '/admin', name: 'Admin', component: Admin, meta: { requiresAuth: true, role: 'admin' } },
-        { path: '/adcursos', name: 'AdminCursos', component: AdminCursos, meta: { requiresAuth: true, role: ['admin', 'teacher'] } },
+        { path: '/adcursos', name: 'AdminCursos', component: AdminCursos, meta: { requiresAuth: true, role: ['admin'] } },
         { path: '/docentes', name: 'Docentes', component: Docentes, meta: { requiresAuth: true, role: 'admin' } },
         { path: '/categorias', name: 'Categorias', component: Categorias, meta: { requiresAuth: true, role: 'admin' } },
         { path: '/usuarios', name: 'Usuarios', component: Usuarios, meta: { requiresAuth: true, role: 'admin' } },

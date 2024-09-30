@@ -102,8 +102,6 @@ export const Cursos = defineStore('cursoStore',{
           },
         async updateCurso(token, id, formData) {
             try {
-              console.log('id', id);
-              console.log('formData', formData);
               const response = await fetch(`${this.url}/updateCurso/${id}`, {
                 method: 'PUT',
                 headers: {
@@ -111,7 +109,7 @@ export const Cursos = defineStore('cursoStore',{
                   Authorization: `Bearer ${token}`,
                 },
                 credentials: 'include',
-                body: formData,
+                body: JSON.stringify(formData),
               });
           
               const data = await response.json();

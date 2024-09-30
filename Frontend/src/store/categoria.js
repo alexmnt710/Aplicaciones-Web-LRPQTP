@@ -53,13 +53,14 @@ export const Categoria = defineStore('categoriaStore',{
         },
         async updateCategoria(token, formData, id){
             try {
-                console.log(formData);
                 const response = await fetch(`${this.url}/updateCategoria/${id}`, {
                     method: 'PUT',
                     headers: {
+                        'Content-Type':'application/json',
+                        'Accept': 'application/json',
                         Authorization: `Bearer ${token}`,
                     },
-                    body: formData,
+                    body: JSON.stringify(formData)
                 });
                 const data = await response.json();
                 console.log(data);
