@@ -16,6 +16,13 @@ const router = useRouter();
 onMounted(async () => {
    await cursoStore.getCursosHome();
    cursos.value = cursoStore.cursos; 
+   if (sesionStore.userRole === 'admin') {
+    // Redirigir a 'homead' si el usuario es un administrador
+    router.push({ name: 'homead' });
+  } else {
+    // Redirigir a 'home' si no es administrador (opcional)
+    router.push({ name: 'home' });
+  }
   //  console.log(cursoStore.cursos);
 });
 

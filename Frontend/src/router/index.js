@@ -9,6 +9,7 @@ import Usuarios from '../views/Usuarios.vue';
 import Categorias from '../views/Categorias.vue';
 import Docentes from '../views/Docentes.vue';
 import Perfil from '../views/Perfil.vue';
+import Homead from '../views/Homead.vue';
 import Cursos from '../views/Cursos.vue';
 import { Sesion } from '../store/sesion';
 
@@ -25,7 +26,8 @@ const router = createRouter({
         { path: '/docentes', name: 'Docentes', component: Docentes, meta: { requiresAuth: true, role: 'admin' } },
         { path: '/categorias', name: 'Categorias', component: Categorias, meta: { requiresAuth: true, role: 'admin' } },
         { path: '/usuarios', name: 'Usuarios', component: Usuarios, meta: { requiresAuth: true, role: 'admin' } },
-        { path: '/perfil', name: 'Perfil', component: Perfil, meta: { requiresAuth: true, role: ['admin', 'teacher', 'student'] } }
+        { path: '/perfil', name: 'Perfil', component: Perfil, meta: { requiresAuth: true, role: ['admin', 'teacher', 'student'] } },
+        { path: '/homead', name: 'homead', component: Homead, meta: { requiresAuth: true, role: ['admin', 'teacher'] } }
     ]
 });
 
@@ -34,6 +36,11 @@ router.beforeEach((to, from, next) => {
     const sesionStore = Sesion(); // Obtén la sesión
     const userRole = sesionStore.rol; // Rol del usuario en sesión
     const isAuthenticated = !!userRole; // Verifica si hay un rol definido (usuario autenticado)
+
+    // Redirigir a 'homead' si el usuario es un administrador y está intentando acceder a 'Home'
+    if (to.name === 'Home' && userRole === 'admin') {
+        return next({ name: 'homead' });
+    }
 
     // Restringir el acceso a login y registro si el usuario ya tiene sesión
     if (isAuthenticated && (to.name === 'Login' || to.name === 'Register')) {

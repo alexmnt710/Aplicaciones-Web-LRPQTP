@@ -19,57 +19,99 @@ const selectedCategoria = ref(null);
 const newCategoria = ref({
   categoriaName: '',
   categoriaDescripcion: '',
-  categoriaImagen: ''
+  categoriaImagenUrl: '' // URL para la imagen
 });
 
-// Función para cargar categorías
+// --- Funciones CRUD ---
+
+// Función para cargar todas las categorías
 const loadCategorias = async () => {
-  await categoriaStore.getCategorias();
-  categorias.value = categoriaStore.categoria;
+  try {
+    await categoriaStore.getCategorias();
+    categorias.value = categoriaStore.categoria;
+  } catch (error) {
+    console.error('Error loading categories:', error);
+  }
 };
 
-// Función para abrir el modal de creación/edición de categorías
-const openModal = (categoria = null) => {
-  isEditing.value = !!categoria;
-  selectedCategoria.value = categoria;
-  if (categoria) {
-    newCategoria.value = { ...categoria }; // Llenar con datos de la categoría seleccionada
-  } else {
-    newCategoria.value = { categoriaName: '', categoriaDescripcion: '', categoriaImagen: '' };
-  }
+// Función para abrir el modal para crear una categoría
+const openCreateModal = () => {
+  isEditing.value = false;
+  resetForm();
   showModal.value = true;
 };
 
-// Función para crear o editar una categoría
-const saveCategoria = async () => {
-  try {
-    const formData = {
-      categoriaName: newCategoria.value.categoriaName,
-      categoriaDescripcion: newCategoria.value.categoriaDescripcion,
-      categoriaImagen: newCategoria.value.categoriaImagen
-    };
+// Función para abrir el modal para editar una categoría
+const openEditModal = (categoria) => {
+  isEditing.value = true;
+  selectedCategoria.value = categoria;
+  newCategoria.value = {
+    categoriaName: categoria.categoriaName,
+    categoriaDescripcion: categoria.categoriaDescripcion,
+    categoriaImagenUrl: categoria.categoriaImagen // Prellenar con la URL existente
+  };
+  showModal.value = true;
+};
 
-    if (isEditing.value) {
-      // Editar categoría
-      console.log('formData', formData);
-      const response = await categoriaStore.updateCategoria(sesionStore.token, formData, selectedCategoria.value.categoriaId);
-      if (response.success == true) {
-        sweetAlert.successAlert('Éxito', 'La categoría ha sido actualizada correctamente.');
-      }else{
-        sweetAlert.errorAlert('Error', response.message);
-      }
+// Función para resetear el formulario
+const resetForm = () => {
+  newCategoria.value = {
+    categoriaName: '',
+    categoriaDescripcion: '',
+    categoriaImagenUrl: ''
+  };
+};
+
+// Función para crear una nueva categoría
+const createCategoria = async () => {
+  const formData = new FormData();
+  formData.append('categoriaName', newCategoria.value.categoriaName);
+  formData.append('categoriaDescripcion', newCategoria.value.categoriaDescripcion);
+  formData.append('categoriaImagenUrl', newCategoria.value.categoriaImagenUrl); // Añadir URL de la imagen
+
+  try {
+    const response = await categoriaStore.crearCategoria(sesionStore.token, formData);
+    if (response.success) {
+      sweetAlert.successAlert('Éxito', 'La categoría ha sido creada correctamente.');
+      showModal.value = false;
+      loadCategorias();
     } else {
-      // Crear nueva categoría
-      console.log('formData', formData);
-      const response = await categoriaStore.crearCategoria(sesionStore.token, formData);
-      if (response.success == true) {
-      sweetAlert.successAlert('Éxito', response.message);
-      }
+      sweetAlert.errorAlert('Error', response.message);
     }
-    showModal.value = false;
-    loadCategorias();
   } catch (error) {
-    sweetAlert.errorAlert('Error', 'Hubo un problema al guardar la categoría.');
+    console.error('Error creating category:', error);
+    sweetAlert.errorAlert('Error', 'Hubo un problema al crear la categoría.');
+  }
+};
+
+// Función para actualizar una categoría
+const updateCategoria = async () => {
+  const formData = new FormData();
+  formData.append('categoriaName', newCategoria.value.categoriaName);
+  formData.append('categoriaDescripcion', newCategoria.value.categoriaDescripcion);
+  formData.append('categoriaImagenUrl', newCategoria.value.categoriaImagenUrl); // Añadir URL de la imagen
+
+  try {
+    const response = await categoriaStore.updateCategoria(sesionStore.token, formData, selectedCategoria.value.categoriaId);
+    if (response.success) {
+      sweetAlert.successAlert('Éxito', 'La categoría ha sido actualizada correctamente.');
+      showModal.value = false;
+      loadCategorias();
+    } else {
+      sweetAlert.errorAlert('Error', response.message);
+    }
+  } catch (error) {
+    console.error('Error updating category:', error);
+    sweetAlert.errorAlert('Error', 'Hubo un problema al actualizar la categoría.');
+  }
+};
+
+// Función para guardar la categoría (creación o actualización)
+const saveCategoria = () => {
+  if (isEditing.value) {
+    updateCategoria();
+  } else {
+    createCategoria();
   }
 };
 
@@ -77,9 +119,14 @@ const saveCategoria = async () => {
 const deleteCategoria = async (categoriaId) => {
   const confirm = await sweetAlert.confirmAlert('Confirmar', '¿Estás seguro de que deseas eliminar esta categoría?');
   if (confirm) {
-    await categoriaStore.deleteCategoria(sesionStore.token, categoriaId);
-    sweetAlert.successAlert('Éxito', 'La categoría ha sido eliminada correctamente.');
-    loadCategorias();
+    try {
+      await categoriaStore.deleteCategoria(sesionStore.token, categoriaId);
+      sweetAlert.successAlert('Éxito', 'La categoría ha sido eliminada correctamente.');
+      loadCategorias();
+    } catch (error) {
+      console.error('Error deleting category:', error);
+      sweetAlert.errorAlert('Error', 'Hubo un problema al eliminar la categoría.');
+    }
   }
 };
 
@@ -96,7 +143,7 @@ onMounted(() => {
 
     <!-- Botón para abrir el modal de crear categoría -->
     <div class="mb-3">
-      <button class="btn btn-primary" @click="openModal">Crear Categoría</button>
+      <button class="btn btn-primary" @click="openCreateModal">Crear Categoría</button>
     </div>
 
     <!-- Tabla de categorías -->
@@ -121,7 +168,7 @@ onMounted(() => {
           <td>{{ categoria.created_at }}</td>
           <td>{{ categoria.updated_at }}</td>
           <td>
-            <button class="btn btn-primary btn-sm mx-1" @click="openModal(categoria)">Editar</button>
+            <button class="btn btn-primary btn-sm mx-1" @click="openEditModal(categoria)">Editar</button>
             <button class="btn btn-danger btn-sm mx-1" @click="deleteCategoria(categoria.categoriaId)">Eliminar</button>
           </td>
         </tr>
@@ -147,8 +194,8 @@ onMounted(() => {
                 <textarea v-model="newCategoria.categoriaDescripcion" id="categoriaDescripcion" class="form-control" required></textarea>
               </div>
               <div class="mb-3">
-                <label for="categoriaImagen" class="form-label">Imagen (URL)</label>
-                <input v-model="newCategoria.categoriaImagen" type="text" id="categoriaImagen" class="form-control">
+                <label for="categoriaImagenUrl" class="form-label">URL de la Imagen</label>
+                <input v-model="newCategoria.categoriaImagenUrl" type="text" id="categoriaImagenUrl" class="form-control" required>
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" @click="showModal = false">Cerrar</button>
