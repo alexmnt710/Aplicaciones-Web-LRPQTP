@@ -100,16 +100,17 @@ export const Cursos = defineStore('cursoStore',{
               throw error;
             }
           },
-        async updateCurso(token, id, formData) {
+          async updateCurso(token, id, formData) {
             try {
               const response = await fetch(`${this.url}/updateCurso/${id}`, {
                 method: 'PUT',
                 headers: {
                   'Accept': 'application/json',
+                  'Content-Type': 'application/json', // <-- Asegúrate de agregar esta línea
                   Authorization: `Bearer ${token}`,
                 },
                 credentials: 'include',
-                body: JSON.stringify(formData),
+                body: JSON.stringify(formData), // Enviar como JSON
               });
           
               const data = await response.json();
@@ -120,6 +121,7 @@ export const Cursos = defineStore('cursoStore',{
               throw error;
             }
           },
+          
                
     },
     
