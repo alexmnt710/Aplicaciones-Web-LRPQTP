@@ -164,7 +164,7 @@ onMounted(() => {
         </tr>
       </thead>
       <tbody>
-        <tr v-for="categoria in categorias" :key="categoria.categoriaId">
+        <tr v-for="categoria in categorias.data" :key="categoria.categoriaId">
           <td>{{ categoria.categoriaId }}</td>
           <td>{{ categoria.categoriaName }}</td>
           <td>{{ categoria.categoriaDescripcion }}</td>

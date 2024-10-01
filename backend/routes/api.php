@@ -10,7 +10,7 @@ use App\Http\Controllers\SesionController;
 
 //rutas publicas
 Route::get('/courses/{id?}',[CursoController::class,'home']);
-Route::get('/getCategorias',[CategoriaController::class, 'index']);
+Route::get('/getCategorias/{search?}/',[CategoriaController::class, 'index']);
 Route::get('/getNivel',[CategoriaController::class, 'nivelGet']);
 Route::post('/login', [SesionController::class, 'login'])->middleware('guest:sanctum');
 Route::post('/postUser', [UserController::class,'createUser'])->middleware('guest:sanctum');

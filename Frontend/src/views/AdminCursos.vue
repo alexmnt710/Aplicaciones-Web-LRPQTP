@@ -31,6 +31,7 @@ const newCurso = ref({
   cursoValor: '',
   cursoRequisito: '',
   cursoCategoriaId: '',
+  createdBy: '',
   contenido: []
 });
 
@@ -55,6 +56,7 @@ const openEditModal = (curso) => {
     cursoValor: curso.cursoValor,
     cursoRequisito: curso.cursoRequisito,
     cursoCategoriaId: curso.cursoCategoriaId,
+    createdBy: curso.createdBy,
     contenido: Array.isArray(curso.cursoContenido) ? JSON.parse(JSON.stringify(curso.cursoContenido)) : [] // Validar que sea un array
   };
 
@@ -71,6 +73,7 @@ const resetForm = () => {
     cursoValor: '',
     cursoRequisito: '',
     cursoCategoriaId: '',
+    createdBy: '',
     contenido: []
   };
 };
@@ -142,6 +145,7 @@ const updateCurso = async () => {
     cursoValor: newCurso.value.cursoValor,
     cursoRequisito: newCurso.value.cursoRequisito,
     cursoCategoriaId: newCurso.value.cursoCategoriaId,
+    createdBy: newCurso.value.createdBy,
     cursoContenido: Array.isArray(newCurso.value.contenido) ? newCurso.value.contenido : []
   };
 
@@ -208,6 +212,7 @@ const deleteCurso = async (cursoId) => {
 
 onMounted(async () => {
   await loadCursos();
+  console.log('Cursos:', cursos.value);
   await categoriaStore.getCategorias();
   await categoriaStore.getNiveles();
 });

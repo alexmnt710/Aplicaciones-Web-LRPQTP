@@ -8,8 +8,8 @@ export const Categoria = defineStore('categoriaStore',{
         }
     ),
     actions:{
-        async getCategorias(){
-            const response = await fetch (`${this.url}/getCategorias`,{
+        async getCategorias(page=1){
+            const response = await fetch (`${this.url}/getCategorias?page=${page}`,{
                 method:'GET',
                 headers:{
                     'Content-Type':'application/json',
@@ -18,7 +18,7 @@ export const Categoria = defineStore('categoriaStore',{
                 credentials:'include',
             })
             const data = await response.json()
-            this.categoria = data
+            this.categoria = data;
 
         },
         async getNiveles(){

@@ -10,9 +10,14 @@ use Illuminate\Support\Facades\Validator;
 class CategoriaController extends Controller
 {
     // Obtener todas las categorías
-    public function index(){
-        $categorias = Categoria::all();
-        return response()->json($categorias);
+    public function index($search = null){
+        if($search){
+            $categorias = Categoria::where('categoriaName','like','%'.$search.'%')->paginate(10);
+            return response()->json($categorias);
+        }else{
+            $categorias = Categoria::paginate(10);
+            return response()->json($categorias);
+        }
     }
 
     // Crear una nueva categoría

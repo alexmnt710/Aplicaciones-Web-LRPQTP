@@ -101,6 +101,7 @@ export const Cursos = defineStore('cursoStore',{
             }
           },
           async updateCurso(token, id, formData) {
+            
             try {
               const response = await fetch(`${this.url}/updateCurso/${id}`, {
                 method: 'PUT',
