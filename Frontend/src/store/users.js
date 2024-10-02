@@ -65,6 +65,41 @@ export const User = defineStore('userStore',{
                 return error;
             }
         },
+        async deleteDocente(token, id){
+            try {
+                const response = await fetch(`${this.url}/deleteUser/${id}`,{
+                    method: 'DELETE',
+                    headers:{
+                        'Accept': 'application/json',
+                        Authorization: `Bearer ${token}`,
+                    },
+                    credentials:'include',
+                });
+                const data = await response.json()
+                console.log(data);
+                return data;
+            } catch (error) {
+                return error;
+            }
+        },
+        async updateDocente(token, formData, id){
+            try {
+                const response = await fetch(`${this.url}/updateUser/${id}`,{
+                    method: 'PUT',
+                    headers:{
+                        'Accept': 'application/json',
+                        Authorization: `Bearer ${token}`,
+                    },
+                    credentials:'include',
+                    body: formData,
+                });
+                const data = await response.json()
+                console.log(data);
+                return data;
+            } catch (error) {
+                return error;
+            }
+        },
     },
 
 })
