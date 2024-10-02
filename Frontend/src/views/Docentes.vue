@@ -4,8 +4,11 @@ import Header from '../components/Public/header.vue';
 import Footer from '../components/Public/footer.vue';
 import Pagination from '../components/Pagination.vue';
 import { Sesion } from '../store/sesion';
+import { User } from '../store/users';
 
-const sesionStore = Sesion(); 
+const sesionStore = Sesion();
+const docentesStore = User();
+const token = sesionStore.token; 
 
 const formData = ref({
   userNombres: '',
@@ -37,11 +40,8 @@ const closeModal = () => {
 };
 
 // Función para enviar datos (actualmente solo muestra en consola)
-const submitForm = () => {
-  const token = sesionStore.token; // Obtener el token de la sesión
+const submitForm = async() => {
   const formDataObj = new FormData();
-  
-  // Añadir los campos al FormData
   formDataObj.append('userNombres', formData.value.userNombres);
   formDataObj.append('userApellidos', formData.value.userApellidos);
   formDataObj.append('userName', formData.value.userName);
@@ -52,17 +52,15 @@ const submitForm = () => {
 
   // Mostrar el token y el contenido del FormData en la consola
   console.log('Token:', token);
-  for (let pair of formDataObj.entries()) {
-    console.log(`${pair[0]}: ${pair[1]}`);
-  }
+  const response = await docentesStore.createDocente(token, formData.value);
+  console.log('Response:', response);
 };
 
 // Cargar la lista de docentes
 const loadDocentes = async (page = 1) => {
   try {
-    await docentesStore.getDocentes(page); // Método que trae la lista de docentes desde el store
+    await docentesStore.getDocentes(token, page); // Método que trae la lista de docentes desde el store
     docentes.value = docentesStore.docentes.data; // Asignar los docentes al array
-
     // Configurar los datos de la paginación
     paginationData.value.current_page = docentesStore.docentes.current_page;
     paginationData.value.last_page = docentesStore.docentes.last_page;
@@ -76,7 +74,7 @@ const loadDocentes = async (page = 1) => {
 
 // Función para manejar el cambio de página
 const handlePageChange = (page) => {
-  loadDocentes(page);
+  loadDocentes(token, page);
 };
 
 // Función para eliminar un docente
@@ -84,7 +82,7 @@ const deleteDocente = async (docenteId) => {
   const confirm = await sweetAlert.confirmAlert('Eliminar docente', '¿Estás seguro de que deseas eliminar este docente?');
   if (confirm) {
     try {
-      await docentesStore.deleteDocente(docenteId); // Método del store para eliminar un docente
+      await docentesStore.deleteDocente(token, docenteId); // Método del store para eliminar un docente
       sweetAlert.successAlert('Éxito', 'El docente ha sido eliminado correctamente.');
       loadDocentes();
     } catch (error) {

@@ -113,4 +113,44 @@ class UserController extends Controller
         ], 200);
         
     }
+    public function getDocentes(){
+        $users = User::role('teacher')->paginate(10);
+        return response()->json($users);
+    }
+    public function createDocente(Request $request){
+        $validator = Validator::make($request->all(), [
+            'userName' => 'required|unique:users',
+            'password' => 'required|min:6',
+            'userNombres' => 'required',
+            'userApellidos' => 'required',
+            'userCorreo' => 'required|email',
+            'userWordKey' => 'required'
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Por favor revise los campos',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $user = new User();
+        $user->userName = $request->userName;
+        $user->password = bcrypt($request->password); // Encriptar la contraseña
+        $user->userNombres = $request->userNombres;
+        $user->userApellidos = $request->userApellidos;
+        $user->userCorreo = $request->userCorreo;
+        $user->userWordKey = $request->userWordKey;
+        $user->save();
+    
+        // Asignar rol al usuario
+        $user->assignRole('teacher');
+    
+        // Retornar la respuesta exitosa en JSON
+       return response()->json([
+            'success' => true,
+            'message' => 'Docente creado exitosamente',
+            'user' => $user
+        ], 201);  // 201 Created
+    }
 }

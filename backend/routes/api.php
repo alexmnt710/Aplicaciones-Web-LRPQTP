@@ -38,6 +38,12 @@ Route::middleware(['auth:sanctum','role:admin|teacher'])->group(function () {
     Route::put('/updateCategoria/{id}',[CategoriaController::class, 'updateCategoria']);
     Route::delete('/deleteCategoria/{id}',[CategoriaController::class, 'deleteCategoria']);
 });
+Route::middleware(['auth:sanctum','role:admin'])->group(function () {
+    //Rutas user
+    Route::get('/getDocentes',[UserController::class,'getDocentes']);
+    Route::post('/postDocente', [UserController::class,'createDocente']);
+
+});
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/checksesion', [SesionController::class, 'checkSession'])->middleware('auth:sanctum');
     Route::get('/getCursos/{search?}/', [CursoController::class, 'index'])->middleware('auth:sanctum');
