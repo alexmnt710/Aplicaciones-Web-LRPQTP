@@ -52,7 +52,7 @@ const submitForm = async() => {
 
   // Mostrar el token y el contenido del FormData en la consola
   console.log('Token:', token);
-  const response = await docentesStore.createDocente(token, formData.value);
+  const response = await docentesStore.createDocente(token, formDataObj);
   console.log('Response:', response);
 };
 

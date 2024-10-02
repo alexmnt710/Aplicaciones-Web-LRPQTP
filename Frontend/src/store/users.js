@@ -51,15 +51,15 @@ export const User = defineStore('userStore',{
                 const response = await fetch(`${this.url}/postDocente`,{
                     method: 'POST',
                     headers:{
-                        'Content-Type':'application/json',
                         'Accept': 'application/json',
                         Authorization: `Bearer ${token}`,
                     },
                     credentials:'include',
                     body: formData,
                 });
+                console.log(response);
                 const data = await response.json()
-                
+                console.log(data);
                 return data;
             } catch (error) {
                 return error;
