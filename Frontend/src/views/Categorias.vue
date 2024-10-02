@@ -1,6 +1,7 @@
 <script setup>
 import Header from '../components/Public/header.vue';
 import Footer from '../components/Public/footer.vue';
+import Pagination from '../components/Pagination.vue'; // Importamos el componente de paginación
 import { Categoria } from '../store/categoria';
 import { ref, onMounted } from 'vue';
 import { sweetalert } from '../composables/sweetAlert';
@@ -11,6 +12,13 @@ const sesionStore = Sesion();
 const sweetAlert = sweetalert();
 
 const categorias = ref([]); // Lista de categorías
+const paginationData = ref({
+  current_page: 1,
+  last_page: 1,
+  prev_page_url: null,
+  next_page_url: null,
+});
+
 const showModal = ref(false);
 const isEditing = ref(false);
 const selectedCategoria = ref(null);
@@ -25,10 +33,16 @@ const newCategoria = ref({
 // --- Funciones CRUD ---
 
 // Función para cargar todas las categorías
-const loadCategorias = async () => {
+const loadCategorias = async (page = 1) => {
   try {
-    await categoriaStore.getCategorias();
-    categorias.value = categoriaStore.categoria;
+    await categoriaStore.getCategorias(page);
+    categorias.value = categoriaStore.categoria.data;
+
+    // Configurar los datos de la paginación
+    paginationData.value.current_page = categoriaStore.categoria.current_page;
+    paginationData.value.last_page = categoriaStore.categoria.last_page;
+    paginationData.value.prev_page_url = categoriaStore.categoria.prev_page_url;
+    paginationData.value.next_page_url = categoriaStore.categoria.next_page_url;
   } catch (error) {
     console.error('Error loading categories:', error);
   }
@@ -50,8 +64,6 @@ const openEditModal = (categoria) => {
     categoriaDescripcion: categoria.categoriaDescripcion,
     categoriaImagen: categoria.categoriaImagen // Prellenar con la URL existente
   };
-
-
   showModal.value = true;
 };
 
@@ -72,7 +84,6 @@ const createCategoria = async () => {
   formData.append('categoriaImagen', newCategoria.value.categoriaImagen);
 
   try {
-    console.log(formData)
     const response = await categoriaStore.crearCategoria(sesionStore.token, formData);
     if (response.success) {
       sweetAlert.successAlert('Éxito', 'La categoría ha sido creada correctamente.');
@@ -94,9 +105,8 @@ const updateCategoria = async () => {
   formData.append('categoriaDescripcion', newCategoria.value.categoriaDescripcion);
   formData.append('categoriaImagen', newCategoria.value.categoriaImagen);
 
-  console.log(newCategoria.value)
   try {
-    const response = await categoriaStore.updateCategoria(sesionStore.token, newCategoria.value, selectedCategoria.value.categoriaId);
+    const response = await categoriaStore.updateCategoria(sesionStore.token, formData, selectedCategoria.value.categoriaId);
     if (response.success) {
       sweetAlert.successAlert('Éxito', 'La categoría ha sido actualizada correctamente.');
       showModal.value = false;
@@ -134,6 +144,12 @@ const deleteCategoria = async (categoriaId) => {
   }
 };
 
+// Función para manejar el cambio de página
+const handlePageChange = (page) => {
+  loadCategorias(page);
+};
+
+// Cargar las categorías cuando el componente se monte
 onMounted(() => {
   loadCategorias();
 });
@@ -164,7 +180,7 @@ onMounted(() => {
         </tr>
       </thead>
       <tbody>
-        <tr v-for="categoria in categorias.data" :key="categoria.categoriaId">
+        <tr v-for="categoria in categorias" :key="categoria.categoriaId">
           <td>{{ categoria.categoriaId }}</td>
           <td>{{ categoria.categoriaName }}</td>
           <td>{{ categoria.categoriaDescripcion }}</td>
@@ -178,6 +194,15 @@ onMounted(() => {
         </tr>
       </tbody>
     </table>
+
+    <!-- Componente de Paginación -->
+    <Pagination
+      :currentPage="paginationData.current_page"
+      :lastPage="paginationData.last_page"
+      :prevPageUrl="paginationData.prev_page_url"
+      :nextPageUrl="paginationData.next_page_url"
+      @pageChange="handlePageChange"
+    />
 
     <!-- Modal para crear/editar categoría -->
     <div v-if="showModal" class="modal fade show d-block" tabindex="-1" role="dialog" style="background-color: rgba(0, 0, 0, 0.5);">
