@@ -65,10 +65,11 @@ class UserController extends Controller
     public function updateUser(Request $request, $id){
         $validator = Validator::make($request->all(), [
             'userName' => 'required|unique:users',
-            'userPassword' => 'required|min:6',
+            'password' => 'required|min:6',
             'userNombres' => 'required',
             'userApellidos' => 'required',
             'userCorreo' => 'required|email',
+            'userWordKey' => 'required'
         ]);
 
         if ($validator->fails()) {
@@ -86,10 +87,11 @@ class UserController extends Controller
             ], 404);
         }
         $user->userName = $request->userName;
-        $user->userPassword = $request->userPassword;
+        $user->password = $request->password;
         $user->userNombres = $request->userNombres;
         $user->userApellidos = $request->userApellidos;
         $user->userCorreo = $request->userCorreo;
+        $user->userWordKey = $request->userWordKey;
 
         $user->save();
         return response()->json([

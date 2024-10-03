@@ -145,7 +145,7 @@ const updateDocente = async () => {
     userApellidos: formData.value.userApellidos || '',
     userName: formData.value.userName || '',
     userCorreo: formData.value.userCorreo || '',
-    userPassword: formData.value.password || '',
+    password: formData.value.password || '',
     confirmPassword: formData.value.confirmPassword || '',
     userWordKey: formData.value.userWordKey || ''
   };
