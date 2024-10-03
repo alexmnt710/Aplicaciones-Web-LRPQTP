@@ -83,15 +83,17 @@ export const User = defineStore('userStore',{
             }
         },
         async updateDocente(token, formData, id){
+            console.log(formData);
             try {
                 const response = await fetch(`${this.url}/updateUser/${id}`,{
                     method: 'PUT',
                     headers:{
                         'Accept': 'application/json',
+                        'Content-Type': 'application/json', // <-- Asegúrate de agregar esta línea
                         Authorization: `Bearer ${token}`,
                     },
                     credentials:'include',
-                    body: formData,
+                    body: JSON.stringify(formData), // Enviar como JSON
                 });
                 const data = await response.json()
                 console.log(data);

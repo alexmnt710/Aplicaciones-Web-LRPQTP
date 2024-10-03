@@ -86,9 +86,20 @@ const resetForm = () => {
   selectedDocenteId.value = null; // Limpiar el ID del docente seleccionado
 };
 
+// Función para guardar el docente (creación o actualización)
+const saveDocente = () => {
+  if (isEditing.value) {
+    updateDocente();
+  } else {
+    createDocente();
+  }
+};
+
+
 // Función para enviar datos (crear o editar)
-const submitForm = async () => {
-  checkPasswordMatch(); 
+// Función para crear un docente
+const createDocente = async () => {
+  checkPasswordMatch();
   if (!passwordMatch.value) {
     sweetAlert.errorAlert('Error', 'Las contraseñas no coinciden.');
     return;
@@ -99,36 +110,14 @@ const submitForm = async () => {
   formDataObj.append('userApellidos', formData.value.userApellidos || '');
   formDataObj.append('userName', formData.value.userName || '');
   formDataObj.append('userCorreo', formData.value.userCorreo || '');
-  
-  // Solo incluir la contraseña si se está creando un nuevo docente
-  if (!isEditing.value) {
-    formDataObj.append('password', formData.value.password || '');
-    formDataObj.append('confirmPassword', formData.value.confirmPassword || '');
-  }
-  
+  formDataObj.append('password', formData.value.password || '');
+  formDataObj.append('confirmPassword', formData.value.confirmPassword || '');
   formDataObj.append('userWordKey', formData.value.userWordKey || '');
 
-  // Mostrar el contenido de FormData para depuración
-  console.log('Token:', token);
-  console.log('isEditing:', isEditing.value);
-  console.log('selectedDocenteId:', selectedDocenteId.value);
-  for (let pair of formDataObj.entries()) {
-    console.log(`${pair[0]}: ${pair[1]}`);
-  }
-
   try {
-    let response;
-    if (isEditing.value && selectedDocenteId.value) {
-      // Actualizar docente
-      response = await docentesStore.updateDocente(token, formDataObj, selectedDocenteId.value);
-    } else {
-      // Crear docente
-      response = await docentesStore.createDocente(token, formDataObj);
-    }
-
-    console.log('Response:', response);
+    const response = await docentesStore.createDocente(token, formDataObj);
     if (response.success) {
-      sweetAlert.successAlert('Éxito', isEditing.value ? 'El docente ha sido actualizado correctamente.' : 'El docente ha sido creado correctamente.');
+      sweetAlert.successAlert('Éxito', 'El docente ha sido creado correctamente.');
       showModal.value = false;
       loadDocentes();
     } else {
@@ -137,9 +126,50 @@ const submitForm = async () => {
     }
   } catch (error) {
     console.error('Error:', error);
-    sweetAlert.errorAlert('Error', 'Hubo un problema al procesar el formulario.');
+    sweetAlert.errorAlert('Error', 'Hubo un problema al crear el docente.');
   }
 };
+
+// Función para actualizar un docente
+// Función para actualizar un docente
+const updateDocente = async () => {
+  checkPasswordMatch();
+  if (!passwordMatch.value) {
+    sweetAlert.errorAlert('Error', 'Las contraseñas no coinciden.');
+    return;
+  }
+
+  // Construir el objeto JSON con los datos del docente
+  const updatedData = {
+    userNombres: formData.value.userNombres || '',
+    userApellidos: formData.value.userApellidos || '',
+    userName: formData.value.userName || '',
+    userCorreo: formData.value.userCorreo || '',
+    userPassword: formData.value.password || '',
+    confirmPassword: formData.value.confirmPassword || '',
+    userWordKey: formData.value.userWordKey || ''
+  };
+  console.log('token:', token);
+  console.log('Datos enviados:', updatedData);
+  console.log('Id:', selectedDocenteId.value);
+
+  try {
+    const response = await docentesStore.updateDocente(token, updatedData, selectedDocenteId.value);
+    if (response.success) {
+      sweetAlert.successAlert('Éxito', 'El docente ha sido actualizado correctamente.');
+      showModal.value = false;
+      loadDocentes();
+    } else {
+      const errorMessages = Object.values(response.errors).flat().map(error => `<p>${error}</p>`).join('');
+      sweetAlert.errorAlert('Error en la actualización', `Por favor revise los campos: ${errorMessages}`, true);
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    sweetAlert.errorAlert('Error', 'Hubo un problema al actualizar el docente.');
+  }
+};
+
+
 
 
 
@@ -201,7 +231,7 @@ onMounted(() => {
           <button type="button" class="btn-close" @click="closeModal"></button>
         </div>
         <div class="modal-body">
-          <form @submit.prevent="submitForm">
+          <form @submit.prevent="saveDocente">
             <div class="mb-3">
               <label for="userNombres" class="form-label">Nombres</label>
               <input v-model="formData.userNombres" type="text" id="userNombres" class="form-control" required />
