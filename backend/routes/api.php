@@ -42,6 +42,8 @@ Route::middleware(['auth:sanctum','role:admin'])->group(function () {
     //Rutas user
     Route::get('/getDocentes',[UserController::class,'getDocentes']);
     Route::post('/postDocente', [UserController::class,'createDocente']);
+    //rutas estudiantes
+    Route::get('/getEstudiantes',[UserController::class,'getEstudiantes']);
 
 });
 Route::middleware(['auth:sanctum'])->group(function () {

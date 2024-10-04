@@ -155,4 +155,9 @@ class UserController extends Controller
             'user' => $user
         ], 201);  // 201 Created
     }
+    public function getEstudiantes(){
+        $users = User::role('student')->paginate(10);
+        return response()->json($users);
+    }
+    
 }

@@ -102,6 +102,24 @@ export const User = defineStore('userStore',{
                 return error;
             }
         },
+        async getEstudiantes(token, page){
+            try {
+                const response = await fetch(`${this.url}/getEstudiantes?page=${page}`,{
+                    method: 'GET',
+                    headers:{
+                        'Content-Type':'application/json',
+                        'Accept': 'application/json',
+                        Authorization: `Bearer ${token}`,
+                    },
+                    credentials:'include',
+                });
+                const data = await response.json()
+                console.log(data);
+                this.docentes = data;
+            } catch (error) {
+                return error;
+            }
+        },
     },
 
 })
