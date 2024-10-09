@@ -135,12 +135,6 @@ const createStudent = async () => {
   }
 };
 
-
-
-
-
-
-
 // Función para actualizar un estudiante
 const updateDocente = async () => {
   checkPasswordMatch();

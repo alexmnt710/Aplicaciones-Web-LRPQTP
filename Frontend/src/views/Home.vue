@@ -106,9 +106,9 @@ onMounted(async () => {
               <div class="col-md-6 d-flex flex-column justify-content-center">
                 <h2>{{ curso.cursoName }}</h2>
                 <p>{{ curso.cursoDescripcion }}</p>
-                <p><strong>Precio:</strong> ${{ curso.cursoValor }}</p>
+                <!-- <p><strong>Precio:</strong> ${{ curso.cursoValor }}</p> -->
                 <p>
-                  <strong>Categoría:</strong> {{ curso.categoria.categoriaName }}
+                  <!-- <strong>Categoría:</strong> {{ curso.categoria.categoriaName }} -->
                   <strong>Dificultad:</strong> {{ curso.nivel.nivelName }} 
                 </p>
                 
@@ -126,7 +126,7 @@ onMounted(async () => {
               <!-- Imagen del curso -->
               <div class="col-md-6">
                 <img
-                  :src="curso.cursoImagen || 'ruta/imagen/por/defecto.jpg'"
+                  :src="curso.categoria.categoriaImagen || 'ruta/imagen/por/defecto.jpg'"
                   class="d-block w-100 img-fluid"
                   alt="Imagen del curso"
                 />

@@ -213,7 +213,8 @@ const deleteCurso = async (cursoId) => {
 onMounted(async () => {
   await loadCursos();
   console.log('Cursos:', cursos.value);
-  await categoriaStore.getCategorias();
+  await categoriaStore.getCategoria();
+  console.log(categoriaStore.categorianormal);
   await categoriaStore.getNiveles();
 });
 </script>
@@ -297,6 +298,7 @@ onMounted(async () => {
                   </option>
                 </select>
               </div>
+            
 
               <div class="mb-3">
                 <label for="cursoValor" class="form-label">Precio</label>
@@ -306,11 +308,13 @@ onMounted(async () => {
                 <label for="cursoRequisito" class="form-label">Requisitos</label>
                 <input v-model="newCurso.cursoRequisito" type="text" id="cursoRequisito" class="form-control">
               </div>
+
+            
               <div class="mb-3">
                 <label for="cursoCategoriaId" class="form-label">Categoría</label>
                 <select v-model="newCurso.cursoCategoriaId" id="cursoCategoriaId" class="form-control" required>
                   <option value="" disabled>Seleccione una categoría</option>
-                  <option v-for="categoria in categoriaStore.categoria" :key="categoria.categoriaId" :value="categoria.categoriaId">
+                  <option v-for="categoria in categoriaStore.categorianormal" :key="categoria.categoriaId" :value="categoria.categoriaId">
                     {{ categoria.categoriaName }}
                   </option>
                 </select>

@@ -5,7 +5,9 @@ export const Categoria = defineStore('categoriaStore',{
             categoria: [],
             nivel: [],
             url: import.meta.env.VITE_API_URL,
+            categorianormal:[],
         }
+
     ),
     actions:{
         async getCategorias(page=1){
@@ -21,6 +23,21 @@ export const Categoria = defineStore('categoriaStore',{
             this.categoria = data;
 
         },
+        // get de categorías sin paginación
+        async getCategoria(){
+            const response = await fetch (`${this.url}/getCategoria`,{
+                method:'GET',
+                headers:{
+                    'Content-Type':'application/json',
+                    'Accept': 'application/json',
+                },
+                credentials:'include',
+            })
+            const data = await response.json()
+            this.categorianormal = data;
+
+        },
+        
         async getNiveles(){
             const response = await fetch (`${this.url}/getNivel`,{
                 method:'GET',

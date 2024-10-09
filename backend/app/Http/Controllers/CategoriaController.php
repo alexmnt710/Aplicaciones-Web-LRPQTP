@@ -20,6 +20,12 @@ class CategoriaController extends Controller
         }
     }
 
+    public function getcategoria(){
+         $categorias = Categoria::all();
+        return response()->json($categorias);
+        
+    }
+
     // Crear una nueva categoría
     public function createCategoria(Request $request){
         $validator = Validator::make($request->all(), [

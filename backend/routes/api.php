@@ -14,6 +14,8 @@ Route::get('/getCategorias/{search?}/',[CategoriaController::class, 'index']);
 Route::get('/getNivel',[CategoriaController::class, 'nivelGet']);
 Route::post('/login', [SesionController::class, 'login'])->middleware('guest:sanctum');
 Route::post('/postUser', [UserController::class,'createUser'])->middleware('guest:sanctum');
+Route::get('/getCategoria',[CategoriaController::class, 'getcategoria']);
+
 
 //ruta para sesion
 Route::post('/', function () {
