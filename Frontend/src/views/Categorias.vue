@@ -151,49 +151,59 @@ const handlePageChange = (page) => {
 
 // Cargar las categorías cuando el componente se monte
 onMounted(() => {
+  const closeLoading = sweetAlert.ShowLoading();
   loadCategorias();
+  closeLoading();
 });
 </script>
 
 <template>
   <Header />
 
-  <div class="container mt-5">
-    <h2>Gestión de Categorías</h2>
+  <div class="crud-container mt-5">
+    <h2 class="crud-title">Gestión de Categorías</h2>
 
     <!-- Botón para abrir el modal de crear categoría -->
-    <div class="mb-3">
-      <button class="btn btn-primary" @click="openCreateModal">Crear Categoría</button>
+    <div class="action-bar">
+      <button class="btn btn-primary" @click="openCreateModal">
+        <i class="bi bi-plus-circle"></i> Crear Categoría
+      </button>
     </div>
 
     <!-- Tabla de categorías -->
-    <table class="table table-bordered">
-      <thead class="thead-dark">
-        <tr>
-          <th>ID</th>
-          <th>Nombre</th>
-          <th>Descripción</th>
-          <th>Imagen</th>
-          <th>Creada en</th>
-          <th>Actualizada en</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="categoria in categorias" :key="categoria.categoriaId">
-          <td>{{ categoria.categoriaId }}</td>
-          <td>{{ categoria.categoriaName }}</td>
-          <td>{{ categoria.categoriaDescripcion }}</td>
-          <td><img :src="categoria.categoriaImagen" alt="Imagen" width="50"></td>
-          <td>{{ categoria.created_at }}</td>
-          <td>{{ categoria.updated_at }}</td>
-          <td>
-            <button class="btn btn-primary btn-sm mx-1" @click="openEditModal(categoria)">Editar</button>
-            <button class="btn btn-danger btn-sm mx-1" @click="deleteCategoria(categoria.categoriaId)">Eliminar</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="table-responsive">
+      <table class="table table-striped table-hover">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Imagen</th>
+            <th>Creada en</th>
+            <th>Actualizada en</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="categoria in categorias" :key="categoria.categoriaId">
+            <td>{{ categoria.categoriaId }}</td>
+            <td>{{ categoria.categoriaName }}</td>
+            <td>{{ categoria.categoriaDescripcion }}</td>
+            <td><img :src="categoria.categoriaImagen" alt="Imagen" class="table-image"></td>
+            <td>{{ categoria.created_at }}</td>
+            <td>{{ categoria.updated_at }}</td>
+            <td>
+              <button class="btn btn-warning btn-sm mx-1" @click="openEditModal(categoria)">
+                <i class="bi bi-pencil"></i> Editar
+              </button>
+              <button class="btn btn-danger btn-sm mx-1" @click="deleteCategoria(categoria.categoriaId)">
+                <i class="bi bi-trash"></i> Eliminar
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
     <!-- Componente de Paginación -->
     <Pagination
@@ -241,9 +251,77 @@ onMounted(() => {
 </template>
 
 <style scoped>
+/* Contenedor principal */
+.crud-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: #f8f9fa; /* Fondo claro */
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Título del CRUD */
+.crud-title {
+  text-align: center;
+  font-size: 2rem;
+  color: #0f3d28;
+  margin-bottom: 2rem;
+}
+
+/* Barra de acciones */
+.action-bar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1.5rem;
+}
+
+/* Tabla */
+.table-responsive {
+  margin-top: 1rem;
+}
+
+.table {
+  background-color: white;
+}
+
 .table th, .table td {
   text-align: center;
   vertical-align: middle;
+  padding: 1rem;
+}
+
+.table th {
+  background-color: #0f3d28;
+  color: white;
+}
+
+.table td {
+  background-color: #f0f7f4;
+}
+
+/* Imágenes de la tabla */
+.table-image {
+  width: 50px;
+  height: auto;
+  border-radius: 5px;
+}
+
+/* Botones */
+.btn-sm {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.9rem;
+}
+
+/* Modal */
+.modal-dialog-scrollable {
+  max-height: 90vh;
+}
+
+.modal-body {
+  overflow-y: auto;
+  max-height: 65vh;
+  padding: 1.5rem;
 }
 
 .modal.show {
@@ -252,5 +330,11 @@ onMounted(() => {
 
 .modal-dialog {
   max-width: 600px;
+}
+
+@media (min-width: 768px) {
+  .modal-dialog {
+    max-width: 600px;
+  }
 }
 </style>

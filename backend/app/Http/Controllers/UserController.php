@@ -30,7 +30,6 @@ class UserController extends Controller
             'userNombres' => 'required',
             'userApellidos' => 'required',
             'userCorreo' => 'required|email',
-            'userWordKey' => 'required'
         ]);
     
         // Verificar si la validación falla
@@ -49,7 +48,6 @@ class UserController extends Controller
         $user->userNombres = $request->userNombres;
         $user->userApellidos = $request->userApellidos;
         $user->userCorreo = $request->userCorreo;
-        $user->userWordKey = $request->userWordKey;
         $user->save();
     
         // Asignar rol al usuario
@@ -69,7 +67,6 @@ class UserController extends Controller
             'userNombres' => 'required',
             'userApellidos' => 'required',
             'userCorreo' => 'required|email',
-            'userWordKey' => 'required'
         ]);
 
         if ($validator->fails()) {
@@ -91,7 +88,6 @@ class UserController extends Controller
         $user->userNombres = $request->userNombres;
         $user->userApellidos = $request->userApellidos;
         $user->userCorreo = $request->userCorreo;
-        $user->userWordKey = $request->userWordKey;
 
         $user->save();
         return response()->json([
@@ -126,7 +122,6 @@ class UserController extends Controller
             'userNombres' => 'required',
             'userApellidos' => 'required',
             'userCorreo' => 'required|email',
-            'userWordKey' => 'required'
         ]);
         if ($validator->fails()) {
             return response()->json([
@@ -142,7 +137,6 @@ class UserController extends Controller
         $user->userNombres = $request->userNombres;
         $user->userApellidos = $request->userApellidos;
         $user->userCorreo = $request->userCorreo;
-        $user->userWordKey = $request->userWordKey;
         $user->save();
     
         // Asignar rol al usuario

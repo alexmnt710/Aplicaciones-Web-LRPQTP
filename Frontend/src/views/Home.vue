@@ -56,8 +56,8 @@ onMounted(async () => {
 <template>
   <Header />
 
-<!-- Gustavin -->
-<section v-if="!sesionStore.sesion" class="cta-section">
+  <!-- Gustavin -->
+  <section v-if="!sesionStore.sesion" class="cta-section">
     <div class="container">
       <div class="row align-items-center">
         <!-- Texto principal -->
@@ -75,9 +75,8 @@ onMounted(async () => {
     </div>
   </section>
 
-
-<!-- carrusel -->
-<div id="carouselExample" class="carousel slide" data-bs-ride="carousel">
+  <!-- Carrusel -->
+  <div id="carouselExample" class="carousel slide" data-bs-ride="carousel">
     <!-- Indicadores de carrusel -->
     <div class="carousel-indicators">
       <button
@@ -106,12 +105,9 @@ onMounted(async () => {
               <div class="col-md-6 d-flex flex-column justify-content-center">
                 <h2>{{ curso.cursoName }}</h2>
                 <p>{{ curso.cursoDescripcion }}</p>
-                <!-- <p><strong>Precio:</strong> ${{ curso.cursoValor }}</p> -->
                 <p>
-                  <!-- <strong>Categoría:</strong> {{ curso.categoria.categoriaName }} -->
                   <strong>Dificultad:</strong> {{ curso.nivel.nivelName }} 
                 </p>
-                
                 <!-- Botón para mostrar requisitos -->
                 <button class="btn btn-custom" @click="mostrarRequisitos(curso.cursoRequisito)">
                   Ver Requisitos
@@ -152,60 +148,126 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-/* Fondo del body que coincide con el header */
-body {
-  background-color: #0f3d28; /* Fondo verde oscuro */
+/* Fondo para la sección superior */
+.cta-section {
+  background-color: #d1e7dd; /* Verde grisáceo claro */
+  padding: 4rem 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 }
 
-/* Carrusel */
-/* Carrusel */
+.cta-section h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #0f3d28; /* Verde oscuro */
+  margin-bottom: 1rem;
+}
+
+.cta-section p {
+  color: #0f3d28;
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+.cta-section img {
+  max-width: 80%;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease-in-out;
+}
+
+.cta-section img:hover {
+  transform: scale(1.05); /* Efecto de zoom al pasar el mouse */
+}
+
+/* Fondo para la sección inferior */
 .carousel-inner {
-  min-height: 400px;
-  background-color: #0f3d28; /* Fondo del carrusel */
+  background-color: #f8f9fa; /* Color de fondo más claro para contraste */
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
 }
 
-.carousel-item {
-  transition: transform 0.6s ease-in-out;
-}
-
+/* Botones de navegación */
 .carousel-control-prev-icon,
 .carousel-control-next-icon {
-  background-color: rgb(2, 2, 2); /* Controles en blanco para contraste */
+  background-color: rgba(0, 0, 0, 0.6); /* Fondo oscuro con opacidad */
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  transition: background-color 0.3s ease;
 }
 
+.carousel-control-prev-icon:hover,
+.carousel-control-next-icon:hover {
+  background-color: rgba(0, 0, 0, 0.8); /* Color más oscuro al hacer hover */
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+}
+
+.carousel-control-prev {
+  left: -10px;
+}
+
+.carousel-control-next {
+  right: -10px;
+}
+
+/* Indicadores del carrusel */
 .carousel-indicators [data-bs-target] {
-  background-color: white; /* Indicadores en blanco */
+  background-color: #333;
+  border-radius: 50%;
+  width: 10px;
+  height: 10px;
+  transition: background-color 0.3s ease;
 }
 
-/* Textos del Carrusel */
+.carousel-indicators .active {
+  background-color: #3ecf8e; /* Indicador activo en verde claro */
+}
+
+/* Textos del carrusel */
 h2 {
-  color: #a4dbac; /* Títulos en verde claro */
+  color: #0f3d28;
   font-size: 1.8rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
 }
 
 p {
-  color: #d3d3d3; /* Texto en gris claro */
-  font-size: 1rem;
+  color: #555;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
 }
 
 p strong {
-  color: #f1f1f1; /* Texto destacado en blanco */
+  color: #0f3d28;
+  font-weight: 600;
 }
 
-/* Botones del carrusel */
+/* Botones */
 .btn {
-  background-color: #3ecf8e; /* Botón verde claro */
+  background-color: #0f3d28;
   color: white;
   padding: 0.75rem 1.5rem;
   border: none;
   border-radius: 5px;
   font-size: 1.1rem;
   margin-top: 0.5rem;
+  transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .btn:hover {
-  background-color: white; /* Hover del botón */
-  color: #0f3d28; /* Texto en verde oscuro al hacer hover */
+  background-color: #3ecf8e; /* Fondo verde claro al hacer hover */
+  color: #0f3d28; /* Texto en verde oscuro */
+  box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.15);
 }
 
 /* Ajuste de las imágenes del carrusel */
@@ -213,69 +275,55 @@ p strong {
   width: 100%;
   height: auto;
   object-fit: cover;
+  border-radius: 10px;
+  transition: transform 0.3s ease-in-out;
 }
 
-/* Texto del CTA (llamada a la acción) */
-.cta-section {
-  background-color: #0f3d28; /* Fondo verde oscuro */
-  padding: 4rem 0;
+.carousel-item img:hover {
+  transform: scale(1.03); /* Pequeño zoom al hacer hover */
 }
 
-.cta-section h1,
-.cta-section p {
-  color: white; /* Texto en blanco para buen contraste */
-}
-
-.cta-disclaimer {
-  font-size: 0.85rem;
-  color: #ccc; /* Texto más claro */
-}
-
-/* Imagen dentro del carrusel */
-.carousel-item img {
-  width: 100%;
-  height: auto;
-  object-fit: cover;
-}
-
-/* Diseño responsivo para pantallas pequeñas */
+/* Responsividad */
 @media (max-width: 768px) {
-  .carousel-inner {
-    min-height: 300px;
+  .cta-section {
+    padding: 2rem 0;
   }
 
   .cta-section h1 {
-    font-size: 1.8rem;
+    font-size: 2rem;
   }
 
   .cta-section p {
     font-size: 1rem;
   }
 
-  .cta-button {
-    font-size: 1rem;
-    padding: 0.5rem 1rem;
+  .carousel-inner {
+    min-height: 300px;
   }
 
   .carousel-item img {
     max-height: 250px;
   }
 
-  /* Ajustar las columnas para que se apilen en pantallas pequeñas */
-  .cta-section .row,
   .carousel .row {
     flex-direction: column;
     text-align: center;
   }
 
   .col-md-6 {
-    width: 100%; /* Ocupa el 100% en pantallas pequeñas */
+    width: 100%;
   }
 
-  .carousel-indicators {
-    bottom: -30px; /* Ajusta la posición de los indicadores */
+  .carousel-control-prev,
+  .carousel-control-next {
+    top: auto;
+    bottom: 10px;
   }
 }
 </style>
+
+
+
+
 
 

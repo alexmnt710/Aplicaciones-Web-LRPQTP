@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('userNombres'); // Crea una columna 'userNombres' de tipo VARCHAR para almacenar los nombres del usuario.
             $table->string('userApellidos'); // Crea una columna 'userApellidos' de tipo VARCHAR para almacenar los apellidos del usuario.
             $table->string('userCorreo'); // Crea una columna 'userCorreo' de tipo VARCHAR para almacenar el correo electrónico del usuario.
-            $table->string('userWordKey'); // Crea una columna 'userWordKey' de tipo VARCHAR para almacenar la palabra clave del usuario.   
+            $table->string('userWordKey')->nullable(); // Crea una columna 'userWordKey' de tipo VARCHAR para almacenar la palabra clave del usuario.   
             $table->timestamps(); // Crea dos columnas de tipo TIMESTAMP, 'created_at' y 'updated_at', para almacenar las marcas de tiempo de creación y actualización del registro.            
         });
         Schema::create('sessions', function (Blueprint $table) {

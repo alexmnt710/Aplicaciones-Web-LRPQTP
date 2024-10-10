@@ -21,6 +21,9 @@ onMounted(async () => {
   try {
     // Ejecuta las llamadas en paralelo
     await Promise.all([sesionStore.getSesion(), categoriaStore.getCategorias(),cursoStore.getCursosHome()]);
+    if(sesionStore.rol === 'admin'){
+      router.push({ name: 'homead' });
+    }
   } catch (error) {
     sweetAlert.errorAlert('Error', 'Error al obtener la sesión');
     console.error(error);
@@ -32,7 +35,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="app" style="height: 100vh">
+  <div class="app" style="height: 100vh; background-color: aliceblue;">
     <!-- Mostrar RouterView solo cuando isChildMounted sea true -->
     <RouterView v-if="isChildMounted" />
   </div>

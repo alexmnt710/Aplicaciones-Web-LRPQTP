@@ -46,92 +46,154 @@ const goToRegister = () => {
 </script>
 
 <template>
-    <Header></Header>
-    <div class="login-container">
-      <div class="login-box">
-        <h2>Inicia sesión en tu cuenta</h2>
+  <Header></Header>
+  <div class="login-container">
+    <div class="login-box animate-fade-in">
+      <h2>Inicia sesión en tu cuenta</h2>
   
-        <form @submit.prevent="login">
-          <div class="form-group">
-            <label for="userName">Nombre de usuario</label>
-            <input type="text" id="userName" v-model="formData.userName" required />
+      <form @submit.prevent="login">
+        <div class="form-group">
+          <input type="text" id="userName" v-model="formData.userName" placeholder="Nombre de usuario" required />
+        </div>
+  
+        <div class="form-group">
+          <div class="password-wrapper">
+            <input
+              :type="isPasswordVisible ? 'text' : 'password'"
+              id="password"
+              v-model="formData.password"
+              placeholder="Contraseña"
+              required
+            />
+            <button type="button" @click="togglePasswordVisibility" aria-label="Toggle password visibility">
+              <i :class="isPasswordVisible ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
+            </button>
           </div>
+        </div>
   
-          <div class="form-group">
-            <label for="password">Contraseña</label>
-            <div class="password-wrapper">
-              <input
-                :type="isPasswordVisible ? 'text' : 'password'"
-                id="password"
-                v-model="formData.password"
-                required
-              />
-              <button type="button" @click="togglePasswordVisibility" aria-label="Toggle password visibility">
-                <i :class="isPasswordVisible ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
-              </button>
-            </div>
-          </div>
+        <button type="submit" class="login-button">Iniciar sesión</button>
+      </form>
   
-          <button type="submit" class="login-button">Iniciar sesión</button>
-        </form>
-  
-        <a href="#" class="forgot-password">He olvidado la contraseña</a>
-        <p class="has-no-account">
-            ¿No tienes una cuenta? 
-            <a @click="goToRegister">Regístrate</a>
-        </p>
-      </div>
-  
-      <div class="login-image">
-        <img src="/src/assets/img/gustavinlogin.png" class="cta-image img-fluid" />
-      </div>
+      <a href="#" class="forgot-password">He olvidado la contraseña</a>
+      <p class="has-no-account">
+        ¿No tienes una cuenta? 
+        <a @click="goToRegister">Regístrate</a>
+      </p>
     </div>
-    <Footer></Footer>
+
+    <!-- Sección inspiracional sobre la educación -->
+    <div class="education-message animate-slide-up">
+      <h3>La educación es la clave del éxito</h3>
+      <p>
+        La educación transforma vidas y abre las puertas hacia un futuro brillante. Al igual que nuestros estudiantes de élite, tú también puedes alcanzar la excelencia profesional con el conocimiento y las habilidades correctas. ¡El primer paso empieza aquí!
+      </p>
+      <p>
+        <strong>Ejemplo:</strong> Mira cómo nuestros estudiantes, como el profesional que ves en la imagen, han alcanzado sus metas a través de nuestra plataforma educativa. Tú puedes ser el próximo.
+      </p>
+    </div>
+
+    <div class="login-image animate-fade-in-right">
+      <img src="/src/assets/img/gustavinlogin.png" class="cta-image img-fluid" />
+    </div>
+  </div>
+  <Footer></Footer>
 </template>
 
 <style scoped>
+/* Animaciones */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInRight {
+  from {
+    transform: translateX(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Aplicando las animaciones */
+.animate-fade-in {
+  animation: fadeIn 1s ease-in-out;
+}
+
+.animate-slide-up {
+  animation: slideUp 1.2s ease-out;
+}
+
+.animate-fade-in-right {
+  animation: fadeInRight 1.5s ease-in-out;
+}
+
 /* Contenedor principal del login */
 .login-container {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background-color: #0f3d28; /* Fondo verde oscuro */
+  background: linear-gradient(90deg, #0f3d28, #0d0f0c); /* Fondo con degradado */
   padding: 2rem;
+  gap: 4rem; /* Aumenta el espacio entre el formulario y la imagen */
 }
 
 .login-box {
   background-color: white;
-  padding: 2rem;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 2rem 2.5rem;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
   width: 400px;
+  max-width: 100%;
 }
 
+/* Título del formulario */
 .login-box h2 {
+  text-align: center;
   margin-bottom: 2rem;
   font-size: 1.8rem;
-  color: #0f3d28; /* Color oscuro del header */
+  color: #0f3d28;
 }
 
+/* Agrupación de los campos */
 .form-group {
   margin-bottom: 1.5rem;
 }
 
-.form-group label {
-  display: block;
-  margin-bottom: 0.5rem;
-  color: #0f3d28;
-}
-
 .form-group input {
   width: 100%;
-  padding: 0.7rem;
+  padding: 0.8rem;
   border: 1px solid #ccc;
-  border-radius: 5px;
+  border-radius: 10px;
   font-size: 1rem;
+  background-color: #f8f9fa;
 }
 
+.form-group input:focus {
+  border-color: #3ecf8e; /* Verde claro al hacer focus */
+  outline: none;
+  box-shadow: 0 0 5px rgba(62, 207, 142, 0.4);
+}
+
+/* Ajuste de la caja de contraseña */
 .password-wrapper {
   position: relative;
 }
@@ -149,8 +211,8 @@ const goToRegister = () => {
 
 .login-button {
   width: 100%;
-  padding: 0.8rem;
-  background-color: #3ecf8e; /* Color verde del header */
+  padding: 0.9rem;
+  background-color: #3ecf8e;
   color: white;
   border: none;
   border-radius: 25px;
@@ -163,6 +225,7 @@ const goToRegister = () => {
   background-color: #35b67b; /* Hover del botón */
 }
 
+/* Texto olvidó contraseña */
 .forgot-password {
   display: block;
   margin-top: 1rem;
@@ -170,6 +233,7 @@ const goToRegister = () => {
   text-align: center;
 }
 
+/* Texto para quienes no tienen cuenta */
 .has-no-account {
   text-align: center;
   margin-top: 1rem;
@@ -181,15 +245,58 @@ const goToRegister = () => {
   cursor: pointer;
 }
 
+/* Sección con mensaje sobre la importancia de la educación */
+.education-message {
+  max-width: 350px;
+  text-align: center;
+  color: white;
+}
+
+.education-message h3 {
+  font-size: 1.6rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.education-message p {
+  font-size: 1.1rem;
+  margin-bottom: 0.8rem;
+}
+
+/* Imagen en la parte derecha */
 .login-image {
-  width: 50%;
+  max-width: 300px; /* Ajustar el tamaño máximo de la imagen */
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-shrink: 0; /* Evitar que la imagen se reduzca demasiado */
 }
 
 .login-image img {
   width: 100%;
-  max-width: 200px;
+  max-width: 250px;
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+  .login-container {
+    flex-direction: column;
+    padding: 2rem;
+    text-align: center;
+  }
+
+  .login-image {
+    display: none; /* Ocultar imagen en pantallas pequeñas */
+  }
+
+  .login-box {
+    width: 100%;
+    max-width: 90%;
+  }
+
+  .education-message {
+    display: none; /* Ocultar la sección inspiracional en pantallas pequeñas */
+  }
 }
 </style>
+

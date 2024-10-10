@@ -50,10 +50,12 @@ const irAVistaCurso = (cursoId) => {
 }
 
 onMounted(async () => {
+  const closeLoading = sweetAlert.ShowLoading();
   await loadCursos();
   console.log('Cursos:', cursos.value);
   await categoriaStore.getCategoria();
   console.log(categoriaStore.categorianormal);
+  closeLoading();
 });
 </script>
 <template>

@@ -69,38 +69,37 @@ const goToLogin = () => {
 <template>
   <Header></Header>
   <div class="register-container">
-    <div class="register-box">
-      <h2>Regístrate</h2>
-
+    <div class="register-left animate-slide-in-left">
+      <h1>¡Únete a nuestra comunidad!</h1>
+      <p>Accede a más de 6,000 cursos en línea. Es gratis y fácil de empezar.</p>
+    </div>
+    <div class="register-box animate-slide-in-right">
+      <h2>Crea tu cuenta</h2>
       <form @submit.prevent="register">
         <div class="form-group-inline">
           <div class="form-group">
-            <label for="userNombres">Nombres</label>
-            <input type="text" id="userNombres" v-model="formData.userNombres" required />
+            <input type="text" id="userNombres" v-model="formData.userNombres" placeholder="Nombres" required />
           </div>
           <div class="form-group">
-            <label for="userApellidos">Apellidos</label>
-            <input type="text" id="userApellidos" v-model="formData.userApellidos" required />
+            <input type="text" id="userApellidos" v-model="formData.userApellidos" placeholder="Apellidos" required />
           </div>
         </div>
 
         <div class="form-group">
-          <label for="userName">Nombre de usuario</label>
-          <input type="text" id="userName" v-model="formData.userName" required />
+          <input type="text" id="userName" v-model="formData.userName" placeholder="Nombre de usuario" required />
         </div>
 
         <div class="form-group">
-          <label for="userCorreo">Correo electrónico</label>
-          <input type="email" id="userCorreo" v-model="formData.userCorreo" required />
+          <input type="email" id="userCorreo" v-model="formData.userCorreo" placeholder="Correo electrónico" required />
         </div>
 
         <div class="form-group">
-          <label for="password">Contraseña</label>
           <div class="password-wrapper">
             <input
               :type="isPasswordVisible ? 'text' : 'password'"
               id="password"
               v-model="formData.password"
+              placeholder="Contraseña"
               required
             />
             <button type="button" @click="togglePasswordVisibility" aria-label="Toggle password visibility">
@@ -110,23 +109,18 @@ const goToLogin = () => {
         </div>
 
         <div class="form-group">
-          <label for="confirmPassword">Confirmar contraseña</label>
           <div class="password-wrapper">
             <input
               :type="isConfirmPasswordVisible ? 'text' : 'password'"
               id="confirmPassword"
               v-model="formData.confirmPassword"
+              placeholder="Confirmar contraseña"
               required
             />
             <button type="button" @click="toggleConfirmPasswordVisibility" aria-label="Toggle confirm password visibility">
               <i :class="isConfirmPasswordVisible ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
             </button>
           </div>
-        </div>
-
-        <div class="form-group">
-          <label for="userWordKey">Palabra clave</label>
-          <input type="text" id="userWordKey" v-model="formData.userWordKey" />
         </div>
 
         <button type="submit" class="register-button">Crear cuenta</button>
@@ -142,57 +136,113 @@ const goToLogin = () => {
 </template>
 
 <style scoped>
+/* Animaciones */
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-in-left {
+  animation: slideInLeft 1s ease-out;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 1s ease-out;
+}
+
 /* Contenedor principal del registro */
 .register-container {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background-color: #0f3d28; /* Fondo verde oscuro */
+  background: linear-gradient(90deg, #0f3d28, #0d0f0c); /* Degradado */
   padding: 2rem;
+  gap: 3.5rem; /* Aumentar el espacio entre los elementos */
 }
 
+/* Panel izquierdo con el mensaje */
+.register-left {
+  flex: 1;
+  color: white;
+  padding: 2rem;
+  text-align: center;
+  max-width: 450px; /* Ancho máximo del texto */
+}
+
+.register-left h1 {
+  font-size: 2.8rem;
+  margin-bottom: 1rem;
+  color: #3ecf8e; /* Verde claro */
+}
+
+.register-left p {
+  font-size: 1.2rem;
+  color: #f0f0f0;
+}
+
+/* Caja de registro */
 .register-box {
   background-color: white;
-  padding: 2rem;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 2rem 2.5rem;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
   width: 400px;
+  max-width: 100%;
 }
 
+/* Título del formulario */
 .register-box h2 {
+  text-align: center;
   margin-bottom: 2rem;
   font-size: 1.8rem;
   color: #0f3d28;
 }
 
+/* Agrupación de los campos */
 .form-group {
   margin-bottom: 1.5rem;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 0.5rem;
-  color: #0f3d28;
 }
 
 .form-group-inline {
   display: flex;
   justify-content: space-between;
-}
-
-.form-group-inline .form-group {
-  width: 48%;
+  gap: 1rem;
 }
 
 .form-group input {
   width: 100%;
-  padding: 0.7rem;
+  padding: 0.8rem;
   border: 1px solid #ccc;
-  border-radius: 5px;
+  border-radius: 10px;
   font-size: 1rem;
+  background-color: #f8f9fa;
 }
 
+.form-group input:focus {
+  border-color: #3ecf8e; /* Verde claro al hacer focus */
+  outline: none;
+  box-shadow: 0 0 5px rgba(62, 207, 142, 0.4);
+}
+
+/* Ajuste de la caja de contraseña */
 .password-wrapper {
   position: relative;
 }
@@ -210,7 +260,7 @@ const goToLogin = () => {
 
 .register-button {
   width: 100%;
-  padding: 0.8rem;
+  padding: 0.9rem;
   background-color: #3ecf8e;
   color: white;
   border: none;
@@ -226,7 +276,7 @@ const goToLogin = () => {
 
 .has-account {
   text-align: center;
-  margin-top: 1rem;
+  margin-top: 1.5rem;
   color: #0f3d28;
 }
 
@@ -234,4 +284,23 @@ const goToLogin = () => {
   color: #3ecf8e;
   cursor: pointer;
 }
+
+/* Responsividad */
+@media (max-width: 768px) {
+  .register-container {
+    flex-direction: column;
+  }
+
+  .register-left {
+    display: none; /* Ocultar panel izquierdo en pantallas pequeñas */
+  }
+
+  .register-box {
+    width: 100%;
+    max-width: 90%;
+  }
+}
 </style>
+
+
+

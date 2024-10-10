@@ -19,7 +19,7 @@ class CategoriaFactory extends Factory
         return [
             'categoriaName' => $this->faker->word(),  // Genera un nombre aleatorio de una palabra
             'categoriaDescripcion' => $this->faker->sentence(),  // Genera una descripción aleatoria de una oración
-            'categoriaImagen' => $this->faker->imageUrl(),  // Genera una URL de imagen aleatoria
+            'categoriaImagen' => 'https://ecuador.unir.net/wp-content/uploads/sites/8/2022/06/diverse-office-enthusiastic-white-it-programmer-working-on-desktop-picture-id1354205065.jpg',  // Genera una URL de imagen aleatoria
         ];
     }
 }

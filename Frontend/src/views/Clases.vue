@@ -33,6 +33,7 @@ const mostrarRequisitos = (cursoRequisito) => {
 
 // Poner algo hasta que cargue
 onMounted(async () => {
+  const closeLoading = sweetAlert.ShowLoading();
   const cursoId = route.params.claseId; // Obtener 'claseId' de los parámetros de la ruta
   try {
     await categoriaStore.getCategoria();
@@ -53,6 +54,7 @@ onMounted(async () => {
   } catch (error) {
     console.error('Error al cargar el curso:', error);
   }
+  closeLoading();
 });
 </script>
 

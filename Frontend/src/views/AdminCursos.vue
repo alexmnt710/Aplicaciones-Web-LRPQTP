@@ -211,29 +211,33 @@ const deleteCurso = async (cursoId) => {
 };
 
 onMounted(async () => {
+  const closeLoading = sweetAlert.ShowLoading();
   await loadCursos();
   console.log('Cursos:', cursos.value);
   await categoriaStore.getCategoria();
   console.log(categoriaStore.categorianormal);
   await categoriaStore.getNiveles();
+  closeLoading();
 });
 </script>
 
 <template>
   <Header />
 
-  <div class="container-fluid mt-5">
-    <h2 class="text-center">Gestión de Cursos</h2>
+  <div class="crud-container">
+    <h2 class="crud-title">Gestión de Cursos</h2>
 
-    <div class="d-flex justify-content-end mb-3">
-      <button class="btn btn-primary" @click="openCreateModal">Crear Curso</button>
+    <div class="action-bar">
+      <button class="btn btn-primary" @click="openCreateModal">
+        <i class="bi bi-plus-circle"></i> Crear Curso
+      </button>
     </div>
 
     <div class="table-responsive">
-      <table class="table table-bordered">
-        <thead class="thead-dark">
+      <table class="table table-striped table-hover">
+        <thead>
           <tr>
-            <th>Id</th>
+            <th>ID</th>
             <th>Nombre</th>
             <th>Descripción</th>
             <th>Precio</th>
@@ -251,7 +255,7 @@ onMounted(async () => {
             <td>{{ curso.cursoCategoriaId }}</td>
             <td>{{ curso.createdBy }}</td>
             <td>
-              <button class="btn btn-primary btn-sm" @click="openEditModal(curso)">
+              <button class="btn btn-warning btn-sm" @click="openEditModal(curso)">
                 <i class="bi bi-pencil"></i> Editar
               </button>
               <button class="btn btn-danger btn-sm" @click="deleteCurso(curso.cursoId)">
@@ -298,18 +302,17 @@ onMounted(async () => {
                   </option>
                 </select>
               </div>
-            
 
               <div class="mb-3">
                 <label for="cursoValor" class="form-label">Precio</label>
                 <input v-model="newCurso.cursoValor" type="number" id="cursoValor" class="form-control" required>
               </div>
+
               <div class="mb-3">
                 <label for="cursoRequisito" class="form-label">Requisitos</label>
                 <input v-model="newCurso.cursoRequisito" type="text" id="cursoRequisito" class="form-control">
               </div>
 
-            
               <div class="mb-3">
                 <label for="cursoCategoriaId" class="form-label">Categoría</label>
                 <select v-model="newCurso.cursoCategoriaId" id="cursoCategoriaId" class="form-control" required>
@@ -354,15 +357,62 @@ onMounted(async () => {
 </template>
 
 <style scoped>
+/* Contenedor principal */
+.crud-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: #f8f9fa; /* Fondo más claro para la sección del CRUD */
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Título del CRUD */
+.crud-title {
+  text-align: center;
+  font-size: 2rem;
+  color: #0f3d28;
+  margin-bottom: 2rem;
+}
+
+/* Barra de acciones */
+.action-bar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1.5rem;
+}
+
+/* Tabla */
 .table-responsive {
   margin-top: 1rem;
+}
+
+.table {
+  background-color: white;
 }
 
 .table th, .table td {
   text-align: center;
   vertical-align: middle;
+  padding: 1rem;
 }
 
+.table th {
+  background-color: #0f3d28;
+  color: white;
+}
+
+.table td {
+  background-color: #f0f7f4;
+}
+
+/* Botones */
+.btn-sm {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.9rem;
+}
+
+/* Modal */
 .modal-dialog-scrollable {
   max-height: 90vh;
 }
@@ -378,7 +428,7 @@ onMounted(async () => {
 }
 
 .modal-dialog {
-  max-width: 100%;
+  max-width: 600px;
 }
 
 @media (min-width: 768px) {

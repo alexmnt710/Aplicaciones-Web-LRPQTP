@@ -30,24 +30,12 @@ const handleLogout = async () => {
     <nav class="nav-links" :class="{ 'mobile-menu': isMobileMenuOpen }">
       <ul>
         <li>
-          <router-link :to="{ name: 'Home' }"><i class="bi bi-house"></i> Home</router-link>
+          <router-link :to="{ name: 'Home' }"><i class="bi bi-house"></i>Home</router-link>
         </li>
         <li v-if="sesionStore.rol === 'student' || sesionStore.sesion == false">
           <router-link :to="{ name: 'Cursos' }"><i class="bi bi-book"></i> Cursos</router-link>
         </li>
-        <li v-else-if="sesionStore.rol === 'admin' || sesionStore.rol === 'teacher'">
-          <router-link :to="{ name: 'AdminCursos' }"><i class="bi bi-bookmarks"></i> Cursos</router-link>
-        </li>
-        <li v-if="sesionStore.rol === 'admin'">
-          <router-link :to="{ name: 'Docentes' }"><i class="bi bi-person"></i> Docentes</router-link>
-        </li>
-        <li v-if="sesionStore.rol === 'admin'">
-          <router-link :to="{ name: 'Categorias' }"><i class="bi bi-person"></i> Categorias</router-link>
-        </li>
-        <li v-if="sesionStore.rol === 'admin'">
-          <router-link :to="{ name: 'Usuarios' }"><i class="bi bi-person-lines-fill"></i> Usuarios</router-link>
-        </li>
-        <li>        
+        <li v-if="sesionStore.sesion == true && sesionStore.rol !== 'admin'">        
           <router-link :to="{ name: 'Perfil' }"><i class="bi bi-person-circle"></i> Perfil</router-link>
         </li>
       </ul>
@@ -81,6 +69,7 @@ const handleLogout = async () => {
   background: linear-gradient(90deg, #0f3d28, #0d0f0c); 
   color: white;
   position: relative;
+  z-index: 100;
 }
 
 .logo h1 {
@@ -103,14 +92,22 @@ const handleLogout = async () => {
   font-weight: 500;
   display: flex;
   align-items: center;
+  transition: color 0.3s ease-in-out;
 }
 
 .nav-links ul li a i {
   margin-right: 0.5rem; /* Espacio entre el icono y el texto */
 }
 
-.nav-links ul li a:hover {
-  text-decoration: underline;
+.nav-links ul li:hover {
+  background-color: #3ecf8e; /* Fondo verde brillante al hacer hover */
+  color: white;
+  border-radius: 5px;
+}
+
+.nav-links ul li {
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
 }
 
 .login-button {
@@ -119,16 +116,22 @@ const handleLogout = async () => {
 }
 
 .login-button button {
-  background-color: white;
-  color: #0d0f0c;
+  background-color: transparent;
+  color: #f0f0f0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   border: none;
   padding: 0.5rem 1rem;
-  border-radius: 25px;
+  border-radius: 5px;
   font-weight: bold;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
   display: flex;
   align-items: center;
+}
+
+.login-button a {
+  text-decoration: none;
+  color: #f0f0f0;
 }
 
 .login-button button i {
@@ -136,7 +139,9 @@ const handleLogout = async () => {
 }
 
 .login-button button:hover {
-  background-color: #f0f0f0;
+  background-color: #3ecf8e; /* Color de fondo más brillante */
+  color: #0f3d28;
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3); /* Sombra más pronunciada en hover */
 }
 
 /* Icono para móviles */
