@@ -8,31 +8,52 @@ use Illuminate\Support\Facades\Validator;
 
 class CursoController extends Controller
 {
-    //
-    public function index(Request $request, $search = null){
+    // Obtener lista de cursos con búsqueda opcional o por categoría
+    public function index(Request $request, $search = null)
+    {
         try {
-            if($search){
-                $cursos = Curso::where('cursoName','like','%'.$search.'%')->paginate(10);
-                return response()->json($cursos);
-            }else if($request->has('categoriaId')){
-                $cursos = Curso::where('cursoCategoriaId',$request->categoriaId)->paginate(10);
-                return response()->json($cursos);
-            }else{
+            if ($search) {
+                // Buscar cursos cuyo nombre coincida con el término de búsqueda
+                $cursos = Curso::where('cursoName', 'like', '%' . $search . '%')->paginate(10);
+            } else if ($request->has('categoriaId')) {
+                // Buscar cursos por ID de categoría
+                $cursos = Curso::where('cursoCategoriaId', $request->categoriaId)->paginate(10);
+            } else {
+                // Obtener todos los cursos paginados
                 $cursos = Curso::paginate(10);
-                return response()->json($cursos);
             }
-        }catch(\Exception $e){
+            return response()->json($cursos);
+        } catch (\Exception $e) {
+            // Manejar errores y devolver respuesta con mensaje de error
             return response()->json([
                 'success' => false,
                 'message' => 'Error al obtener los cursos',
                 'error' => $e->getMessage()
             ], 500);
-
         }
-        
     }
-    public function createCurso(Request $request){
-        $validator = Validator::make($request->all(),[
+
+    // Obtener cursos por ID de categoría
+    public function cursosCategoria($id)
+    {
+        try {
+            $cursos = Curso::where('cursoCategoriaId', $id)->paginate(10);
+            return response()->json($cursos);
+        } catch (\Exception $e) {
+            // Manejar errores y devolver respuesta con mensaje de error
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al obtener los cursos',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    // Crear un nuevo curso
+    public function createCurso(Request $request)
+    {
+        // Validar los datos recibidos
+        $validator = Validator::make($request->all(), [
             'cursoName' => 'required',
             'cursoDescripcion' => 'required',
             'cursoNivelId' => 'required',
@@ -42,13 +63,17 @@ class CursoController extends Controller
             'createdBy' => 'required',
             'cursoCategoriaId' => 'required'
         ]);
-        if($validator->fails()){
+
+        // Si la validación falla, devolver errores
+        if ($validator->fails()) {
             return response()->json([
                 'success' => false,
                 'message' => 'Por favor revise los campos',
                 'errors' => $validator->errors()
             ], 422);
         }
+
+        // Crear y guardar el nuevo curso
         $curso = new Curso();
         $curso->cursoName = $request->cursoName;
         $curso->cursoDescripcion = $request->cursoDescripcion;
@@ -59,14 +84,18 @@ class CursoController extends Controller
         $curso->createdBy = $request->createdBy;
         $curso->cursoCategoriaId = $request->cursoCategoriaId;
         $curso->save();
+
         return response()->json([
             'success' => true,
             'message' => 'Curso creado exitosamente'
         ]);
-
     }
-    public function updateCurso(Request $request, $id){
-        $validator = Validator::make($request->all(),[
+
+    // Actualizar un curso existente
+    public function updateCurso(Request $request, $id)
+    {
+        // Validar los datos recibidos
+        $validator = Validator::make($request->all(), [
             'cursoName' => 'required',
             'cursoDescripcion' => 'required',
             'cursoNivelId' => 'required',
@@ -75,15 +104,20 @@ class CursoController extends Controller
             'cursoContenido' => 'required',
             'cursoCategoriaId' => 'required'
         ]);
-        if($validator->fails()){
+
+        // Si la validación falla, devolver errores
+        if ($validator->fails()) {
             return response()->json([
                 'success' => false,
                 'message' => 'Por favor revise los campos',
                 'errors' => $validator->errors()
             ], 422);
         }
+
+        // Buscar el curso por ID
         $curso = Curso::find($id);
-        if($curso){
+        if ($curso) {
+            // Actualizar los datos del curso
             $curso->cursoName = $request->cursoName;
             $curso->cursoDescripcion = $request->cursoDescripcion;
             $curso->cursoNivelId = $request->cursoNivelId;
@@ -98,51 +132,56 @@ class CursoController extends Controller
                 'message' => 'Curso actualizado exitosamente'
             ]);
         }
+        // Devolver error si el curso no existe
         return response()->json([
             'success' => false,
             'message' => 'Curso no encontrado'
         ], 404);
     }
-    public function deleteCurso($id){
+
+    // Eliminar un curso
+    public function deleteCurso($id)
+    {
+        // Buscar el curso por ID
         $curso = Curso::find($id);
-        if($curso){
+        if ($curso) {
+            // Eliminar el curso si existe
             $curso->delete();
             return response()->json([
                 'success' => true,
                 'message' => 'Curso eliminado exitosamente'
             ]);
         }
+        // Devolver error si el curso no existe
         return response()->json([
             'success' => false,
             'message' => 'Curso no encontrado'
         ], 404);
     }
 
+    // Obtener información de un curso o los últimos 10 cursos creados
     public function home($id = null)
     {
         try {
             if ($id) {
-
+                // Obtener un curso específico con su categoría y nivel
                 $curso = Curso::with([
-                    'categoria:categoriaId,categoriaName,categoriaImagen', // Trae solo categoriaId y categoriaName de la tabla categorías
+                    'categoria:categoriaId,categoriaName,categoriaImagen', // Trae solo categoriaId, categoriaName y categoriaImagen de la tabla categorías
                     'nivel:nivelId,nivelName' // Trae solo nivelId y nivelName de la tabla niveles
-                ])
-                ->find($id);
-        
+                ])->find($id);
+
                 return response()->json($curso);
-                
-            }else{
+            } else {
+                // Obtener los últimos 10 cursos creados con su categoría y nivel
                 $cursos = Curso::with([
-                    'categoria:categoriaId,categoriaName,categoriaImagen', // Trae solo categoriaId y categoriaName de la tabla categorías
+                    'categoria:categoriaId,categoriaName,categoriaImagen', // Trae solo categoriaId, categoriaName y categoriaImagen de la tabla categorías
                     'nivel:nivelId,nivelName' // Trae solo nivelId y nivelName de la tabla niveles
-                ])
-                ->latest()
-                ->take(10)
-                ->get();
-        
+                ])->latest()->take(10)->get();
+
                 return response()->json($cursos);
             }
         } catch (\Exception $e) {
+            // Manejar errores y devolver respuesta con mensaje de error
             return response()->json([
                 'success' => false,
                 'message' => 'Error al obtener los cursos',

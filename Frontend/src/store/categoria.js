@@ -37,7 +37,19 @@ export const Categoria = defineStore('categoriaStore',{
             this.categorianormal = data;
 
         },
-        
+        //get categorias para el header
+        async getCategoriasHeader(){
+            const response = await fetch (`${this.url}/getCategoriasHeader`,{
+                method:'GET',
+                headers:{
+                    'Content-Type':'application/json',
+                    'Accept': 'application/json',
+                },
+                credentials:'include',
+            })
+            const data = await response.json()
+            this.categorianormal = data;
+        },
         async getNiveles(){
             const response = await fetch (`${this.url}/getNivel`,{
                 method:'GET',

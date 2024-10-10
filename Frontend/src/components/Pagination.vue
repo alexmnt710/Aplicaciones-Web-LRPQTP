@@ -1,6 +1,5 @@
 <!-- src/components/Pagination.vue -->
 <script setup>
-import {  defineEmits } from 'vue';
 
 const props = defineProps({
   currentPage: Number,

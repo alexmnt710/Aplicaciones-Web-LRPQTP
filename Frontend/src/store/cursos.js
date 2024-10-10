@@ -57,6 +57,24 @@ export const Cursos = defineStore('cursoStore',{
             const data = await response.json()
             this.cursos = data
         },
+        async getCursosCategorizados(page, id){
+          console.log('id', id);
+          try{
+            const response = await fetch (`${this.url}/getCursosC/${id}?page=${page}`,{
+              //&search=${search}
+              method:'GET',
+              headers:{
+                  'Content-Type':'application/json',
+                  'Accept': 'application/json',
+              },
+              credentials:'include',
+          })
+          const data = await response.json()
+          this.cursos = data.data
+          }catch(error){
+            console.error('Error fetching courses:', error);
+          }
+        },
         async crearCurso(token, formData) {
             try {
               console.log(formData);
@@ -122,8 +140,26 @@ export const Cursos = defineStore('cursoStore',{
               throw error;
             }
           },
+          async inscripcion(token, formData) {
+            try {
+              const response = await fetch(`${this.url}/inscripcion`, {
+                method: 'POST',
+                headers: {
+                  'Accept': 'application/json',
+                  Authorization: `Bearer ${token}`,
+                },
+                credentials: 'include',
+                body: JSON.stringify(formData),
+              });
           
-               
+              const data = await response.json();
+              console.log(data);
+              return data;
+            } catch (error) {
+              console.error('Error enrolling in course:', error);
+              throw error;
+            }
+          }    
     },
     
 })

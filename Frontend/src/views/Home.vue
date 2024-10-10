@@ -6,7 +6,7 @@ import { Cursos } from '../store/cursos';
 import { sweetalert } from '../composables/sweetAlert';
 import { useRouter } from 'vue-router';
 import { Sesion } from '../store/sesion';
-import Homead from './Homead.vue';
+
 
 const sweetAlert = sweetalert(); 
 const cursoStore = Cursos();

@@ -2,13 +2,18 @@
 import Header from '../components/Public/header.vue';
 import Footer from '../components/Public/footer.vue';
 import { Cursos } from '../store/cursos';
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { Sesion } from '../store/sesion';
 import { Categoria } from '../store/categoria';
 import Pagination from '../components/Pagination.vue';
-import { useRouter } from 'vue-router';
+import { sweetalert } from '../composables/sweetAlert';
+import { useRouter, useRoute } from 'vue-router';
 
-const router = useRouter();  
+
+
+const router = useRouter();
+const route = useRoute();  
+const sweetAlert = sweetalert();
 const categoriaStore = Categoria();
 const sesionStore = Sesion();
 const cursoStore = Cursos();
@@ -19,11 +24,20 @@ const paginationData = ref({
   prev_page_url: null,
   next_page_url: null
 });
+const categoriaId = ref(route.params.categoriaId);
+
+watch(() => route.params.categoriaId, async (newCategoriaId) => {
+  const closeLoading = sweetAlert.ShowLoading();
+  categoriaId.value = newCategoriaId;
+  await loadCursos(null, categoriaId.value);
+  closeLoading();
+});
 
 // Función para cargar cursos
-const loadCursos = async (pageUrl = null) => {
-  await cursoStore.getCursos(sesionStore.token, pageUrl);
-  cursos.value = cursoStore.cursos.data;
+const loadCursos = async (pageUrl = null, id) => {
+  console.log('loadCursos', pageUrl, id);
+  await cursoStore.getCursosCategorizados(pageUrl, id);
+  cursos.value = cursoStore.cursos;
   paginationData.value = {
     current_page: cursoStore.cursos.current_page,
     last_page: cursoStore.cursos.last_page,
@@ -49,16 +63,40 @@ const irAVistaCurso = (cursoId) => {
   }
 }
 
+const inscripcion = async (cursoId,cursoValor) => {
+  const formData = [
+    { name: "cursoId", value: cursoId },
+    { name: "userId", value: sesionStore.sesion.userId}
+  ]
+  if (!sesionStore.sesion) {
+    sweetAlert.showAlert(
+      "Debes iniciar sesión",
+      "Por favor, inicia sesión para inscribirte en los cursos."
+    );
+  } else {
+      if(cursoValor != 0){
+        const response = await sweetAlert.confirmAlert(
+          "Atencion",
+          "Este curso tiene un valor de " + cursoValor + " US$, ¿Desea continuar con la inscripción?" 
+        );
+        if (response == true) {
+            const response2 = await cursoStore.inscripcion(sesionStore.token, formData);
+        }
+      }else{
+        const response2 = await cursoStore.inscripcion(sesionStore.token, formData);
+      }
+  }
+};
+
 onMounted(async () => {
   const closeLoading = sweetAlert.ShowLoading();
-  await loadCursos();
-  console.log('Cursos:', cursos.value);
-  await categoriaStore.getCategoria();
-  console.log(categoriaStore.categorianormal);
+  const categoriaId = route.params.categoriaId;
+  await loadCursos(null,categoriaId);
   closeLoading();
 });
 </script>
 <template>
+<div>
   <Header />
 
   <div class="container my-5">
@@ -78,8 +116,8 @@ onMounted(async () => {
           <p class="curso-descripcion">{{ curso.cursoDescripcion }}</p>
           <p class="curso-instructor">{{ curso.createdBy }}</p>
           <p class="curso-precio">{{ curso.cursoValor }} US$</p> 
-          <button class="btn btn-custom" @click="irAVistaCurso(curso.cursoId)">
-            Ver Curso
+          <button class="btn btn-custom" @click="inscripcion(curso.cursoId, curso.cursoValor)">
+            Incribirse
           </button>
         </div>
       </div>
@@ -96,6 +134,7 @@ onMounted(async () => {
   </div>
 
   <Footer />
+</div>
 </template>
 
 
