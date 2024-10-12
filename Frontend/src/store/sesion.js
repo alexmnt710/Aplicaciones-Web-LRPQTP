@@ -3,7 +3,7 @@ import { defineStore } from 'pinia';
 export const Sesion = defineStore('sesionStore', {
   state: () => ({
     sesion: false,
-    user: null, // Cambiado a null para que sea un objeto más tarde
+    user: null, 
     token: null,
     rol: null,
     url: import.meta.env.VITE_API_URL,
@@ -11,18 +11,14 @@ export const Sesion = defineStore('sesionStore', {
   actions: {
     async getSesion() {
       try {
-        // Recuperar datos del localStorage y parsear user
         const userData = localStorage.getItem('user');
-        this.user = userData ? JSON.parse(userData) : null; // Asegurarse de que es un objeto
+        this.user = userData ? JSON.parse(userData) : null;
         this.token = localStorage.getItem('token');
         this.rol = localStorage.getItem('rol');
-
-        if (this.user !== null && this.token !== null) {
-          await this.checkSesion(this.token);
-          return;
+        if (this.user && this.token && this.rol) {
+          this.sesion = true; // Marcar la sesión como válida
         } else {
-          this.sesion = false;
-          return;
+          this.sesion = false; // No hay sesión activa
         }
       } catch (error) {
         this.sesion = false;

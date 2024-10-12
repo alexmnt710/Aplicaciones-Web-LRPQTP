@@ -39,17 +39,13 @@ onMounted(async () => {
     await categoriaStore.getCategoria();
     await cursoStore.getCurso(cursoId); // Llamar a la función del store para obtener el curso
     curso.value = cursoStore.cursoIndividual; // Asignar el curso obtenido a la referencia 'curso'
-
-    // Verificar si el contenido está en formato JSON string y convertirlo en un array de objetos
     if (curso.value && typeof curso.value.cursoContenido === 'string') {
       curso.value.cursoContenido = JSON.parse(curso.value.cursoContenido);
     }
-
     // Seleccionar la primera clase por defecto si hay contenido
     if (curso.value.cursoContenido.length > 0) {
       claseSeleccionada.value = 0;
     }
-
     console.log('Curso individual:', curso.value);
   } catch (error) {
     console.error('Error al cargar el curso:', error);

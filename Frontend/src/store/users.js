@@ -27,6 +27,26 @@ export const User = defineStore('userStore',{
                 return error;
             }
         },
+        //get de usuario que pertenecen a un curso
+        async getUserCurso(token, id){
+            try {
+                const response = await fetch(`${this.url}/getUserCurso/${id}`,{
+                    method: 'GET',
+                    headers:{
+                        'Content-Type':'application/json',
+                        'Accept': 'application/json',
+                        Authorization: `Bearer ${token}`,
+                    },
+                    credentials:'include',
+                });
+                const data = await response.json()
+                console.log(data);
+                this.user = data;
+                return data;
+            } catch (error) {
+                return error;
+            }
+        },
         async getDocentes(token, page){
             try {
                 const response = await fetch(`${this.url}/getDocentes?page=${page}`,{

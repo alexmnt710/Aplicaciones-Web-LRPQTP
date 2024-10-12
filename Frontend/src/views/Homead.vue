@@ -16,7 +16,7 @@ const navigateTo = (routeName) => {
 <template>
     <Header></Header>
     
-    <div class="toolbox-container">
+    <div v-if="sesionStore.rol == 'admin'" class="toolbox-container">
       <h2 class="admin-title">Home de Admin</h2>
       <div class="toolbox">
         <!-- Botón para la vista de Cursos -->
@@ -38,6 +38,22 @@ const navigateTo = (routeName) => {
         <button @click="navigateTo('Categorias')" class="toolbox-item">
           <i class="bi bi-card-list"></i>
           <span>Categorías</span>
+        </button>
+        <!-- Botón para la vista de transacciones -->
+        <button @click="navigateTo('Transacciones')" class="toolbox-item">
+            <i class="bi bi-cash-stack"></i>
+          <span>Transacciones</span>
+        </button>
+      </div>
+    </div>
+
+    <div v-if="sesionStore.rol == 'teacher'" class="toolbox-container">
+      <h2 class="admin-title">Home de Profesor</h2>
+      <div class="toolbox">
+        <!-- Botón para la vista de Cursos -->
+        <button @click="navigateTo('TeacherCursos')" class="toolbox-item">
+          <i class="bi bi-book"></i>
+          <span>Cursos</span>
         </button>
       </div>
     </div>

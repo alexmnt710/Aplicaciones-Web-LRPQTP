@@ -74,7 +74,7 @@ const goToRegister = () => {
         <button type="submit" class="login-button">Iniciar sesión</button>
       </form>
   
-      <a href="#" class="forgot-password">He olvidado la contraseña</a>
+      <!-- <a href="#" class="forgot-password">He olvidado la contraseña</a> -->
       <p class="has-no-account">
         ¿No tienes una cuenta? 
         <a @click="goToRegister">Regístrate</a>

@@ -48,11 +48,12 @@ const cursoIr = (categoriaId) => {
     </div>
     <nav class="nav-links" :class="{ 'mobile-menu': isMobileMenuOpen }">
       <ul>
+        
         <li>
           <router-link :to="{ name: 'Home' }"><i class="bi bi-house"></i> Home</router-link>
         </li>
         <!-- Botón para mostrar el dropdown de cursos -->
-        <li class="dropdown" @mouseenter="showDropdown">
+        <li v-if="sesionStore.rol == 'student'|| sesionStore.sesion == false" class="dropdown" @mouseenter="showDropdown">
           <div class="dropdown-toggle">
             <i class="bi bi-book"></i> Cursos
             <i class="bi bi-chevron-down"></i>

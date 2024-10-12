@@ -15,15 +15,14 @@ const router = useRouter();
 // Bandera para controlar el renderizado del componente hijo
 const isChildMounted = ref(false);
 
+
+
 onMounted(async () => {
   const closeLoading = sweetAlert.ShowLoading();
 
   try {
     // Ejecuta las llamadas en paralelo
     await Promise.all([sesionStore.getSesion(), categoriaStore.getCategorias(),cursoStore.getCursosHome()]);
-    if(sesionStore.rol === 'admin'){
-      router.push({ name: 'homead' });
-    }
   } catch (error) {
     sweetAlert.errorAlert('Error', 'Error al obtener la sesión');
     console.error(error);

@@ -3,6 +3,7 @@ export const Cursos = defineStore('cursoStore',{
     state: ()=>(
         {
             cursos : [],
+            cursoTeacher: [],
             cursoIndividual: [],
             url: import.meta.env.VITE_API_URL,
         }
@@ -20,6 +21,21 @@ export const Cursos = defineStore('cursoStore',{
             })
             const data = await response.json()
             this.cursos = data
+        },
+        //get de cursos por un solo usuario
+        async getCursosTeacher(token, id, page){
+            const response = await fetch (`${this.url}/getCursosTeacher/${id}?page=${page}`,{
+                method:'GET',
+                headers:{
+                    'Content-Type':'application/json',
+                    'Accept': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                credentials:'include',
+            })
+            const data = await response.json()
+            this.cursoTeacher = data
+            return data
         },
         //Get de curso individual
         async getCurso(id) {
@@ -55,7 +71,9 @@ export const Cursos = defineStore('cursoStore',{
                 credentials:'include',
             })
             const data = await response.json()
+            console.log(data);
             this.cursos = data
+
         },
         async getCursosCategorizados(page, id){
           console.log('id', id);
@@ -75,28 +93,28 @@ export const Cursos = defineStore('cursoStore',{
             console.error('Error fetching courses:', error);
           }
         },
-        async crearCurso(token, formData) {
-            try {
-              console.log(formData);
-              const response = await fetch(`${this.url}/postCurso`, {
-                method: 'POST',
-                headers: {
-                  'Accept': 'application/json', // Mantén este encabezado para aceptar JSON como respuesta
-                  Authorization: `Bearer ${token}`, // El token de autorización
-                },
-                credentials: 'include',
-                body: formData, // Enviar FormData directamente
-              });
-          
-              const data = await response.json();
-              console.log(data);
-
-              return data;
-            } catch (error) {
-              console.error('Error creating course:', error);
-              throw error; // Lanzar el error para manejarlo en el componente
-            }
-          },
+        async crearCurso(token, curso) {
+          try {
+            console.log(curso); // Muestra el objeto antes de enviarlo
+            const response = await fetch(`${this.url}/postCurso`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json', // Cambia a JSON
+                'Accept': 'application/json',
+                Authorization: `Bearer ${token}`,
+              },
+              credentials: 'include',
+              body: JSON.stringify(curso), // Serializa el objeto a JSON
+            });
+        
+            const data = await response.json();
+            console.log(data);
+            return data;
+          } catch (error) {
+            console.error('Error creating course:', error);
+            throw error; // Lanzar el error para manejarlo en el componente
+          }
+        },
         async deleteCurso(token, id) {
             try {
               console.log*('id', id);
@@ -118,8 +136,9 @@ export const Cursos = defineStore('cursoStore',{
               throw error;
             }
           },
-          async updateCurso(token, id, formData) {
-            
+          async updateCurso(token, id, curso) {
+            console.log('curso', curso);
+            console.log('id', id);
             try {
               const response = await fetch(`${this.url}/updateCurso/${id}`, {
                 method: 'PUT',
@@ -129,7 +148,7 @@ export const Cursos = defineStore('cursoStore',{
                   Authorization: `Bearer ${token}`,
                 },
                 credentials: 'include',
-                body: JSON.stringify(formData), // Enviar como JSON
+                body: JSON.stringify(curso), // Enviar como JSON
               });
           
               const data = await response.json();
@@ -141,6 +160,7 @@ export const Cursos = defineStore('cursoStore',{
             }
           },
           async inscripcion(token, formData) {
+            console.log('formData', formData);
             try {
               const response = await fetch(`${this.url}/inscripcion`, {
                 method: 'POST',
@@ -149,7 +169,7 @@ export const Cursos = defineStore('cursoStore',{
                   Authorization: `Bearer ${token}`,
                 },
                 credentials: 'include',
-                body: JSON.stringify(formData),
+                body: formData,
               });
           
               const data = await response.json();

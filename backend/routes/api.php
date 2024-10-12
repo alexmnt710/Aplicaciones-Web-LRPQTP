@@ -40,6 +40,11 @@ Route::middleware(['auth:sanctum', 'role:admin|teacher'])->group(function () {
     Route::put('/updateCurso/{id}', [CursoController::class, 'updateCurso']); // Actualizar un curso por ID
     Route::delete('/deleteCurso/{id}', [CursoController::class, 'deleteCurso']); // Eliminar un curso por ID
 
+    // Rutas para gestión de clases
+    Route::get('getCursosTeacher/{id}', [CursoController::class, 'getCursoTeacher']); // Obtener todas las clases
+    //ruta get para usuarios de un curso
+    Route::get('getUserCurso/{id}', [ClaseController::class, 'getUsersCourse']);
+
     // Rutas para gestión de categorías
     Route::post('/postCategoria', [CategoriaController::class, 'createCategoria']); // Crear una nueva categoría
     Route::put('/updateCategoria/{id}', [CategoriaController::class, 'updateCategoria']); // Actualizar una categoría por ID
@@ -54,6 +59,9 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
 
     // Rutas para gestión de estudiantes
     Route::get('/getEstudiantes', [UserController::class, 'getEstudiantes']); // Obtener todos los estudiantes
+
+    //Rutas para gestion de clases
+    
 });
 
 // Rutas protegidas para usuarios autenticados
@@ -61,9 +69,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/checksesion', [SesionController::class, 'checkSession']); // Verificar si la sesión está activa
     Route::get('/getCursos/{search?}', [CursoController::class, 'index']); // Obtener lista de cursos con búsqueda opcional
     Route::post('/logout', [SesionController::class, 'logout']); // Cerrar sesión
+    Route::get('/transaccion/{caso}/{id?}', [ClaseController::class, 'index']); // Obtener información de un curso por ID
+    Route::delete('/deleteClase/{id}', [ClaseController::class, 'deleteClase']); // Eliminar una clase por ID
 });
 
 //Rutas para estudiantes 
 Route::middleware(['auth:sanctum', 'role:student'])->group(function () {
     Route::post('/inscripcion', [ClaseController::class, 'inscripcion']); // Inscribirse a un curso
+    Route::get('/getRelacion', [ClaseController::class,'index']);
+
 });

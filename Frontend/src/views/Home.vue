@@ -32,17 +32,10 @@ const irAVistaCurso = (cursoId) => {
 
 onMounted(async () => {
   const closeLoading = sweetAlert.ShowLoading();
+  await cursoStore.getCursosHome().then(() => {
+    cursos.value = cursoStore.cursos;
+  });
   try {
-    await cursoStore.getCursosHome().then(() => {
-      cursos.value = cursoStore.cursos;
-      const rol = sesionStore.rol;
-      if (rol === "admin") {
-        router.push({ name: "homead" });
-      }else{
-        router.push({name : 'Home'})
-      }
-    });
-
   } catch (error) {
     sweetAlert.errorAlert("Error", "Error al obtener los cursos");
     console.error(error);

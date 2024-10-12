@@ -10,7 +10,6 @@ import { sweetalert } from '../composables/sweetAlert';
 import { useRouter, useRoute } from 'vue-router';
 
 
-
 const router = useRouter();
 const route = useRoute();  
 const sweetAlert = sweetalert();
@@ -63,28 +62,43 @@ const irAVistaCurso = (cursoId) => {
   }
 }
 
-const inscripcion = async (cursoId,cursoValor) => {
-  const formData = [
-    { name: "cursoId", value: cursoId },
-    { name: "userId", value: sesionStore.sesion.userId}
-  ]
+const inscripcion = async (cursoId, cursoValor) => {
+  cursoValor = parseFloat(cursoValor);
+  const caso = cursoValor !== 0 ? 2 : 1;
+
   if (!sesionStore.sesion) {
     sweetAlert.showAlert(
       "Debes iniciar sesión",
       "Por favor, inicia sesión para inscribirte en los cursos."
+      
     );
+    return;
   } else {
-      if(cursoValor != 0){
-        const response = await sweetAlert.confirmAlert(
-          "Atencion",
-          "Este curso tiene un valor de " + cursoValor + " US$, ¿Desea continuar con la inscripción?" 
-        );
-        if (response == true) {
-            const response2 = await cursoStore.inscripcion(sesionStore.token, formData);
-        }
-      }else{
+    const formData = new FormData();
+    formData.append("cursoId", cursoId);
+    formData.append("userId", sesionStore.user.userId);
+    formData.append("caso", caso);
+    if (cursoValor !== 0.00) {
+      const response = await sweetAlert.confirmAlert(
+        "Atención",
+        "Este curso tiene un valor de " + cursoValor + " US$, ¿Desea continuar con la inscripción?"
+      );
+      if (response) {
         const response2 = await cursoStore.inscripcion(sesionStore.token, formData);
+        if (response2.success) {
+          sweetAlert.showAlert("Inscripción exitosa", response2.message);
+        } else {
+          sweetAlert.showAlert("Error", response2.message);
+        }
       }
+    } else {
+      const response2 = await cursoStore.inscripcion(sesionStore.token, formData);
+      if (response2.success) {
+        sweetAlert.showAlert("Inscripción exitosa", response2.message);
+      } else {
+        sweetAlert.showAlert("Error", response2.message);
+      }
+    }
   }
 };
 

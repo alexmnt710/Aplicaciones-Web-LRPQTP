@@ -20,7 +20,7 @@ class CursoController extends Controller
                 $cursos = Curso::where('cursoCategoriaId', $request->categoriaId)->paginate(10);
             } else {
                 // Obtener todos los cursos paginados
-                $cursos = Curso::paginate(10);
+                $cursos = Curso::orderBy('cursoId', 'asc')->paginate(10);
             }
             return response()->json($cursos);
         } catch (\Exception $e) {
@@ -48,7 +48,21 @@ class CursoController extends Controller
             ], 500);
         }
     }
-
+    //get para obtener los cursos del profesor
+    public function getCursoTeacher($id)
+    {
+        try {
+            $cursos = Curso::where('createdBy', $id)->paginate(10);
+            return response()->json($cursos);
+        } catch (\Exception $e) {
+            // Manejar errores y devolver respuesta con mensaje de error
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al obtener los cursos',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
     // Crear un nuevo curso
     public function createCurso(Request $request)
     {
@@ -61,7 +75,8 @@ class CursoController extends Controller
             'cursoRequisito' => 'required',
             'cursoContenido' => 'required',
             'createdBy' => 'required',
-            'cursoCategoriaId' => 'required'
+            'cursoCategoriaId' => 'required',
+            'cursoExamen' => 'required'
         ]);
 
         // Si la validación falla, devolver errores
@@ -83,6 +98,7 @@ class CursoController extends Controller
         $curso->cursoContenido = $request->cursoContenido;
         $curso->createdBy = $request->createdBy;
         $curso->cursoCategoriaId = $request->cursoCategoriaId;
+        $curso->cursoExamen = $request->cursoExamen;
         $curso->save();
 
         return response()->json([

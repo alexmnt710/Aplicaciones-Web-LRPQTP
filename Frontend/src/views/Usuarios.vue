@@ -116,8 +116,6 @@ const createStudent = async () => {
     userWordKey: formData.value.userWordKey || ''
   };
 
-  console.log('Datos enviados:', studentData);
-
   try {
     const response = await studentStore.registrar(studentData);
     if (response.success) {
@@ -182,6 +180,7 @@ const loadDocentes = async (page = 1) => {
   try {
     await studentStore.getEstudiantes(token, page);
     docentes.value = studentStore.docentes.data;
+    console.log('Docentes:', docentes.value);
     paginationData.value.current_page = studentStore.docentes.current_page;
     paginationData.value.last_page = studentStore.docentes.last_page;
     paginationData.value.prev_page_url = studentStore.docentes.prev_page_url;
@@ -304,7 +303,7 @@ onMounted(() => {
             </tr>
           </thead>
           <tbody>
-            <tr v-for="estudiante in estudiantes" :key="estudiante.id">
+            <tr v-for="estudiante in studentStore.docentes.data" :key="estudiante.userId">
               <td>{{ estudiante.userId }}</td>
               <td>{{ estudiante.userName }}</td>
               <td>{{ estudiante.userNombres }} {{ estudiante.userApellidos }}</td>

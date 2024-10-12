@@ -8,15 +8,20 @@ import { Sesion } from '../store/sesion';
 import { Categoria } from '../store/categoria';
 import { sweetalert } from '../composables/sweetAlert';
 import CrearCurso from '../components/Admin/crearCurso.vue';  // Importamos el componente
+import { User } from '../store/users';
 
 const sweetAlert = sweetalert();
+const userStore = User();
 const categoriaStore = Categoria();
 const sesionStore = Sesion();
 const cursoStore = Cursos();
 const cursos = ref([]);
 
-const showCrearCurso = ref(false);  // Controla la visualización del modal
-const cursoSeleccionado = ref(null);  // Curso seleccionado para editar
+// Controla la visualización de los modales
+const showCrearCurso = ref(false);  // Controla el modal para crear/editar cursos
+const showEstudiantesModal = ref(false);  // Controla el modal para ver estudiantes
+const cursoSeleccionado = ref(null);  // Curso seleccionado para editar o ver estudiantes
+const estudiantes = ref([]);  // Lista de estudiantes del curso seleccionado
 
 const paginationData = ref({
   current_page: 1,
@@ -27,28 +32,14 @@ const paginationData = ref({
 
 // Función para cargar cursos
 const loadCursos = async (pageUrl = null) => {
-  await cursoStore.getCursos(sesionStore.token, pageUrl);
-  cursos.value = cursoStore.cursos.data;
+  await cursoStore.getCursosTeacher(sesionStore.token, sesionStore.user.userName, pageUrl);
+  cursos.value = cursoStore.cursoTeacher.data;
   paginationData.value = {
     current_page: cursoStore.cursos.current_page,
     last_page: cursoStore.cursos.last_page,
     prev_page_url: cursoStore.cursos.prev_page_url,
     next_page_url: cursoStore.cursos.next_page_url
   };
-};
-
-// Función para eliminar un curso
-const deleteCurso = async (cursoId) => {
-  const confirm = await sweetAlert.confirmAlert('Eliminar curso', '¿Estás seguro de que deseas eliminar este curso?');
-  if (confirm) {
-    try {
-      await cursoStore.deleteCurso(sesionStore.token, cursoId);
-      sweetAlert.successAlert('Éxito', 'El curso ha sido eliminado.');
-      loadCursos();
-    } catch (error) {
-      sweetAlert.errorAlert('Error', 'Hubo un problema al eliminar el curso.');
-    }
-  }
 };
 
 // Función para abrir el modal en modo de creación
@@ -63,9 +54,25 @@ const openEditModal = (curso) => {
   showCrearCurso.value = true;
 };
 
-// Función para cerrar el modal
+// Función para abrir el modal de estudiantes
+const openinfoModal = async (cursoId) => {
+  showEstudiantesModal.value = true;  // Mostrar el modal
+  await loadEstudiantes(cursoId);  // Cargar los estudiantes del curso
+};
+
+// Función para cargar estudiantes del curso
+const loadEstudiantes = async (cursoId) => {
+    const closeLoading = sweetAlert.ShowLoading();
+    const response = await userStore.getUserCurso(sesionStore.token,cursoId);
+    console.log(response.data);
+    estudiantes.value = response.data;
+    closeLoading();
+};
+
+// Función para cerrar los modales
 const closeModal = () => {
   showCrearCurso.value = false;
+  showEstudiantesModal.value = false;
 };
 
 onMounted(async () => {
@@ -114,8 +121,8 @@ onMounted(async () => {
               <button class="btn btn-warning btn-sm" @click="openEditModal(curso)">
                 <i class="bi bi-pencil"></i> Editar
               </button>
-              <button class="btn btn-danger btn-sm" @click="deleteCurso(curso.cursoId)">
-                <i class="bi bi-trash"></i> Eliminar
+              <button class="btn btn-info btn-sm" @click="openinfoModal(curso.cursoId)">
+                <i class="bi bi-eye"></i> Ver Estudiantes
               </button>
             </td>
           </tr>
@@ -134,10 +141,45 @@ onMounted(async () => {
 
   <Footer />
 
-  <!-- Mostrar el componente de crear/editar curso cuando showCrearCurso sea true -->
+  <!-- Modal para crear/editar curso -->
   <CrearCurso v-if="showCrearCurso" :cursoData="cursoSeleccionado" @close="closeModal" />
-</template>
 
+  <!-- Modal para ver estudiantes -->
+  <div v-if="showEstudiantesModal" class="modal fade show d-block" tabindex="-1" role="dialog" style="background-color: rgba(0, 0, 0, 0.5);">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Estudiantes del Curso</h5>
+          <button type="button" class="btn-close" @click="closeModal"></button>
+        </div>
+        <div class="modal-body">
+          <div v-if="estudiantes.value != ''" class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Nombre</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="estudiante in estudiantes" :key="estudiante.usuario.userId">
+                  <td>{{ estudiante.usuario.userId}}</td>
+                  <td>{{ estudiante.usuario.userNombres }} {{ estudiante.usuario.userApellidos }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div v-else>
+            <p>No hay estudiantes inscritos en este curso.</p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" @click="closeModal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
 
 <style scoped>
 /* Contenedor principal */
@@ -173,6 +215,7 @@ onMounted(async () => {
 .table th, .table td {
   text-align: center;
   vertical-align: middle;
+  padding: 1rem;
 }
 
 .table th {
@@ -182,5 +225,24 @@ onMounted(async () => {
 
 .table td {
   background-color: #f0f7f4;
+}
+
+/* Estilos del modal */
+.modal-content {
+  padding: 1.5rem;
+}
+
+.modal-header {
+  background-color: #0f3d28;
+  color: white;
+}
+
+.table {
+  background-color: white;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
 }
 </style>

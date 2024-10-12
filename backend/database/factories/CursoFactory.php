@@ -2,30 +2,35 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\Categoria;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Curso>
- */
 class CursoFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition()
     {
         return [
-            'cursoName' => $this->faker->words(3, true),  // Nombre del curso con 3 palabras
-            'cursoDescripcion' => $this->faker->paragraph(),  // Una descripción aleatoria
-            'cursoNivelId' => $this->faker->randomElement([1, 2, 3, 4]),  // Elegir un nivelId existente
-            'cursoValor' => $this->faker->randomFloat(2, 100, 1000),  // Valor del curso aleatorio entre 100 y 1000
-            'cursoRequisito' => $this->faker->sentence(),  // Requisito del curso como una oración aleatoria
-            'cursoContenido' => $this->faker->text(200),  // Contenido del curso como un texto aleatorio de 200 caracteres
-            'createdBy' => $this->faker->name(),  // Nombre del creador del curso
-            'cursoCategoriaId' => Categoria::factory(),  // Genera un ID de categoría usando el factory del modelo Categoria
+            'cursoName' => $this->faker->sentence(3),  // Nombre del curso con 3 palabras más realistas
+            'cursoDescripcion' => $this->faker->paragraph(4),  // Una descripción más larga y detallada
+            'cursoNivelId' => $this->faker->numberBetween(1, 4),  // Nivel del curso entre 1 y 4
+            'cursoValor' => $this->faker->numberBetween(100, 10000),  // Valor del curso entre 100 y 10000
+            'cursoRequisito' => $this->faker->sentence(5),  // Requisito como una oración de 5 palabras
+            'cursoContenido' => json_encode([
+                [
+                    'titulo' => $this->faker->sentence(3),  // Título del contenido
+                    'media' => $this->faker->imageUrl(),  // Generar una URL de imagen falsa
+                    'concepto' => $this->faker->paragraph(2),  // Concepto con 2 párrafos
+                ]
+            ]),  // Contenido del curso en formato JSON
+            'createdBy' => 'admin',  // El nombre del creador puede ser estático o dinámico si prefieres
+            'cursoCategoriaId' => Categoria::factory(),  // Generar una categoría existente
+            'cursoExamen' => json_encode([
+                [
+                    'pregunta' => $this->faker->sentence(5),  // Pregunta de examen
+                    'opciones' => [$this->faker->word(), $this->faker->word(), $this->faker->word(), $this->faker->word()],  // 4 opciones
+                    'respuestaCorrecta' => $this->faker->randomElement(['1', '2', '3', '4']),  // Seleccionar una respuesta correcta
+                ]
+            ]),  // Examen en formato JSON
         ];
     }
 }

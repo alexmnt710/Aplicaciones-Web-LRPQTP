@@ -18,17 +18,21 @@ class Pago extends Model
      * pagoType_PagoTypeId = campo de la relacion con tipo de curso
      */
 
-    protected $fillable = ['pagoMonto', 'clases_users_userId', 'clases_curso_cursoId', 'pagoType_pagoTypeId'];
+    protected $fillable = [
+        'pagoMonto',
+        'pagoType_pagoTypeId',  
+        'pagoComprobante'
+    ];
 
     //funcion de la relacion uno a muchos
     public function clase()
     {
-        return $this->belongsTo(Clase::class, ['clases_users_userId', 'clases_curso_cursoId'], ['users_userId', 'curso_cursoId']);
+        return $this->hasOne(Clase::class, 'pagoId');
     }
     //funcion de relacion uno a muchos
 
     public function pagoType()
     {
-        return $this->belongsTo(PagoType::class, 'pagoType_pagoTypeId', 'pagoTypeId');
+        return $this->belongsTo(PagoType::class, 'pagoType_pagoTypeId');
     }
 }

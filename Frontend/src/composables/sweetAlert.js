@@ -57,6 +57,14 @@ export function sweetalert() {
       confirmButtonText: 'OK'
     });
   };
+  const warningAlert = (title, text) => {
+    Swal.fire({
+      title: title,
+      text: text,
+      icon: 'warning',
+      confirmButtonText: 'OK'
+    });
+  };
 
-  return { alert, successAlert, errorAlert, confirmAlert, ShowLoading, showAlert };
+  return { alert, successAlert, errorAlert, confirmAlert, ShowLoading, showAlert, warningAlert };
 }
