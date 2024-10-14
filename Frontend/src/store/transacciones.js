@@ -124,5 +124,50 @@ export const Transacciones = defineStore('transaccionStore', {
             console.error('Error fetching transaction:', error);
             }
     },
+    //post de finalizar transaccion
+    async finalizarTransaccion(token, dataPago) {
+      const formData = new FormData();
+      formData.append('pagoMonto', dataPago.pagoMonto);
+      formData.append('cursoId', dataPago.cursoId);
+      formData.append('pagoType_pagoTypeId', dataPago.pagoType_pagoTypeId);
+      formData.append('pagoComprobante', dataPago.pagoComprobante);
+    
+      try {
+        const response = await fetch(`${this.url}/finalizarTransaccion`, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`, // No incluir Content-Type manualmente
+          },
+          credentials: 'include',
+          body: formData,
+        });
+    
+        const data = await response.json();
+        if (data.success) {
+          const DataPago2 = {
+            claseId: dataPago.cursoId,
+            pagoId: data.pago.pagoId,
+            caso: 1,
+          };
+    
+          const response2 = await fetch(`${this.url}/editarTransaccion`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+            credentials: 'include',
+            body: JSON.stringify(DataPago2),
+          });
+    
+          const data2 = await response2.json();
+          return data2;
+        }
+      } catch (error) {
+        console.error('Error fetching transaction:', error);
+      }
+    }
+    
   },
 });

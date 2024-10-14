@@ -7,6 +7,7 @@ use App\Http\Controllers\CursoController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\SesionController;
 use App\Http\Controllers\ClaseController;
+use App\Http\Controllers\PagoController;
 use App\Models\Clase;
 
 /**
@@ -60,7 +61,10 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     // Rutas para gestión de estudiantes
     Route::get('/getEstudiantes', [UserController::class, 'getEstudiantes']); // Obtener todos los estudiantes
 
-    //Rutas para gestion de clases
+    // Rutas get para pago type
+    Route::get('/getPagoType', [PagoController::class, 'getPagoType']); // Obtener todos los tipos de pago
+    Route::post('/finalizarTransaccion', [PagoController::class, 'FinalizarPago']); // Obtener un tipo de pago por ID
+    Route::post('/editarTransaccion', [ClaseController::class, 'ClaseEdit']); // Crear un nuevo tipo de pago
     
 });
 
@@ -71,6 +75,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/logout', [SesionController::class, 'logout']); // Cerrar sesión
     Route::get('/transaccion/{caso}/{id?}', [ClaseController::class, 'index']); // Obtener información de un curso por ID
     Route::delete('/deleteClase/{id}', [ClaseController::class, 'deleteClase']); // Eliminar una clase por ID
+    Route::put('/updateUser/{id}', [UserController::class, 'updateUser']); // Actualizar un usuario por ID
 });
 
 //Rutas para estudiantes 

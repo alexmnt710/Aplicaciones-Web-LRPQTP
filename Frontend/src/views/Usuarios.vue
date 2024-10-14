@@ -158,7 +158,7 @@ const updateDocente = async () => {
   try {
     const response = await studentStore.updateDocente(token, updatedData, selectedDocenteId.value);
     if (response.success) {
-      sweetAlert.successAlert('Éxito', 'El docente ha sido actualizado correctamente.');
+      sweetAlert.successAlert('Éxito', 'El estudiante ha sido actualizado correctamente.');
       showModal.value = false;
       loadDocentes();
     } else {
@@ -167,7 +167,7 @@ const updateDocente = async () => {
     }
   } catch (error) {
     console.error('Error:', error);
-    sweetAlert.errorAlert('Error', 'Hubo un problema al actualizar el docente.');
+    sweetAlert.errorAlert('Error', 'Hubo un problema al actualizar el estudiantes.');
   }
 };
 
@@ -186,8 +186,8 @@ const loadDocentes = async (page = 1) => {
     paginationData.value.prev_page_url = studentStore.docentes.prev_page_url;
     paginationData.value.next_page_url = studentStore.docentes.next_page_url;
   } catch (error) {
-    console.error('Error al cargar los docentes:', error);
-    sweetAlert.errorAlert('Error', 'Hubo un problema al cargar la lista de docentes.');
+    console.error('Error al cargar los estudiantes:', error);
+    sweetAlert.errorAlert('Error', 'Hubo un problema al cargar la lista de estudiantes.');
   }
 };
 
@@ -198,15 +198,15 @@ const handlePageChange = (page) => {
 
 // Función para eliminar un docente
 const deleteDocente = async (userId) => {
-  const confirm = await sweetAlert.confirmAlert('Eliminar docente', '¿Estás seguro de que deseas eliminar este docente?');
+  const confirm = await sweetAlert.confirmAlert('Eliminar estudiante', '¿Estás seguro de que deseas eliminar este estudiante?');
   if (confirm) {
     try {
       await studentStore.deleteDocente(token, userId);
-      sweetAlert.successAlert('Éxito', 'El docente ha sido eliminado correctamente.');
+      sweetAlert.successAlert('Éxito', 'El estudiante ha sido eliminado correctamente.');
       loadDocentes();
     } catch (error) {
       console.error('Error al eliminar el docente:', error);
-      sweetAlert.errorAlert('Error', 'Hubo un problema al eliminar el docente.');
+      sweetAlert.errorAlert('Error', 'Hubo un problema al eliminar el estudiante.');
     }
   }
 };

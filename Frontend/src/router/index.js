@@ -24,7 +24,7 @@ const router = createRouter({
         { path: '/login', name: 'Login', component: Login, meta: { requiresAuth: false } },
         { path: '/register', name: 'Register', component: Register, meta: { requiresAuth: false } },
         { path: '/cursos/:categoriaId', name: 'Cursos', component: Cursos, meta: { requiresAuth: false }, props: true  },
-        { path: '/clases/:claseId', name: 'Clases', component: Clases, meta: { requiresAuth: true }, props: true },
+        { path: '/clases/:claseId/:pasado', name: 'Clases', component: Clases, meta: { requiresAuth: true }, props: true },
         { path: '/admin', name: 'Admin', component: Admin, meta: { requiresAuth: true, role: 'admin' } },
         { path: '/adcursos', name: 'AdminCursos', component: AdminCursos, meta: { requiresAuth: true, role: ['admin'] } },
         { path: '/tccursos', name: 'TeacherCursos', component: TeacherCursos, meta: { requiresAuth: true, role: ['teacher'] } },
@@ -47,10 +47,6 @@ router.beforeEach(async (to, from, next) => {
     const userRole = sesionStore.rol; // Rol del usuario en sesión
     const isAuthenticated = !!userRole; // Verifica si hay un rol definido (usuario autenticado)
 
-    // Log para depurar
-    console.log('Ruta solicitada:', to.name);
-    console.log('Usuario autenticado:', isAuthenticated);
-    console.log('Rol del usuario:', userRole);
 
     // Redirigir a 'homead' si el usuario es un administrador y está intentando acceder a 'Home'
     if (to.name === 'Home' && (userRole === 'admin' || userRole === 'teacher')) {

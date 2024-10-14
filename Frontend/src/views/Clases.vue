@@ -1,258 +1,218 @@
 <script setup>
-import { ref, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
 import Header from '../components/Public/header.vue';
 import Footer from '../components/Public/footer.vue';
-import { Cursos } from '../store/cursos';
-import { Categoria } from '../store/categoria';
 import { sweetalert } from '../composables/sweetAlert';
+import { ref, reactive, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
+import { Cursos } from '../store/cursos';
+import Examen from '../components/Examen.vue';
 
-const matriculado = true;
-const categoriaStore = Categoria();
-const sweetAlert = sweetalert();
 const cursoStore = Cursos();
-const route = useRoute(); // Obtener la ruta actual para obtener el parámetro 'id' del curso
+const route = useRoute();
+const sweetAlert = sweetalert();
 
-const curso = ref(null); // Referencia para almacenar los datos del curso
-const claseSeleccionada = ref(null); // Variable para almacenar la clase seleccionada
+const curso = reactive({
+  cursoName: '',
+  cursoDescripcion: '',
+  cursoRequisito: '',
+  cursoValor: '',
+  cursoContenido: [],
+  cursoExamen: []
+});
+const mostrarExamen = ref(false); // Controla la visualización del examen
 
-// Método para seleccionar una clase del contenido
-const seleccionarClase = (index) => {
-  claseSeleccionada.value = index;
+// Función para cargar los datos del curso
+const loadCurso = async (id) => {
+  const response = await cursoStore.getCurso(id);
+  console.log(response);
+  if (response.success) {
+    Object.assign(curso, {
+      ...response.data,
+      cursoContenido: JSON.parse(response.data.cursoContenido),
+      cursoExamen: JSON.parse(response.data.cursoExamen),
+    });
+  } else {
+    sweetAlert.errorAlert('Error', response.message);
+  }
 };
 
-// Método para obtener la imagen de la categoría asociada al curso
-const getCategoriaImagen = (categoriaId) => {
-  const categoria = categoriaStore.categorianormal.find(cat => cat.categoriaId === categoriaId);
-  return categoria ? categoria.categoriaImagen : 'default-image.jpg';
-};
+// Cargar el curso al montar el componente
 
-const mostrarRequisitos = (cursoRequisito) => {
-  sweetAlert.showAlert("Requisitos", cursoRequisito || "No hay requisitos especificados");
-};
+// Traemos la prop claseId
+const props = defineProps({
+  claseId: {
+    type: String,
+    required: true,
+  },
+  pasado: {
+    type: String,
+    required: true,
+  },
+});
 
-// Poner algo hasta que cargue
 onMounted(async () => {
-  const closeLoading = sweetAlert.ShowLoading();
-  const cursoId = route.params.claseId; // Obtener 'claseId' de los parámetros de la ruta
+  const closeLoading = sweetAlert.ShowLoading(); // Muestra loading.
+
   try {
-    await categoriaStore.getCategoria();
-    await cursoStore.getCurso(cursoId); // Llamar a la función del store para obtener el curso
-    curso.value = cursoStore.cursoIndividual; // Asignar el curso obtenido a la referencia 'curso'
-    if (curso.value && typeof curso.value.cursoContenido === 'string') {
-      curso.value.cursoContenido = JSON.parse(curso.value.cursoContenido);
-    }
-    // Seleccionar la primera clase por defecto si hay contenido
-    if (curso.value.cursoContenido.length > 0) {
-      claseSeleccionada.value = 0;
-    }
-    console.log('Curso individual:', curso.value);
+    await loadCurso(props.claseId); // Espera a que se cargue el curso.
   } catch (error) {
     console.error('Error al cargar el curso:', error);
+    sweetAlert.showError('Error al cargar el curso.');
+  } finally {
+    closeLoading(); // Cierra el loading después de que se complete la carga.
   }
-  closeLoading();
 });
 </script>
 
 <template>
   <Header />
+  <div class="curso-container mx-auto max-w-4xl p-6 md:p-12 bg-white shadow-lg rounded-xl animate-fadeIn">
+    <h1 class="text-3xl md:text-4xl font-bold text-center text-green-700 mb-8">{{ curso.cursoName }}</h1>
 
-  <div v-if="matriculado === false" class="curso-no-matriculado">
-    <div v-if="curso" class="curso-detalle">
-      <div class="curso-info">
-        <h2>{{ curso.cursoName }}</h2>
-        <p class="curso-subtitulo">Para ver el contenido de este curso debes matricularte</p>
-        <strong>¿Qué Aprenderé?</strong>
-        <p>{{ curso.cursoDescripcion }}</p>
-        <p><strong>Creado por:</strong> {{ curso.createdBy }}</p>
-        <p><strong>Nivel:</strong> {{ curso.nivel.nivelName }}</p>
-        <p><strong>Valor:</strong> ${{ curso.cursoValor }}</p>
-
-        <button class="btn-add-cart" @click="mostrarRequisitos(curso.cursoRequisito)">
-          Ver Requisitos
-        </button>
-        <button class="btn-add-cart">Matricularse</button>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+      <div class="info-card">
+        <h2 class="font-semibold text-xl mb-2">Requisitos</h2>
+        <p class="text-gray-600">{{ curso.cursoRequisito }}</p>
       </div>
-
-      <div class="curso-acciones">
-        <img :src="getCategoriaImagen(curso.cursoCategoriaId)" class="curso-imagen" alt="Imagen del curso" />
+      <div class="info-card">
+        <h2 class="font-semibold text-xl mb-2">Descripcion del Curso</h2>
+        <p class="text-green-600 text-2xl font-bold">{{ curso.cursoDescripcion }}</p>
       </div>
     </div>
 
-    <div v-else>
-      <p>Cargando detalles del curso...</p>
+    <div
+      v-for="(block, index) in curso.cursoContenido"
+      :key="index"
+      class="content-block mb-12 p-6 bg-white shadow-lg rounded-xl animate-slideUp"
+    >
+      <h2 class="text-2xl font-semibold mb-4 text-green-700">{{ block.titulo }}</h2>
+      <img
+        v-if="block.media"
+        :src="block.media"
+        alt="Media"
+        class="w-full h-64 object-cover rounded-lg shadow-md mb-4"
+      />
+      <p class="text-gray-600">{{ block.concepto }}</p>
     </div>
+
+      <!-- Mostrar el botón solo si pasado es false -->
+      <button
+      v-if="pasado === 'false'"
+      @click="mostrarExamen = true"
+      class="btn-examen mt-8"
+    >
+      Resolver Examen
+    </button>
+
+    <Examen v-if="mostrarExamen" :examen="curso.cursoExamen" @cerrar="mostrarExamen = false" />
   </div>
-
-  <!-- Columna lateral con los títulos de las clases -->
-  <div class="curso-contenido-layout" v-if="curso && Array.isArray(curso.cursoContenido)">
-    <div class="clases-lista">
-      <ul>
-        <li 
-          v-for="(contenido, index) in curso.cursoContenido" 
-          :key="index"
-          @click="seleccionarClase(index)"
-          :class="{ activo: claseSeleccionada === index }"
-        >
-          {{ contenido.titulo }}
-        </li>
-      </ul>
-    </div>
-
-    <!-- Sección principal para mostrar el contenido de la clase seleccionada -->
-    <div class="contenido-detalle" v-if="claseSeleccionada !== null">
-      <h3>{{ curso.cursoContenido[claseSeleccionada].titulo }}</h3>
-      <div class="media-section">
-        <img :src="curso.cursoContenido[claseSeleccionada].media" alt="Imagen del contenido" class="contenido-imagen" />
-      </div>
-      <div class="concepto-section">
-        <p>{{ curso.cursoContenido[claseSeleccionada].concepto }}</p>
-      </div>
-    </div>
-  </div>
-
   <Footer />
 </template>
 
 <style scoped>
-.curso-no-matriculado {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin: 20px auto;
-  max-width: 1200px;
-  padding: 20px;
-  border: 1px solid #ddd;
-  background-color: #f9f9f9;
+/* Animaciones */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
-.curso-detalle {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  width: 100%;
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
-.curso-info {
-  flex: 1;
-  padding-right: 40px;
+.animate-fadeIn {
+  animation: fadeIn 0.6s ease-in-out;
 }
 
-.curso-info h2 {
-  font-size: 2rem;
-  font-weight: bold;
+.animate-slideUp {
+  animation: slideUp 0.6s ease-in-out;
 }
 
-.curso-subtitulo {
-  font-size: 1.25rem;
-  color: #555;
+/* Contenedor principal */
+.curso-container {
+  background-image: linear-gradient(to right, #f0f4f8, #ffffff);
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 3rem 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.curso-rating {
-  font-size: 1rem;
-  margin-bottom: 10px;
-}
-
-.curso-imagen {
-  width: 300px;
-  height: auto;
+/* Tarjetas de información */
+.info-card {
+  background-color: #f9fafb;
+  padding: 1.5rem;
   border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+  margin-bottom: 1rem;
 }
 
-.curso-acciones {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.info-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-.curso-precio {
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin-top: 10px;
-  margin-bottom: 20px;
+/* Bloques de contenido */
+.content-block {
+  margin-bottom: 2rem;
+  padding: 2rem;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.btn-add-cart {
-  padding: 10px 20px;
-  background-color: #6a1b9a;
+/* Imagen del contenido */
+.content-media {
+  width: 100%;
+  max-height: 300px;
+  object-fit: cover;
+  margin-bottom: 1rem;
+}
+
+/* Botón de examen */
+.btn-examen {
+  display: block;
+  width: 100%;
+  background-color: #38a169;
   color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.btn-add-cart:hover {
-  background-color: #7e22ce;
-}
-
-.curso-detalle p {
-  margin: 5px 0;
-}
-
-/* Estilos para el contenido del curso */
-.curso-contenido-layout {
-  display: flex;
-  max-width: 1200px;
-  margin: 20px auto;
-  gap: 20px;
-}
-
-.clases-lista {
-  width: 20%;
-  border: 1px solid #ddd;
-  padding: 20px;
-  border-radius: 8px;
-  background-color: #f9f9f9;
-}
-
-.clases-lista ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-.clases-lista li {
-  margin-bottom: 10px;
-  padding: 10px;
-  border-bottom: 1px solid #ddd;
-  cursor: pointer;
-}
-
-.clases-lista li:hover {
-  background-color: #eee;
-}
-
-.clases-lista li.activo {
   font-weight: bold;
-  background-color: #e0e0e0;
-  border-left: 4px solid #007bff;
-}
-
-.contenido-detalle {
-  width: 75%;
-}
-
-.contenido-detalle h3 {
-  font-size: 1.8rem;
-  margin-bottom: 20px;
-}
-
-.media-section {
-  margin-bottom: 20px;
-}
-
-.contenido-imagen {
-  max-width: 100%;
-  height: 200px;
-  width: 200px;
+  padding: 1rem;
   border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s, transform 0.2s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
 }
 
-.concepto-section {
-  margin-top: 20px;
-  padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background-color: #f9f9f9;
+.btn-examen:hover {
+  background-color: #2f855a;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.btn-examen:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Ajuste de espaciado */
+.curso-container h1 {
+  margin-bottom: 1rem;
+}
+
+.grid {
+  gap: 2rem;
 }
 </style>
+

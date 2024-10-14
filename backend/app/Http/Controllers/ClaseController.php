@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Clase;
 use Illuminate\Support\Facades\Validator;
+use App\Models\Pago;
 
 class ClaseController extends Controller
 {
@@ -46,7 +47,7 @@ class ClaseController extends Controller
                 break;
             //se hace el get de todas las clases que esten verificadas
             case 5:
-                $clases = Clase::with(['curso', 'usuario'])
+                $clases = Clase::with(['curso', 'usuario','pago'])
                                 ->where('relVerificacion', true)
                                ->paginate(10);
                 return response()->json((object)['success'=> true ,'data' => $clases], 200);
@@ -107,8 +108,14 @@ class ClaseController extends Controller
     {
         $clase = Clase::find($id);
         if ($clase) {
+            if ($clase->pagoId) {
+                $pago = Pago::find($clase->pagoId);
+                if ($pago) {
+                    $pago->delete();
+                }
+            }
             $clase->delete();
-            return response()->json(['success' => true, 'message' => 'Clase eliminada'], 200);
+            return response()->json(['success' => true, 'message' => 'Clase y pago relacionados eliminados'], 200);
         } else {
             return response()->json(['success' => false, 'message' => 'Clase no encontrada'], 404);
         }
@@ -118,6 +125,32 @@ class ClaseController extends Controller
                         ->where('curso_cursoId', $id)
                         ->get();
         return response()->json(['success' => true, 'data' => $clases], 200);
+    }
+    //clase edit 
+    public function claseEdit(Request $request){
+        switch($request -> caso){
+            case 1:
+
+                $validator = Validator::make($request->all(), [
+                    'claseId' => 'required|integer',
+                    'pagoId' => 'required|integer',
+                ]);
+                if ($validator->fails()) {
+                    return response()->json(['success' => false, 'message' => 'Por favor revise los campos', 'errors' => $validator->errors()], 422);
+                }
+
+                $clase = Clase::find($request->claseId);
+                $clase->pagoId = $request->pagoId;
+                $clase->relVerificacion = true;
+                $clase->save();
+                return response()->json(['success' => true, 'message' => 'Pago Finalizado'], 200);
+                break;
+            case 2:
+                
+                
+                break;
+
+        }
     }
 
 }

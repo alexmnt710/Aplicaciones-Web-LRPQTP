@@ -186,7 +186,10 @@ class CursoController extends Controller
                     'nivel:nivelId,nivelName' // Trae solo nivelId y nivelName de la tabla niveles
                 ])->find($id);
 
-                return response()->json($curso);
+                return response()->json([
+                    'success' => true,
+                    'data' => $curso
+                ]);
             } else {
                 // Obtener los últimos 10 cursos creados con su categoría y nivel
                 $cursos = Curso::with([

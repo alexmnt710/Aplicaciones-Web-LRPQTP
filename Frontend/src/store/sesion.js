@@ -37,6 +37,7 @@ export const Sesion = defineStore('sesionStore', {
           body: JSON.stringify(formData),
         });
         const data = await response.json();
+        console.log(data);
         if (data.success === true) {
           localStorage.setItem('user', JSON.stringify(data.user));
           localStorage.setItem('token', data.token);

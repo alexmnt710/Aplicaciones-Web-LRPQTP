@@ -10,6 +10,7 @@ class PagoType extends Model
     use HasFactory;
 
     # Se define que la clave primaria de la tabla es 'pagoTypeId' en lugar de la predeterminada 'id'.
+    protected $table = 'pagoType';
     protected $primaryKey = 'pagoTypeId';
     
     # Los atributos que se pueden asignar masivamente son 'pagoTypeName'.

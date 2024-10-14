@@ -5,10 +5,12 @@ import { ref, onMounted, watch } from 'vue';
 import { Sesion } from '../store/sesion';
 import { Transacciones} from '../store/transacciones';
 import { sweetalert } from '../composables/sweetAlert';
+import { useRouter } from 'vue-router';
 
 const sesionStore = Sesion();
 const transaccionStore = Transacciones();
 const sweetAlert = sweetalert();
+const router = useRouter();
 
 const selectedView = ref('misCursos'); // Controla qué vista se está mostrando ('misCursos', 'cursosAprobados', 'cursosInscribirse')
 
@@ -38,14 +40,14 @@ watch(selectedView, async (newView) => {
 const setView = (view) => {
   selectedView.value = view;
 };
-// Función para editar un curso
-const editarCurso = (cursoId) => {
-  console.log("Editar curso con ID:", cursoId);
-  // Lógica de edición del curso
-};
+
 const info = (valor ) => {
   sweetAlert.showAlert("Atencion", "Para poder finalizar la inscripcion de este curso, por favor realizar el pago correspondiente: " + valor);
 }
+const irCurso = (cursoId,pasado) => {
+  console.log(cursoId);
+  router.push(`/clases/${cursoId}/${pasado}`);
+};
 const eliminarCurso = async (cursoId) => {
    const response = await sweetAlert.confirmAlert("Retirarse", "Si te retiras no podras ingresar hasta pagar de nuevo, ¿Estas seguro de retirarte?");
    if(response){
@@ -104,7 +106,7 @@ const eliminarCurso = async (cursoId) => {
                 <td>{{ curso.curso.createdBy }}</td>
                 <td>{{ curso.relVerificacion ? 'En curso' : 'Terminado' }}</td>
                 <td>
-                  <button class="btn btn-warning btn-sm mx-1" @click="editarCurso(curso.curso.cursoId)">Ir al Curso</button>
+                  <button class="btn btn-warning btn-sm mx-1" @click="irCurso(curso.curso.cursoId,false)">Ir al Curso</button>
                   <button class="btn btn-danger btn-sm mx-1" @click="eliminarCurso(curso.claseId)">Retirarse</button>
                 </td>
               </tr>
@@ -134,8 +136,7 @@ const eliminarCurso = async (cursoId) => {
                     <td>{{ curso.usuario.userName }}</td>
                     <td>{{ curso.relVerificacion ? 'Verificado' : 'No Verificado' }}</td>
                     <td>
-                      <button class="btn btn-warning btn-sm mx-1" @click="editarCurso(curso.cursoId)">Editar</button>
-                      <button class="btn btn-danger btn-sm mx-1" @click="eliminarCurso(curso.cursoId)">Eliminar</button>
+                      <button class="btn btn-success btn-sm mx-1" @click="Certificado(curso.cursoId)">Certificado</button>
                     </td>
                   </tr>
             </tbody>

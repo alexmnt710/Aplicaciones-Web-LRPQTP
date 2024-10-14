@@ -122,6 +122,25 @@ export const User = defineStore('userStore',{
                 return error;
             }
         },
+        async updateUserProfile(token, user, id){
+            try {
+                const response = await fetch(`${this.url}/updateUser/${id}`,{
+                    method: 'PUT',
+                    headers:{
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json', // <-- Asegúrate de agregar esta línea
+                        Authorization: `Bearer ${token}`,
+                    },
+                    credentials:'include',
+                    body: JSON.stringify(user), // Enviar como JSON
+                });
+                const data = await response.json()
+                console.log(data);
+                return data;
+            } catch (error) {
+                return error;
+            }
+        },
         async getEstudiantes(token, page){
             try {
                 const response = await fetch(`${this.url}/getEstudiantes?page=${page}`,{
