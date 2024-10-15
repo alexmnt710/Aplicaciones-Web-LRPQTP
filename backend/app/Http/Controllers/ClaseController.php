@@ -146,11 +146,25 @@ class ClaseController extends Controller
                 return response()->json(['success' => true, 'message' => 'Pago Finalizado'], 200);
                 break;
             case 2:
-                
+                $validator = Validator::make($request->all(), [
+                    'claseId' => 'required|integer',
+                    'nota' => 'required|integer'
+                ]);
+                if ($validator->fails()) {
+                    return response()->json(['success' => false, 'message' => 'Por favor revise los campos', 'errors' => $validator->errors()], 422);
+                }
+                $clase = Clase::find($request->claseId);
+                $clase->relNota = $request->nota;
+                $clase->relAprobado = true;
+                $clase->save();
+
+                return response()->json(['success' => true, 'message' => 'Nota Actualizada'], 200);
                 
                 break;
 
         }
     }
+    
+    
 
 }

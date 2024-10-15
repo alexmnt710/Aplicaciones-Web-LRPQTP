@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('cursos', function (Blueprint $table) {
             $table->id('cursoId');
-            $table->string('cursoName');
+            $table->text('cursoName');
             $table->text('cursoDescripcion');
             $table->foreignId('cursoNivelId')->constrained('nivel', 'nivelId');  // Definir una clave foránea
             $table->decimal('cursoValor', 8, 2);  // Cambia a decimal si es necesario
-            $table->string('cursoRequisito');
+            $table->text('cursoRequisito');
             $table->json('cursoContenido');
             $table->json('cursoExamen');
             $table->string('createdBy');

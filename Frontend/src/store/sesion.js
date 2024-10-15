@@ -56,7 +56,7 @@ export const Sesion = defineStore('sesionStore', {
         return error;
       }
     },
-    async logout() {
+    async logout(token) {
       try {
         const response = await fetch(`${this.url}/logout`, {
           method: 'POST',
@@ -65,12 +65,13 @@ export const Sesion = defineStore('sesionStore', {
             'Accept': 'application/json',
           },
           credentials: 'include',
+          body: JSON.stringify({ token }),
         });
         const data = await response.json();
         localStorage.removeItem('user');
         localStorage.removeItem('token');
         localStorage.removeItem('rol');
-        this.user = null; // Restablecer el estado
+        this.user = null;
         this.token = null;
         this.rol = null;
         this.sesion = false;
@@ -91,10 +92,19 @@ export const Sesion = defineStore('sesionStore', {
           credentials: 'include',
         });
         const data = await response.json();
-        if (data.success === true) {
+        console.log(data);
+        if (data.message != 'Unauthenticated.') {
           this.sesion = true;
+          return true;
         } else {
-          this.logout();
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
+        localStorage.removeItem('rol');
+        this.user = null;
+        this.token = null;
+        this.rol = null;
+        this.sesion = false;
+          return false;
         }
       } catch (error) {
         this.sesion = false;

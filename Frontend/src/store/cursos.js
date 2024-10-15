@@ -6,6 +6,7 @@ export const Cursos = defineStore('cursoStore',{
             cursoTeacher: [],
             cursoIndividual: [],
             url: import.meta.env.VITE_API_URL,
+            
         }
     ),
     actions:{
@@ -177,7 +178,55 @@ export const Cursos = defineStore('cursoStore',{
               console.error('Error enrolling in course:', error);
               throw error;
             }
-          }    
+          },
+          //Examen
+          async postExamen(token, payload, claseId, cursoId) {
+            try {
+              // Realiza la solicitud al backend
+              const response = await fetch(`${this.url}/postExamen/${cursoId}`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Accept': 'application/json',
+                  Authorization: `Bearer ${token}`,
+                },
+                credentials: 'include',
+                body: JSON.stringify(payload), 
+              });
+              const data = await response.json();
+              console.log(data.calificacion)
+              if(data.calificacion >= 7){
+                const rawr = {
+                  claseId: claseId,
+                  nota: data.calificacion,
+                  caso: 2
+                };
+                const response2 = await fetch(`${this.url}/editarTransaccion`, {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                  },
+                  credentials: 'include',
+                  body: JSON.stringify(rawr),
+                });
+                const data2 = await response2.json();
+                if(data2.success == true){
+                  return { success: true, calificacion: data.calificacion }
+                }else{
+                  console.log(data);
+                }
+              }else{
+                return { success: false, calificacion: data.calificacion }
+              }
+          
+            } catch (error) {
+              console.error('Error enviando el examen:', error);
+              throw error;
+            }
+          }          
+          
     },
     
 })

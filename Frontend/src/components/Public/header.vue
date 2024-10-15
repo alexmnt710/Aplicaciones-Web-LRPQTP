@@ -31,9 +31,8 @@ const hideDropdown = () => {
 };
 
 const handleLogout = async () => {
+  router.push({ name: 'Home' });
   await sesionStore.logout();
-  router.push({ name: 'Login' });
-  window.location.reload(); // Recargar la página
 };
 const cursoIr = (categoriaId) => {
   console.log(categoriaId);
@@ -50,7 +49,7 @@ const cursoIr = (categoriaId) => {
       <ul>
         
         <li>
-          <router-link :to="{ name: 'Home' }"><i class="bi bi-house"></i> Home</router-link>
+          <router-link :to="{ name: 'Home' }"><i class="bi bi-house"></i>Home</router-link>
         </li>
         <!-- Botón para mostrar el dropdown de cursos -->
         <li v-if="sesionStore.rol == 'student'|| sesionStore.sesion == false" class="dropdown" @mouseenter="showDropdown">

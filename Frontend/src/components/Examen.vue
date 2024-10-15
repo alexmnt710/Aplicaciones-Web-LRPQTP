@@ -1,12 +1,28 @@
 <script setup>
 import { reactive, ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
+import { Cursos } from '../store/cursos';
+import { Sesion } from '../store/sesion';
+import { sweetalert } from '../composables/sweetAlert';
+import Swal from 'sweetalert2';
+
+const cursoStore = Cursos();
+const sesionStore = Sesion();
+const sweetAlert = sweetalert();
 
 const router = useRouter();
 
 const props = defineProps({
   examen: {
     type: Array,
+    required: true
+  },
+  claseId: {
+    type: String,
+    required: true
+  },
+  cursoId: {
+    type: Number,
     required: true
   }
 });
@@ -30,21 +46,52 @@ const anteriorPregunta = () => {
 };
 
 // Función para enviar el examen
-const enviarExamen = () => {
-  const payload = props.examen.map((pregunta, index) => ({
-    pregunta: pregunta.pregunta,
-    opciones: pregunta.opciones,
-    respuestaUsuario: respuestas[index] || '', // Si no se responde, enviamos vacío
-  }));
+const enviarExamen = async () => {
+  const closeLoading = sweetAlert.ShowLoading();
+  // Crear el payload con la estructura necesaria
+  const payload = props.examen.map((pregunta, index) => {
+    return {
+      pregunta: pregunta.pregunta,
+      opciones: pregunta.opciones,
+      respuestaCorrecta: respuestas[index] || '', // Enviar la respuesta del usuario en el campo 'respuestaCorrecta'
+    };
+  });
 
-  // Mostrar en la consola el objeto con las respuestas
-  console.log('Examen enviado:', payload);
+  try {
+    // Llamar a la API para enviar las respuestas del examen
+    const response = await cursoStore.postExamen(sesionStore.token, payload, props.claseId, props.cursoId);
 
-  //redireccionar a la pagina de inicio
-    router.push('/');
+    if (response.calificacion >= 7) {
+      Swal.fire({
+      title: '¡Examen aprobado!',
+      text: `Has aprobado el examen con una calificación de ${response.calificacion}.`,
+      icon: 'success',
+      confirmButtonText: 'OK'
+      }).then(() => {
+      router.push('/');
+      });
+    } else {
+      Swal.fire({
+      title: 'Examen no aprobado',
+      text: `No has aprobado el examen. Tu calificación es ${response.calificacion}.`,
+      icon: 'error',
+      confirmButtonText: 'OK'
+      }).then(() => {
+      router.push('/');
+      closeLoading();
+      });
+    }
+  } catch (error) {
+    console.error('Error al enviar el examen:', error);
+    closeLoading();
+    // Mostrar un mensaje de error
+  }
 
-  examenCompletado.value = true; // Marcar el examen como completado
+  examenCompletado.value = true;
+
 };
+
+
 
 // Computed para saber si estamos en la última pregunta
 const enUltimaPregunta = computed(() => currentSlide.value === props.examen.length - 1);

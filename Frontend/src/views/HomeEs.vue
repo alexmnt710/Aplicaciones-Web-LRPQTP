@@ -6,11 +6,14 @@ import { Sesion } from '../store/sesion';
 import { Transacciones} from '../store/transacciones';
 import { sweetalert } from '../composables/sweetAlert';
 import { useRouter } from 'vue-router';
+import certificado from '../components/certificado.vue'
 
 const sesionStore = Sesion();
 const transaccionStore = Transacciones();
 const sweetAlert = sweetalert();
 const router = useRouter();
+
+const mostrarCertificado = ref(false);
 
 const selectedView = ref('misCursos'); // Controla qué vista se está mostrando ('misCursos', 'cursosAprobados', 'cursosInscribirse')
 
@@ -28,6 +31,7 @@ watch(selectedView, async (newView) => {
       break;
     case 'cursosAprobados':
       await transaccionStore.getTransaccionUserFinalizado(sesionStore.token, sesionStore.user.userId);
+      console.log(transaccionStore.transaccion);
       break;
     case 'cursosInscribirse':
       await transaccionStore.getTransaccionUserNoPagado(sesionStore.token, sesionStore.user.userId);
@@ -44,9 +48,9 @@ const setView = (view) => {
 const info = (valor ) => {
   sweetAlert.showAlert("Atencion", "Para poder finalizar la inscripcion de este curso, por favor realizar el pago correspondiente: " + valor);
 }
-const irCurso = (cursoId,pasado) => {
+const irCurso = (cursoId,pasado,claseId) => {
   console.log(cursoId);
-  router.push(`/clases/${cursoId}/${pasado}`);
+  router.push(`/clases/${cursoId}/${pasado}/${claseId}`);
 };
 const eliminarCurso = async (cursoId) => {
    const response = await sweetAlert.confirmAlert("Retirarse", "Si te retiras no podras ingresar hasta pagar de nuevo, ¿Estas seguro de retirarte?");
@@ -62,6 +66,7 @@ const eliminarCurso = async (cursoId) => {
      return;
    }
 };
+
 </script>
 
 <template>
@@ -106,7 +111,7 @@ const eliminarCurso = async (cursoId) => {
                 <td>{{ curso.curso.createdBy }}</td>
                 <td>{{ curso.relVerificacion ? 'En curso' : 'Terminado' }}</td>
                 <td>
-                  <button class="btn btn-warning btn-sm mx-1" @click="irCurso(curso.curso.cursoId,false)">Ir al Curso</button>
+                  <button class="btn btn-warning btn-sm mx-1" @click="irCurso(curso.curso.cursoId,false,curso.claseId)">Ir al Curso</button>
                   <button class="btn btn-danger btn-sm mx-1" @click="eliminarCurso(curso.claseId)">Retirarse</button>
                 </td>
               </tr>
@@ -125,7 +130,7 @@ const eliminarCurso = async (cursoId) => {
                 <th>ID</th>
                 <th>Nombre del Curso</th>
                 <th>Usuario</th>
-                <th>Verificación</th>
+                <th>Calificacion</th>
                 <th>Acciones</th>
               </tr>
             </thead>
@@ -134,10 +139,11 @@ const eliminarCurso = async (cursoId) => {
                     <td>{{ curso.claseId }}</td>
                     <td>{{ curso.curso.cursoName }}</td>
                     <td>{{ curso.usuario.userName }}</td>
-                    <td>{{ curso.relVerificacion ? 'Verificado' : 'No Verificado' }}</td>
+                    <td>{{ curso.relNota }}</td>
                     <td>
-                      <button class="btn btn-success btn-sm mx-1" @click="Certificado(curso.cursoId)">Certificado</button>
+                      <button class="btn btn-success btn-sm mx-1" @click="mostrarCertificado = true">Certificado</button>
                     </td>
+                    <certificado  v-if="mostrarCertificado" :curso="curso" @cerrar="mostrarCertificado = false"/>
                   </tr>
             </tbody>
           </table>

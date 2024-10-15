@@ -53,28 +53,31 @@ const setView = (view) => {
   selectedView.value = view;
 };
 
+
 // Ver comprobante
 const verComprobante = (comprobante) => {
   swal.fire({
     title: 'Comprobante de Pago',
-    imageUrl: `${url}${comprobante}`,
-    imageWidth: 400,
-    imageHeight: 200,
-    imageAlt: 'Comprobante de Pago',
+    html: `<div style="display: flex; justify-content: center;">
+             <img src="${url}${comprobante}" alt="Comprobante de Pago" style="max-width: 90%; max-height: 70vh; object-fit: contain;">
+           </div>`,
     showCancelButton: true,
-    confirmButtonText: 'Descargar',
+    confirmButtonText: 'Ver y Descargar',
     cancelButtonText: 'Cerrar',
   }).then((result) => {
     if (result.isConfirmed) {
-      const link = document.createElement('a');
-      link.href = `${url}${comprobante}`;
-      link.download = 'comprobante_pago';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      // Abrir la imagen en una nueva pestaña
+      const newTab = window.open(`${url}${comprobante}`, '_blank');
+      
+      if (!newTab) {
+        console.error('No se pudo abrir la nueva pestaña. Asegúrate de que no haya bloqueadores de ventanas emergentes.');
+      }
     }
   });
 };
+
+
+
 
 // Abrir el modal de edición con los datos del curso seleccionado
 const editarCurso = (curso) => {
@@ -210,7 +213,7 @@ const eliminarCurso = async (cursoId) => {
                 <th>Nombre del Curso</th>
                 <th>Usuario</th>
                 <th>Verificación</th>
-                <th>Verificación</th>
+                <th>Comprobante</th>
                 <th>Valor</th>
               </tr>
             </thead>
@@ -220,7 +223,7 @@ const eliminarCurso = async (cursoId) => {
                 <td>{{ curso.curso.cursoName }}</td>
                 <td>{{ curso.usuario.userName }}</td>
                 <td>{{ curso.relVerificacion ? 'Pagado' : 'No Verificado' }}</td>
-                <td v-if="curso.pagoId">
+                <td v-if="curso.pago.pagoComprobante">
                   <img 
                     :src="`${url}${curso.pago.pagoComprobante}`" 
                     alt="Comprobante" 

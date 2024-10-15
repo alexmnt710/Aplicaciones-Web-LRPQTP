@@ -208,4 +208,45 @@ class CursoController extends Controller
             ], 500);
         }
     }
+    public function Examen(Request $request, $id)
+    {
+        // Obtener el curso por el id
+        $curso = Curso::find($id);
+
+        // Obtener el examen del curso (almacenado como JSON)
+        $examen = json_decode($curso->cursoExamen, true);
+
+        // Obtener las respuestas del usuario
+        $respuestasUsuario = $request->all();
+
+        // Inicializar variables para el conteo
+        $preguntasCorrectas = 0;
+        $totalPreguntas = count($examen);
+
+        // Iterar sobre las preguntas del examen y comparar con las respuestas del usuario
+        foreach ($examen as $preguntaServidor) {
+            foreach ($respuestasUsuario as $preguntaUsuario) {
+                // Comparar las preguntas por el campo "pregunta" y luego las respuestas
+                if (
+                    $preguntaServidor['pregunta'] === $preguntaUsuario['pregunta'] &&
+                    $preguntaServidor['respuestaCorrecta'] === $preguntaUsuario['respuestaCorrecta']
+                ) {
+                    $preguntasCorrectas++;
+                }
+            }
+        }
+
+        // Calcular la calificación final
+        $calificacion = ($preguntasCorrectas / $totalPreguntas) * 10;
+
+        // Devolver el resultado
+        return response()->json([
+            'request' => $respuestasUsuario,
+            'examen' => $examen,
+            'preguntasCorrectas' => $preguntasCorrectas,
+            'totalPreguntas' => $totalPreguntas,
+            'calificacion' => $calificacion,
+        ]);
+    }
+
 }

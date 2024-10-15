@@ -51,11 +51,18 @@ class SesionController extends Controller
             return response()->json(['error'=>$e->getMessage()]);
         }
     }
-    public function checkSession() {
-        if (Auth::check()) {
-            return response()->json(['success' => true]);
-        } else {
-            return response()->json(['success'=> false], 401);
+    public function checkSession(Request $request)
+    {
+        try {
+            // Si el usuario está autenticado correctamente con su token
+            if ($request->user()) {
+                return response()->json(['success' => true, 'user' => $request->user()], 200);
+            } else {
+                return response()->json(['success' => false, 'message' => 'No hay sesión activa'], 401);
+            }
+        } catch (Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
         }
-    }
+}
+
 }

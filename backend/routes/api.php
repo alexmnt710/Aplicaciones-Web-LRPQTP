@@ -64,23 +64,26 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     // Rutas get para pago type
     Route::get('/getPagoType', [PagoController::class, 'getPagoType']); // Obtener todos los tipos de pago
     Route::post('/finalizarTransaccion', [PagoController::class, 'FinalizarPago']); // Obtener un tipo de pago por ID
-    Route::post('/editarTransaccion', [ClaseController::class, 'ClaseEdit']); // Crear un nuevo tipo de pago
+    Route::post('/editarTransaccion', [ClaseController::class, 'ClaseEdit']);
     
 });
 
 // Rutas protegidas para usuarios autenticados
 Route::middleware(['auth:sanctum'])->group(function () {
-    Route::get('/checksesion', [SesionController::class, 'checkSession']); // Verificar si la sesión está activa
+    Route::get('/checksesion', [SesionController::class, 'checkSession']);
     Route::get('/getCursos/{search?}', [CursoController::class, 'index']); // Obtener lista de cursos con búsqueda opcional
     Route::post('/logout', [SesionController::class, 'logout']); // Cerrar sesión
     Route::get('/transaccion/{caso}/{id?}', [ClaseController::class, 'index']); // Obtener información de un curso por ID
     Route::delete('/deleteClase/{id}', [ClaseController::class, 'deleteClase']); // Eliminar una clase por ID
     Route::put('/updateUser/{id}', [UserController::class, 'updateUser']); // Actualizar un usuario por ID
+    Route::post('/editarTransaccion', [ClaseController::class, 'ClaseEdit']);
 });
 
 //Rutas para estudiantes 
 Route::middleware(['auth:sanctum', 'role:student'])->group(function () {
     Route::post('/inscripcion', [ClaseController::class, 'inscripcion']); // Inscribirse a un curso
     Route::get('/getRelacion', [ClaseController::class,'index']);
+
+    Route::post('/postExamen/{id}', [CursoController::class, 'Examen']); // Inscribirse a un curso
 
 });

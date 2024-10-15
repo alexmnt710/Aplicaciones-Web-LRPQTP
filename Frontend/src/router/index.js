@@ -13,9 +13,9 @@ import Homead from '../views/Homead.vue';
 import Cursos from '../views/Cursos.vue';
 import { Sesion } from '../store/sesion';
 import HomeEs from '../views/HomeEs.vue';
-import { sweetalert } from '../composables/sweetAlert';
 import Transacciones from '../views/Transacciones.vue';
 import TeacherCursos from '../views/TeacherCursos.vue';
+import Swal from 'sweetalert2';
 
 const router = createRouter({
     history: createWebHistory('/Ulemi/'), 
@@ -24,7 +24,7 @@ const router = createRouter({
         { path: '/login', name: 'Login', component: Login, meta: { requiresAuth: false } },
         { path: '/register', name: 'Register', component: Register, meta: { requiresAuth: false } },
         { path: '/cursos/:categoriaId', name: 'Cursos', component: Cursos, meta: { requiresAuth: false }, props: true  },
-        { path: '/clases/:claseId/:pasado', name: 'Clases', component: Clases, meta: { requiresAuth: true }, props: true },
+        { path: '/clases/:claseId/:pasado/:cursoId', name: 'Clases', component: Clases, meta: { requiresAuth: true }, props: true },
         { path: '/admin', name: 'Admin', component: Admin, meta: { requiresAuth: true, role: 'admin' } },
         { path: '/adcursos', name: 'AdminCursos', component: AdminCursos, meta: { requiresAuth: true, role: ['admin'] } },
         { path: '/tccursos', name: 'TeacherCursos', component: TeacherCursos, meta: { requiresAuth: true, role: ['teacher'] } },
@@ -38,54 +38,59 @@ const router = createRouter({
     ]
 });
 
-// Navigation guard
+// Navigation guard mejorado
 router.beforeEach(async (to, from, next) => {
     const sesionStore = Sesion(); // Obtén el store de sesión
-    await sesionStore.getSesion(); // Asegúrate de que la sesión esté cargada desde localStorage
-    const swal = sweetalert();
 
-    const userRole = sesionStore.rol; // Rol del usuario en sesión
-    const isAuthenticated = !!userRole; // Verifica si hay un rol definido (usuario autenticado)
-
-
-    // Redirigir a 'homead' si el usuario es un administrador y está intentando acceder a 'Home'
-    if (to.name === 'Home' && (userRole === 'admin' || userRole === 'teacher')) {
-        return next({ name: 'homead' });
-    }else if(to.name === 'Home' && userRole === 'student'){
-        return next({ name: 'homeEs' });
+    if (sesionStore.token) {
+        const response = await sesionStore.checkSesion(sesionStore.token);
+        console.log(response);  
+        if(response.status === 401){
+            console.log('hola');
+            sesionStore.logout();
+        }
     }
 
-    // Restringir el acceso a login y registro si el usuario ya tiene sesión
+    // Obtener los datos de la sesión
+    await sesionStore.getSesion();
+    const userRole = sesionStore.rol;
+    const isAuthenticated = !!userRole;
+
+    // Redirigir según el rol y la ruta
+    if (to.name === 'Home') {
+        if (userRole === 'admin' || userRole === 'teacher') {
+            return next({ name: 'homead' });
+        } else if (userRole === 'student') {
+            return next({ name: 'homeEs' });
+        }
+    }
+
+    // Restricción de acceso a Login y Registro si ya está autenticado
     if (isAuthenticated && (to.name === 'Login' || to.name === 'Register')) {
-        sweetalert('Ya estás autenticado', 'No puedes acceder a esta página.', 'warning')
-        return next({ path: '/' }); // Redirige a Home si el usuario ya tiene sesión
-        
+        Swal.fire('Ya estás autenticado', 'No puedes acceder a esta página.', 'warning');
+        return next({ path: '/' });
     }
 
-    // Verifica si la ruta requiere autenticación
-    if (to.meta.requiresAuth) {
-        if (!isAuthenticated) {
-            console.log('No autenticado, redirigiendo a Login');
-            sweetalert('No autenticado', 'Debes iniciar sesión para acceder a esta página.', 'warning');
-            // Si no está autenticado, redirige a login
-            return next({ name: 'Login' });
-        }
+    // Verificar si la ruta requiere autenticación
+    if (to.meta.requiresAuth && !isAuthenticated) {
+        Swal.fire('No autenticado', 'Debes iniciar sesión para acceder a esta página.', 'warning');
+        return next({ name: 'Login' });
+    }
 
-        // Verifica si la ruta tiene restricciones de rol
-        if (to.meta.role) {
-            const allowedRoles = Array.isArray(to.meta.role) ? to.meta.role : [to.meta.role];
-            if (!allowedRoles.includes(userRole)) {
-                console.log('Rol no autorizado, redirigiendo a Home');
-                sweetalert('Acceso denegado', 'No tienes permiso para acceder a esta página.', 'error');
-                // Si el rol no está permitido, redirige a Home
-                return next({ path: '/' });
-            }
+    // Verificar restricciones de rol
+    if (to.meta.role) {
+        const allowedRoles = Array.isArray(to.meta.role) ? to.meta.role : [to.meta.role];
+        if (!allowedRoles.includes(userRole)) {
+            Swal.fire('Acceso denegado', 'No tienes permiso para acceder a esta página.', 'error');
+            return next({ path: '/' });
         }
     }
 
-    // Si todo está bien, permite la navegación
+    // Permitir navegación si todo está correcto
     next();
 });
+
+
 
 
 export default router;

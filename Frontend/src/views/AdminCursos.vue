@@ -106,7 +106,7 @@ onMounted(async () => {
           <tr v-for="curso in cursos" :key="curso.cursoId">
             <td>{{ curso.cursoId }}</td>
             <td>{{ curso.cursoName }}</td>
-            <td>{{ curso.cursoDescripcion }}</td>
+            <td class="descripcion">{{ curso.cursoDescripcion }}</td>
             <td>{{ curso.cursoValor }}</td>
             <td>{{ curso.cursoCategoriaId }}</td>
             <td>{{ curso.createdBy }}</td>
@@ -140,6 +140,12 @@ onMounted(async () => {
 
 
 <style scoped>
+.descripcion {
+  max-width: 300px; /* Ajusta el ancho máximo que desees */
+  white-space: nowrap; /* Evita que el texto se divida en varias líneas */
+  overflow: hidden; /* Oculta el texto que se desborda */
+  text-overflow: ellipsis; /* Añade "..." al final del texto truncado */
+}
 /* Contenedor principal */
 .crud-container {
   max-width: 1200px;

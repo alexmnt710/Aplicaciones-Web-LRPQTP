@@ -17,6 +17,7 @@ const categoriaStore = Categoria();
 const sesionStore = Sesion();
 const cursoStore = Cursos();
 
+
 // Inicializar el curso con un bloque de contenido y una pregunta de examen por defecto
 const newCurso = reactive({
   cursoId: null,
@@ -26,8 +27,12 @@ const newCurso = reactive({
   cursoCategoriaId: null,
   cursoValor: null,
   cursoRequisito: '',
-  cursoContenido: [{ titulo: '', media: '', concepto: '' }],
-  cursoExamen: [{ pregunta: '', opciones: ['', '', '', ''], respuestaCorrecta: '' }],
+  cursoContenido: [
+    { titulo: '', media: '', tipoMedia: 'imagen', concepto: '' }
+  ],
+  cursoExamen: [
+    { pregunta: '', opciones: ['', '', '', ''], respuestaCorrecta: '' }
+  ],
   createdBy: sesionStore.user.userName
 });
 
@@ -174,6 +179,13 @@ onMounted(() => {
                     <div class="form-group mb-2">
                       <label for="'media-' + index" class="form-label">Media (URL)</label>
                       <input v-model="block.media" type="text" :id="'media-' + index" class="form-control" />
+                      <div class="form-group mb-2">
+                        <label for="'tipoMedia-' + index" class="form-label">Tipo de Media</label>
+                          <input v-model="block.tipoMedia" type="radio" :id="'tipoMedia-imagen-' + index" value="imagen" checked />
+                          <label :for="'tipoMedia-imagen-' + index">Imagen</label>
+                          <input v-model="block.tipoMedia" type="radio" :id="'tipoMedia-video-' + index" value="video" />
+                          <label :for="'tipoMedia-video-' + index">Video</label>
+                      </div>
                     </div>
                     <div class="form-group mb-2">
                       <label for="'concepto-' + index" class="form-label">Concepto</label>

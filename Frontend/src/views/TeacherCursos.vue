@@ -73,6 +73,7 @@ const loadEstudiantes = async (cursoId) => {
 const closeModal = () => {
   showCrearCurso.value = false;
   showEstudiantesModal.value = false;
+  loadCursos();
 };
 
 onMounted(async () => {
