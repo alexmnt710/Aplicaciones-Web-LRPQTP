@@ -1,8 +1,6 @@
 <template>
-  <div v-if="showModal" class="modal-overlay" @click.self="closeModal">
+  <div v-if="showModal" class="modal-overlay" @click="$emit('cerrar')">
     <div class="certificado-container">
-      <button class="close-button" @click="$emit('cerrar')">&times;</button>
-
       <div class="certificado-content">
         <h1 class="certificado-title">Certificado</h1>
         <h2 class="certificado-subtitle">DE RECONOCIMIENTO A:</h2>
@@ -27,10 +25,8 @@
             <hr class="firma-linea-ajustada" />
             <p class="firma-docente">Firma Docente</p>
           </div>
-          <p class="certificado-firma">Fecha: {{ curso.updated_at }}</p>
+          <p class="certificado-firma">Fecha: {{ curso.updated_at.split('T')[0] }}</p>
         </div>
-
-        <!-- Botón de impresión -->
         <button class="print-button no-print" @click="printCertificado">Imprimir Certificado</button>
       </div>
     </div>
@@ -54,71 +50,37 @@ const closeModal = () => {
 };
 
 const printCertificado = () => {
-  const printContents = document.querySelector('.certificado-container').innerHTML;
-
-  // Crear una nueva ventana para la impresión
-  const printWindow = window.open('', '', 'width=800,height=600');
-  printWindow.document.write(`
-    <html>
-      <head>
-        <title>Certificado</title>
-        <link rel="stylesheet" href="ruta/a/tus/estilos.css">
-        <style>
-          body {
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: 1.5rem;
-            padding: 2rem;
-          }
-          .certificado-container {
-            width: 90%;
-            max-width: 1000px;
-            padding: 2rem;
-            border-radius: 10px;
-            background-image: url('https://github.com/alexmnt710/Aplicaciones-Web-LRPQTP/blob/main/Frontend/src/assets/img/certificado.png');
-            background-size: cover;
-            background-position: center;
-            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: 1.5rem;
-            position: relative;
-          }
-          /* Agregar aquí los otros estilos necesarios */
-        </style>
-      </head>
-      <body>${printContents}</body>
-    </html>
-  `);
-  printWindow.document.close();
-  printWindow.print();
+  window.print();
 };
-
-
 </script>
 
 <style scoped>
+@page {
+  size: landscape;
+  margin: 0;
+}
+
 @media print {
-  body {
-    text-align: center;
+  * {
+    visibility: hidden;
+  }
+  .certificado-container, .certificado-container * {
+    visibility: visible;
   }
   .certificado-container {
-    width: 90%;
-    max-width: 1000px;
-    padding: 2rem;
-    background-image: url('../assets/img/certificado.png');
-    background-size: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding: 1rem;
+    background-image: url('https://raw.githubusercontent.com/alexmnt710/Aplicaciones-Web-LRPQTP/main/Frontend/src/assets/img/certificado.png');
+    background-size: 100% 100%;
     background-position: center;
     box-shadow: none;
   }
-  /* Asegúrate de incluir los estilos necesarios para mantener el diseño deseado */
 }
+
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -133,11 +95,11 @@ const printCertificado = () => {
 }
 
 .certificado-container {
-  width: 90%;
-  max-width: 1000px;
+  width: 95%;
+  max-width: 1200px;
   padding: 2rem;
   border-radius: 10px;
-  background-image: url('../assets/img/certificado.png');
+  background-image: url('https://raw.githubusercontent.com/alexmnt710/Aplicaciones-Web-LRPQTP/main/Frontend/src/assets/img/certificado.png');
   background-size: cover;
   background-position: center;
   box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);

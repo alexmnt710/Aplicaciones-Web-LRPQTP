@@ -1,7 +1,5 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-import Header from '../components/Public/header.vue';
-import Footer from '../components/Public/footer.vue';
 import { Sesion } from '../store/sesion.js';
 import { useRouter } from 'vue-router';
 import { sweetalert } from '../composables/sweetAlert'; // Importa SweetAlert
@@ -96,7 +94,6 @@ const goToRegister = () => {
       <img src="/src/assets/img/gustavinlogin.png" class="cta-image img-fluid" />
     </div>
   </div>
-  <Footer></Footer>
 </template>
 
 <style scoped>

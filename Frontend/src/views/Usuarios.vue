@@ -1,7 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-import Header from '../components/Public/header.vue';
-import Footer from '../components/Public/footer.vue';
+
 import Pagination from '../components/Pagination.vue';
 import { sweetalert } from '../composables/sweetAlert';
 import { Sesion } from '../store/sesion';
@@ -220,7 +219,6 @@ onMounted(() => {
 </script>
 
 <template>
-  <Header />
 
   <!-- Contenedor principal con un ancho máximo -->
   <div class="container mt-5">
@@ -332,7 +330,6 @@ onMounted(() => {
     </div>
   </div>
 
-  <Footer />
 </template>
 
 <style scoped>

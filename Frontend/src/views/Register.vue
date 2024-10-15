@@ -1,7 +1,5 @@
 <script setup>
 import { ref } from 'vue';
-import Header from '../components/Public/header.vue';
-import Footer from '../components/Public/footer.vue';
 import { Sesion } from '../store/sesion.js';
 import { useRouter } from 'vue-router';
 import { User } from '../store/users.js';
@@ -132,7 +130,6 @@ const goToLogin = () => {
       </p>
     </div>
   </div>
-  <Footer></Footer>
 </template>
 
 <style scoped>

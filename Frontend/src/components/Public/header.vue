@@ -26,8 +26,7 @@ const showDropdown = () => {
 
 // Ocultar el dropdown
 const hideDropdown = () => {
-    dropdownVisible.value = false;
-
+  dropdownVisible.value = false;
 };
 
 const handleLogout = async () => {
@@ -47,30 +46,37 @@ const cursoIr = (categoriaId) => {
     </div>
     <nav class="nav-links" :class="{ 'mobile-menu': isMobileMenuOpen }">
       <ul>
-        
         <li>
-          <router-link :to="{ name: 'Home' }"><i class="bi bi-house"></i>Home</router-link>
+          <router-link :to="{ name: 'Home' }"><i class="bi bi-house"></i> Home</router-link>
         </li>
+        
         <!-- Botón para mostrar el dropdown de cursos -->
-        <li v-if="sesionStore.rol == 'student'|| sesionStore.sesion == false" class="dropdown" @mouseenter="showDropdown">
+        <li v-if="sesionStore.rol == 'student' || sesionStore.sesion == false" class="dropdown" @mouseover="showDropdown" @mouseleave="hideDropdown">
           <div class="dropdown-toggle">
             <i class="bi bi-book"></i> Cursos
             <i class="bi bi-chevron-down"></i>
           </div>
+          <!-- Dropdown contenido ahora como hijo del botón -->
+          <ul class="dropdown-content" v-if="dropdownVisible">
+            <li v-for="categoria in categoriaStore.categorianormal" :key="categoria.categoriaId" @click="cursoIr(categoria.categoriaId)">
+              {{ categoria.categoriaName }}
+            </li>
+          </ul>
         </li>
+        
         <li v-if="sesionStore.sesion && sesionStore.rol !== 'admin'">
           <router-link :to="{ name: 'Perfil' }"><i class="bi bi-person-circle"></i> Perfil</router-link>
         </li>
       </ul>
     </nav>
     <div class="login-button">
-      <button v-if="!sesionStore.sesion">
+      <button v-if="!sesionStore.sesion" class="login-register-button">
         <router-link :to="{ name: 'Register' }"><i class="bi bi-person-plus"></i> Registrarse</router-link>
       </button>
-      <button v-if="!sesionStore.sesion">
+      <button v-if="!sesionStore.sesion" class="login-register-button">
         <router-link :to="{ name: 'Login' }"><i class="bi bi-box-arrow-in-right"></i> Acceder</router-link>
       </button>
-      <button v-else @click="handleLogout">
+      <button v-else @click="handleLogout" class="logout-button">
         <i class="bi bi-box-arrow-right"></i> Cerrar sesión
       </button>
     </div>
@@ -79,13 +85,6 @@ const cursoIr = (categoriaId) => {
       <span></span>
       <span></span>
     </div>
-
-    <!-- Dropdown independiente para las categorías de cursos -->
-    <ul class="dropdown-content" v-if="dropdownVisible" @mouseenter="showDropdown" @mouseleave="hideDropdown">
-      <li v-for="categoria in categoriaStore.categorianormal" :key="categoria.categoriaId" @click="cursoIr(categoria.categoriaId)">
-        {{ categoria.categoriaName }}
-      </li>
-    </ul>
   </header>
 </template>
 
@@ -140,39 +139,36 @@ const cursoIr = (categoriaId) => {
   border-radius: 5px;
 }
 
-/* Dropdown independiente */
+/* Dropdown contenido */
+.dropdown {
+  position: relative;
+}
+
 .dropdown-content {
+  display: flex;
+  flex-direction: column;
   position: absolute;
   top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 0;
   background-color: #0f3d28;
   border-radius: 5px;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-  min-width: 300px;
-  max-height: 300px;
-  overflow-y: auto;
+  min-width: 200px;
+  max-width: 250px;
+  max-height: 500px; /* Altura máxima del dropdown */
+  overflow-y: auto; /* Habilitar scroll vertical */
   z-index: 1;
-  opacity: 1;
-  visibility: visible;
-  transition: opacity 0.3s ease, visibility 0.3s ease;
+  padding: 0;
+  margin: 0;
 }
 
 .dropdown-content li {
   padding: 0.5rem 1rem;
-  white-space: nowrap;
   cursor: pointer;
+  white-space: nowrap;
 }
 
-.dropdown-content li a {
-  color: white;
-  text-decoration: none;
-  display: block;
-  padding: 0.5rem 1rem;
-  transition: background-color 0.3s ease;
-}
-
-.dropdown-content li a:hover {
+.dropdown-content li:hover {
   background-color: #3ecf8e;
 }
 
@@ -182,7 +178,7 @@ const cursoIr = (categoriaId) => {
   gap: 1rem;
 }
 
-.login-button button {
+.login-register-button {
   background-color: transparent;
   color: #f0f0f0;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
@@ -196,16 +192,40 @@ const cursoIr = (categoriaId) => {
   align-items: center;
 }
 
-.login-button a {
+.login-register-button a {
   text-decoration: none;
   color: #f0f0f0;
 }
 
-.login-button button i {
+.login-register-button i {
   margin-right: 0.5rem;
 }
 
-.login-button button:hover {
+.login-register-button:hover {
+  background-color: #3ecf8e;
+  color: #0f3d28;
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
+}
+
+.logout-button {
+  background-color: transparent;
+  color: #f0f0f0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+  display: flex;
+  align-items: center;
+}
+
+.logout-button i {
+  margin-right: 0.5rem;
+}
+
+.logout-button:hover {
   background-color: #3ecf8e;
   color: #0f3d28;
   box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
@@ -294,4 +314,3 @@ const cursoIr = (categoriaId) => {
   border-radius: 4px;
 }
 </style>
-

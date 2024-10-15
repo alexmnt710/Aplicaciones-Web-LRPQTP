@@ -1,6 +1,4 @@
 <script setup>
-import Header from '../components/Public/header.vue';
-import Footer from '../components/Public/footer.vue';
 import Pagination from '../components/Pagination.vue'; // Importamos el componente de paginación
 import { Categoria } from '../store/categoria';
 import { ref, onMounted } from 'vue';
@@ -158,7 +156,6 @@ onMounted(() => {
 </script>
 
 <template>
-  <Header />
 
   <div class="crud-container mt-5">
     <h2 class="crud-title">Gestión de Categorías</h2>
@@ -247,7 +244,6 @@ onMounted(() => {
     </div>
   </div>
 
-  <Footer />
 </template>
 
 <style scoped>

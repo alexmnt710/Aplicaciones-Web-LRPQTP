@@ -1,6 +1,5 @@
 <script setup>
-import Header from '../components/Public/header.vue';
-import Footer from '../components/Public/footer.vue';
+
 import Pagination from '../components/Pagination.vue'; 
 import { Cursos } from '../store/cursos';
 import { ref, onMounted } from 'vue';
@@ -140,7 +139,6 @@ onMounted(async () => {
     />
   </div>
 
-  <Footer />
 
   <!-- Modal para crear/editar curso -->
   <CrearCurso v-if="showCrearCurso" :cursoData="cursoSeleccionado" @close="closeModal" />

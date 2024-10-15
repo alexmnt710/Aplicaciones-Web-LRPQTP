@@ -1,6 +1,5 @@
 <script setup>
-import Header from '../components/Public/header.vue';
-import Footer from '../components/Public/footer.vue';
+
 import { sweetalert } from '../composables/sweetAlert';
 import { ref, reactive, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
@@ -177,7 +176,6 @@ const mostrarMedia = (media, esImagen) => {
 
     <Examen v-if="mostrarExamen" :examen="curso.cursoExamen" :claseId="props.cursoId" :cursoId="curso.cursoId" @cerrar="mostrarExamen = false" />
   </div>
-  <Footer />
 </template>
 
 <style scoped>

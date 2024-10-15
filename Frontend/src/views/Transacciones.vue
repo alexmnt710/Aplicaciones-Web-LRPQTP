@@ -1,6 +1,5 @@
 <script setup>
-import Header from '../components/Public/header.vue';
-import Footer from '../components/Public/footer.vue';
+
 import { useRouter } from 'vue-router';
 import { Sesion } from '../store/sesion';
 import { Transacciones } from '../store/transacciones';
@@ -161,7 +160,7 @@ const eliminarCurso = async (cursoId) => {
 </script>
 
 <template>
-  <Header></Header>
+
   <div class="perfil-container">
     <h2 class="text-center">Transacciones</h2>
 
@@ -270,7 +269,6 @@ const eliminarCurso = async (cursoId) => {
       </div>
     </div>
   </div>
-  <Footer></Footer>
 </template>
 
 

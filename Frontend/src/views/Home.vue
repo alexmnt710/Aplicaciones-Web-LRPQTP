@@ -1,7 +1,5 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-import Header from '../components/Public/header.vue';
-import Footer from '../components/Public/footer.vue';
 import { Cursos } from '../store/cursos';
 import { sweetalert } from '../composables/sweetAlert';
 import { useRouter } from 'vue-router';
@@ -47,8 +45,6 @@ onMounted(async () => {
 </script>
 
 <template>
-  <Header />
-
   <!-- Gustavin -->
   <section v-if="!sesionStore.sesion" class="cta-section">
     <div class="container">
@@ -137,7 +133,6 @@ onMounted(async () => {
     </button>
   </div>
 
-  <Footer />
 </template>
 
 <style scoped>

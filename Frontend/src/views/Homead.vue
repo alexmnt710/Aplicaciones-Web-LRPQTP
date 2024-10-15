@@ -1,6 +1,4 @@
 <script setup>
-import Header from '../components/Public/header.vue';
-import Footer from '../components/Public/footer.vue';
 import { useRouter } from 'vue-router';
 import { Sesion } from '../store/sesion';
 
@@ -14,7 +12,6 @@ const navigateTo = (routeName) => {
 </script>
 
 <template>
-    <Header></Header>
     
     <div v-if="sesionStore.rol == 'admin'" class="toolbox-container">
       <h2 class="admin-title">Home de Admin</h2>
@@ -57,8 +54,7 @@ const navigateTo = (routeName) => {
         </button>
       </div>
     </div>
-  
-    <Footer></Footer>
+
   </template>
   
   <style scoped>

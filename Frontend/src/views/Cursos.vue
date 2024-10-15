@@ -1,6 +1,4 @@
 <script setup>
-import Header from '../components/Public/header.vue';
-import Footer from '../components/Public/footer.vue';
 import { Cursos } from '../store/cursos';
 import { ref, onMounted, watch } from 'vue';
 import { Sesion } from '../store/sesion';
@@ -111,7 +109,7 @@ onMounted(async () => {
 </script>
 <template>
 <div>
-  <Header />
+
 
   <div class="container my-5">
     <h2>Lista de Cursos</h2>
@@ -147,7 +145,6 @@ onMounted(async () => {
     </div>
   </div>
 
-  <Footer />
 </div>
 </template>
 

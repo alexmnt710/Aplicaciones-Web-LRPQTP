@@ -1,6 +1,5 @@
 <script setup>
-import Header from '../components/Public/header.vue';
-import Footer from '../components/Public/footer.vue';
+
 import Pagination from '../components/Pagination.vue'; 
 import { Cursos } from '../store/cursos';
 import { ref, onMounted } from 'vue';
@@ -78,8 +77,6 @@ onMounted(async () => {
 </script>
 
 <template>
-  <Header />
-
   <div class="crud-container">
     <h2 class="crud-title">Gestión de Cursos</h2>
 
@@ -131,8 +128,6 @@ onMounted(async () => {
       @pageChange="loadCursos"
     />
   </div>
-
-  <Footer />
 
   <!-- Mostrar el componente de crear/editar curso cuando showCrearCurso sea true -->
   <CrearCurso v-if="showCrearCurso" :cursoData="cursoSeleccionado" @close="closeModal" />

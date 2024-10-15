@@ -1,6 +1,4 @@
 <script setup>
-import Header from '../components/Public/header.vue';
-import Footer from '../components/Public/footer.vue';
 import { Sesion } from '../store/sesion';
 import { useRouter } from 'vue-router';
 import { onMounted, ref, watch, reactive, computed } from 'vue';
@@ -118,7 +116,7 @@ const guardarPerfil = async () => {
 </script>
 
 <template>
-  <Header></Header>
+
   <div class="perfil-container mx-auto p-8 shadow-lg rounded-xl">
     <div class="icono-usuario">
       <i class="bi bi-person-circle text-green-600"></i>
@@ -173,7 +171,7 @@ const guardarPerfil = async () => {
       </button>
     </form>
   </div>
-  <Footer></Footer>
+
 </template>
   
   <style scoped>
