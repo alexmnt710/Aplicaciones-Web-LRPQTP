@@ -112,7 +112,7 @@ onMounted(async () => {
 
 
   <div class="container my-5">
-    <h2>Lista de Cursos</h2>
+    <h2>Lista de Cursos: </h2>
 
     <!-- Recorre los cursos y muestra su información -->
     <div v-if="cursos.length">

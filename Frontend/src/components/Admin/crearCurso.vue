@@ -33,7 +33,7 @@ const newCurso = reactive({
   cursoExamen: [
     { pregunta: '', opciones: ['', '', '', ''], respuestaCorrecta: '' }
   ],
-  createdBy: sesionStore.user.userName
+  createdBy: `${sesionStore.user.userNombres} ${sesionStore.user.userApellidos}`
 });
 
 // Cargar los datos del curso seleccionado al editar

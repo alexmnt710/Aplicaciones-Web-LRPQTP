@@ -42,6 +42,10 @@ onMounted(async () => {
   }
 });
 
+const goToRegister = () => {
+  router.push({ name: 'Register' });
+};
+
 </script>
 
 <template>
@@ -53,7 +57,7 @@ onMounted(async () => {
         <div class="col-md-6">
           <h1>Estudia gratis y certifícate con +6,000 cursos online</h1>
           <p>Acelera tu futuro con nuestros cursos certificados.</p>
-          <button class="btn btn-custom">Crear cuenta gratis</button>
+          <button class="btn btn-custom" @click="goToRegister">Crear cuenta gratis</button>
           <p class="cta-disclaimer">*Sin datos de tarjetas y sin llamadas de ventas.</p>
         </div>
         <!-- Imagen -->
