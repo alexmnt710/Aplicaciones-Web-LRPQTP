@@ -1,0 +1,45 @@
+version: '3.3'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: laravel_app
+    ports:
+      - "8080:80"
+    networks:
+      - laravel
+    depends_on:
+      - db
+    environment:
+      - DB_CONNECTION=pgsql
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_DATABASE=laravel
+      - DB_USERNAME=laraveluser
+      - DB_PASSWORD=laravelpassword
+    command: >
+      sh -c "php artisan migrate --force &&
+             apache2-foreground"
+
+  db:
+    image: postgres:13
+    container_name: postgres_db
+    environment:
+      POSTGRES_DB: laravel
+      POSTGRES_USER: laraveluser
+      POSTGRES_PASSWORD: laravelpassword
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - laravel
+    ports:
+      - "5432:5432"
+
+networks:
+  laravel:
+
+volumes:
+  pgdata:
+
