@@ -14,13 +14,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libbz2-dev \
     libcurl4-openssl-dev \
     openssl \
-    curl
+    curl \
+    && docker-php-ext-install pdo_pgsql mbstring exif pcntl bcmath gd dom \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Instalamos las extensiones de PHP necesarias
-RUN docker-php-ext-install pdo_pgsql mbstring exif pcntl bcmath gd dom
-
-# Limpiamos los archivos de instalación
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+# Configurar el ServerName para evitar advertencias de Apache
+RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
 # Instalar Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -42,11 +41,9 @@ RUN a2enmod rewrite
 # Establecer DocumentRoot al directorio public de Laravel
 RUN sed -i 's#/var/www/html#/var/www/html/public#' /etc/apache2/sites-available/000-default.conf
 
-# Ejecutar Composer para instalar dependencias de PHP
-RUN composer install --prefer-dist --no-dev --optimize-autoloader
-
-# Copiar el archivo de entorno .env (si no existe) y generar la clave de aplicación
-RUN cp .env.example .env \
+# Instalar dependencias de Laravel y generar APP_KEY
+RUN composer install --prefer-dist --no-dev --optimize-autoloader \
+    && cp .env.example .env \
     && php artisan key:generate
 
 # Exponer el puerto 80 para que Apache sirva la aplicación
@@ -54,4 +51,5 @@ EXPOSE 80
 
 # Comando por defecto para iniciar Apache en primer plano
 CMD ["apache2-foreground"]
+
 
